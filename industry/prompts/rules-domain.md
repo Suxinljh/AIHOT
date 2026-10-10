@@ -1,15 +1,15 @@
 
-【AI 领域翻译规则 — 本平台 100% 是 AI/ML/LLM 行业内容，严格遵守】
+【本站关注领域翻译规则 — 大模型 / 软件 / 硬件 / 具身智能 / 电影艺术，严格遵守】
 
-1. 歧义默认值：以下词在中文有非 AI 歧义，**一律按 AI 含义翻译**：
+1. 歧义默认值：以下词在不同领域有歧义，按本条给出的默认含义翻译，除非上下文明确指向另一种：
    - LLM = 大语言模型（绝不译"法学硕士"/"Master of Laws"）
    - Token / tokens = 模型 token（保留英文；绝不译"代币"/"令牌"）
    - Transformer = Transformer 架构（保留英文；不译"变压器"）
    - Diffusion = 扩散模型（AI 生成，不是物理扩散）
-   - Agent / Agentic = AI 智能体 / 智能体的（不译"代理人"/"中介"）
+   - Agent / Agentic = AI 智能体 / 智能体的（不译"代理人"/"中介"）；影视行业语境里的 agent 是经纪人（talent agent），按上下文区分
    - Alignment = 对齐（AI 安全语境）
    - Inference = 推理（模型生成）
-   - Reasoning = 推理（注意：与 inference 都译"推理"，必要时用"链式推理"区分 CoT；reasoning model 指 o1/o3/R1 这类思考型模型）
+   - Reasoning = 推理（注意：与 inference 都译"推理"，必要时用"链式推理"区分 CoT；reasoning model 指 o1/o3/R1 这类思考型模型）；影视语境里的"推理"是悬疑／侦探类型（mystery / detective），不要与模型推理混淆
    - Embedding = 嵌入向量（也可保留英文）
    - Distillation = 知识蒸馏
    - Hallucination = 模型幻觉
@@ -18,28 +18,38 @@
    - Context window = 上下文窗口
    - Prompt = 提示词
    - Skill / Skills = 技能（Claude 等 Agent 框架的能力包，不译"特长"）
+   - Chip / SoC = 芯片 / 系统级芯片；Wafer = 晶圆；Foundry = 晶圆代工；Fab = 晶圆厂
+   - Render = 渲染；Shader = 着色器；Frame = 帧；FPS = 帧率
+   - Shot = 镜头；Take = 一条（拍摄）；Cut = 剪辑；Trailer = 预告片；Box office = 票房
+   - Release 按领域区分：模型、软件和硬件是"发布"，电影和剧集是"上映／上线"，音乐是"发行"
+   - Foundation model = 基础模型；Open weights = 开放权重（代码没开放就不要译成"开源"）
 
 2. 以下专有名词**一律保留英文原文**，不翻译不加中文括注：
-   - AI 公司：OpenAI / Anthropic / Google DeepMind / xAI / Meta AI / Mistral / DeepSeek / Cohere / HuggingFace（HF）/ Runway / ElevenLabs / Suno / Pika / Midjourney / Perplexity
+   - 公司：OpenAI / Anthropic / Google DeepMind / xAI / Meta AI / Mistral / DeepSeek / Cohere / HuggingFace（HF）/ Runway / ElevenLabs / Suno / Pika / Midjourney / Perplexity / NVIDIA / AMD / Intel / Qualcomm / TSMC / Arm / Samsung / DJI / Unitree / Boston Dynamics / Figure / Waymo / Netflix / Disney / Pixar / Warner Bros / A24 / IMAX / Dolby
    - 模型族（举例 + 通用规则）：GPT / Claude / Gemini / Llama / Qwen / Grok / o 系列 / DeepSeek / Mistral / Mixtral / Phi / Sora / Veo / Imagen
      **规则**：任何大模型族名、产品代号一律保留英文
    - 模型版本号（举例 + 通用规则）：GPT-5 / Claude 4.7 / Claude Sonnet 4.6 / Llama 4 / Gemini 3 / o3 / o4 / DeepSeek-V4 / Qwen3.7
      **规则**：版本号一字不改（包括字母数字后缀如 4o / 4.7 / 405B / V4 / R1），绝不"翻译性扩写"（不要把 "405B" 译成 "4050 亿"，不要把 "V4" 译成 "第 4 代"）
-   - 技术缩写（举例 + 通用规则）：LLM / RAG / RLHF / DPO / LoRA / QLoRA / PEFT / MoE / CoT / ReAct / KV cache / SOTA / AGI / MCP / ADK / NPU / GPU / TPU
-     **规则**：任何 2-5 字母的全大写缩写，默认按 AI/ML 含义保留英文
-   - 评测基准（举例 + 通用规则）：MMLU / GPQA / HumanEval / SWE-bench / SWE-bench Verified / AIME / HLE / ARC-AGI / ARC-AGI 2 / MT-Bench / Chatbot Arena / Aider Polyglot / LiveCodeBench
+   - 硬件产品线（举例 + 通用规则）：RTX 5090 / GeForce / Ryzen / Radeon / Instinct / Core Ultra / Xeon / Snapdragon / Apple M4 / Vision Pro / iPhone / Pixel / Galaxy / PlayStation 5 / Switch 2 / Osmo / RoboMaster / Optimus / Atlas
+     **规则**：芯片、整机、外设的型号一字不改，不自造中文型号名
+   - 技术缩写（举例 + 通用规则）：LLM / RAG / RLHF / DPO / LoRA / QLoRA / PEFT / MoE / CoT / ReAct / KV cache / SOTA / AGI / MCP / ADK / NPU / GPU / TPU / SoC / VR / AR / XR / OLED / Mini-LED / VFX / CG / HDR
+     **规则**：任何 2-5 字母的全大写缩写，默认按本领域含义保留英文
+   - 评测基准（举例 + 通用规则）：MMLU / GPQA / HumanEval / SWE-bench / SWE-bench Verified / AIME / HLE / ARC-AGI / MT-Bench / Chatbot Arena / LiveCodeBench / MLPerf / Geekbench / Cinebench / 3DMark
      **规则**：以 -bench / -eval 结尾或全大写的评测名一律保留英文
    - AI 工具/产品：Cursor / Copilot / Codex / Aider / Devin / Cline / Claude Code / Windsurf / Zed / v0 / Bolt / Lovable / Replit Agent
+   - 创作工具：Unreal Engine / Unity / Blender / DaVinci Resolve / Nuke / Houdini / After Effects / Premiere Pro / Photoshop / Figma
    - Agent 框架：LangChain / LangGraph / LlamaIndex / CrewAI / AutoGen / Pydantic AI / Vercel AI SDK / DSPy
    - 推理/部署：Ollama / vLLM / SGLang / TensorRT / Triton / CUDA / ROCm
    - 通用技术：API / SDK / CLI / IDE / SaaS / CDN / SSO / OAuth / JWT / WebSocket / SSE / gRPC
 
 3. 中国厂商**优先用官方中文品牌名**（首次出现可双标"千问（Qwen3）"，后续选一种保持一致）：
    - 千问（Qwen）/ 文心一言 / 智谱（GLM）/ 月之暗面（Kimi）/ 深度求索（DeepSeek）/ 阶跃星辰（Step）/ 零一万物（Yi）/ 百川 / 豆包（字节）/ 混元（腾讯）/ 可灵（Kling，快手）/ 即梦（Jimeng，字节）/ MiniMax（不译）/ 美团 LongCat / 昆仑万维 Skywork / 面壁 MiniCPM / 华为昇腾 / 寒武纪
+   - 硬件与出行：华为 / 小米 / 比亚迪 / 大疆（DJI）/ 宇树（Unitree）/ 小鹏 / 蔚来 / 理想
+   - 影视与游戏：影片、剧集和游戏用官方中文名，有官方译名就用官方译名，没有就用通行译名；主创人名用通行中文译名
 
 4. 代码 / 命令 / URL / 数字单位 **一字不改**保留：
    - 反引号代码 `code` 不翻译
    - 命令如 /code-review、pip install、npm run 不译（不要译"代码审查"）
    - URL 原样
-   - 数字+单位：8k context / 175B params / 3.5x speedup / $3 per M tokens / 99.9%
+   - 数字+单位：8k context / 175B params / 3.5x speedup / $3 per M tokens / 99.9% / 120W TDP / 4K 120fps / 全球票房 8.2 亿美元
    - 金额、参数量、比例、区间必须保留原文的阿拉伯数字和单位；不要把 $10B-$100B 改写成“数百亿至数千亿美元”等中文数量词
