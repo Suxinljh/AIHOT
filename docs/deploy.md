@@ -30,6 +30,28 @@ docker compose up -d --build
 
 `docker compose` 会起五个容器：`db`（PostgreSQL 17）、`setup`（每次启动先跑数据库迁移和种子数据，然后退出）、`api`、`worker`（抓取、模型处理、定时任务）、`web`（网页）。`web` 只接收网站地址、API 地址等网页配置，通过 HTTP 读取 API；数据库、模型和管理员密钥，以及数据卷，只交给后端容器。
 
+### 从镜像仓库部署（不在部署机上构建）
+
+`.github/workflows/check.yml` 的 `publish` job 在 `main` 上通过全部检查后，会把同一个镜像推到 `ghcr.io/<你的 GitHub 用户名小写>/aihot:latest`，另外带一个短提交号标签；仓库里配了 `DOCKERHUB_USERNAME`、`DOCKERHUB_TOKEN` 两个 secret 时同时推 Docker Hub。镜像里没有 `.env`、`.data`、`.git`（见 `.dockerignore`），推公开仓库也不会带出密钥。
+
+部署机上只要 `docker-compose.yml`、`.env`，以及用 HTTPS 时的 `deploy/Caddyfile`——不需要源码和 Node：
+
+```bash
+APP_IMAGE=ghcr.io/你的用户名/aihot:latest docker compose pull
+APP_IMAGE=ghcr.io/你的用户名/aihot:latest docker compose up -d --no-build
+```
+
+数据库迁移和种子数据仍由 `setup` 服务在每次启动时执行。ghcr.io 的包默认是私有的：要么在 GitHub 的 Packages 页面把 `aihot` 改成 Public，要么在部署机上先 `docker login ghcr.io`。升级就是再 `pull` 一次、再 `up -d`（先停 `api worker web`，`docker compose run --rm setup`，再起——见下面的[更新](#更新)）。
+
+不想用仓库，也可以在有源码的机器上打包再传过去（两边架构要一致；飞牛多为 linux/amd64，本机镜像已经是 linux/amd64）：
+
+```bash
+docker build --platform linux/amd64 -t aihot-app .
+docker save aihot-app:latest | gzip > aihot.tgz      # 未压缩约 670 MB
+# 传到部署机之后
+gunzip -c aihot.tgz | docker load
+```
+
 ### 在中国大陆的服务器上
 
 - 构建时 npm 走国内镜像：`docker compose build --build-arg NPM_REGISTRY=https://registry.npmmirror.com`，然后 `docker compose up -d`。

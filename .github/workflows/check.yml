@@ -121,3 +121,49 @@ jobs:
       - name: Stop
         if: always()
         run: docker compose down -v
+
+  # 把镜像推到镜像仓库，只在 main 上、且上面两个 job 都过了之后跑（PR 不推）。
+  # ghcr.io 用内置的 GITHUB_TOKEN，不需要配任何 secret；想同时推 Docker Hub，
+  # 就在仓库的 Settings → Secrets and variables → Actions 里加 DOCKERHUB_USERNAME 和 DOCKERHUB_TOKEN。
+  # 部署端只 pull，不构建：见 docs/deploy.md 的「从镜像仓库部署」。
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [check, docker]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Log in to ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Log in to Docker Hub
+        # 没配 secret 就跳过，这一趟只推 ghcr.io。
+        if: ${{ secrets.DOCKERHUB_TOKEN != '' }}
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - name: Tags
+        id: tags
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"   # 镜像名必须小写
+          short="${GITHUB_SHA::7}"
+          tags="ghcr.io/${owner}/aihot:latest,ghcr.io/${owner}/aihot:${short}"
+          if [ -n "$DOCKERHUB_USERNAME" ]; then
+            tags="$tags,${DOCKERHUB_USERNAME}/aihot:latest,${DOCKERHUB_USERNAME}/aihot:${short}"
+          fi
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+          echo "pushing: $tags"
+      - name: Build and push (linux/amd64)
+        # 单平台、不带 attestation，飞牛这类 NAS 上的 Docker 直接能拉。
+        env:
+          TAGS: ${{ steps.tags.outputs.tags }}
+        run: |
+          args=()
+          IFS=',' read -ra list <<< "$TAGS"
+          for t in "${list[@]}"; do args+=(--tag "$t"); done
+          docker buildx build --platform linux/amd64 --provenance=false "${args[@]}" --push .

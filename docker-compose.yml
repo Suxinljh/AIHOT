@@ -4,7 +4,9 @@ name: aihot
 
 x-app: &app
   build: .
-  image: aihot-app
+  # 本机构建时用 aihot-app；在只拉镜像的机器（NAS、服务器）上设 APP_IMAGE 指向仓库里的镜像，
+  # 先 docker compose pull，再 docker compose up -d --no-build。
+  image: ${APP_IMAGE:-aihot-app}
   restart: unless-stopped
 
 x-backend: &backend
