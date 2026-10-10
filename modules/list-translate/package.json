@@ -1,0 +1,13 @@
+{
+  "name": "@aihot/list-translate",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./server.ts"
+  },
+  "dependencies": {
+    "@aihot/backend": "*",
+    "@aihot/site": "*",
+    "zod": "4.6.5"
+  }
+}

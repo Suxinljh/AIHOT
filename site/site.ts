@@ -300,29 +300,40 @@ export const FEED_COPY = {
   allLeavesOut: [] as string[],
 };
 
+/** 精选页的筛选条上、分类之后追加的独立列表里的一项（站点配置，不是接口数据）。 */
+export interface FeedList {
+  /** 地址里的名字：网页是 /?list=<slug>，接口是 /api/site/lists/<slug>。 */
+  slug: string;
+  /** 筛选条上的名字。 */
+  label: string;
+  /** 列哪个信源的最新条目（后台里的信源 id）。 */
+  sourceId: string;
+  /** 列表顶部的一句话说明。 */
+  blurb: string;
+  /** 信源自己的页面（选填）：页面上的「去源头看」指向这里。 */
+  officialUrl?: string;
+  /** 每页多少条（接口最多一页 50 条）。 */
+  pageSize: number;
+  /** 条目要不要让模型翻一条中文说明（选填，默认保持信源原文）。 */
+  translate?: boolean;
+}
+
 /**
  * 精选页的筛选条上、分类之后追加的独立列表（选填）：每个是一页，只列某个信源自己最新的条目。
- * 这类条目不走模型、不进精选和日报（那个信源在后台的参与方式选「氛围」即可），文字和链接都用信源原文。
+ * 这类条目不进精选和日报（那个信源在后台的参与方式选「氛围」即可），文字和链接都用信源原文；
+ * 标了 translate 的列表由模型在后台把简介翻成中文（见 modules/list-translate）。
  */
-export const FEED_LISTS = [
+export const FEED_LISTS: readonly FeedList[] = [
   {
-    /** 地址里的名字：网页是 /?list=<slug>，接口是 /api/site/lists/<slug>。 */
     slug: "github",
-    /** 筛选条上的名字。 */
     label: "GitHub 热榜",
-    /** 列哪个信源的最新条目（后台里的信源 id）。 */
     sourceId: "github-trending",
-    /** 列表顶部的一句话说明。 */
     blurb: "GitHub Trending 的每日热门仓库，按当天榜单顺序列出。",
-    /** 信源自己的页面（选填）：页面上的「去源头看」指向这里。 */
     officialUrl: "https://github.com/trending",
-    /** 每页多少条。 */
     pageSize: 10,
+    translate: true,
   },
-] as const;
-
-/** 上面列表里的一项（站点配置，不是接口数据）。 */
-export type FeedList = (typeof FEED_LISTS)[number];
+];
 
 /**
  * 公开接口（API、RSS、MCP）里和网页不同的类别（选填）。上线后不要改：接口参数和订阅地址里有类别的 key。

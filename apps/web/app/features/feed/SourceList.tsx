@@ -1,7 +1,7 @@
 // A site-configured source list (site/site.ts FEED_LISTS), opened from the tab after the categories on
 // 精选: one page of one source's own latest posts, as the source published them. Nothing here is the
-// site's own writing — the title, the lead and the link are the feed's — so every row leaves for the
-// source's page.
+// site's own writing — the title, the lead and the link are the feed's, except the Chinese note a list
+// with translate asked the model for (modules/list-translate) — so every row leaves for the source.
 import { Link } from "react-router";
 import type { SourceListResponse } from "@aihot/contracts/site";
 import type { FeedList } from "@aihot/site";

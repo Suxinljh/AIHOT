@@ -1,7 +1,9 @@
 // A site-configured list of one source's own latest posts (site/site.ts FEED_LISTS): the raw feed
 // listing behind a tab like GitHub 热榜. It is not an editorial surface — the publication row only
 // decides that the post is public (氛围/hot_signal material has no item page and never enters the
-// pool) — so the title, the lead and the link are the source's own, with no model output at all.
+// pool) — so the title and the link are the source's own. The lead is the source's too, unless the
+// site asked for a Chinese note (FEED_LISTS[].translate): that one model-written line is stored on
+// the publication row by the list-translate module and preferred over the source's wording.
 import type { SourceListItem, SourceListResponse } from "@aihot/contracts/site";
 import { FEED_LISTS, type FeedList } from "@aihot/site";
 import { sql } from "../db.ts";
@@ -59,4 +61,17 @@ export async function loadSourceList(slug: string, page = 1): Promise<SourceList
     publishedAt: (row.published_at ?? row.discovered_at).toISOString(),
   }));
   return { source: { id: source.id, name }, items, page: current, pageSize, hasMore: rows.length > pageSize };
+}
+
+/**
+ * Stores the site's own note for one list item — the Chinese line the list-translate module asked the
+ * model for. The article keeps the source's own text; the note is what the list shows in its place.
+ * Returns false when there is no public row to write (the item was withdrawn while the model answered).
+ */
+export async function setListSummary(articleId: string, summary: string): Promise<boolean> {
+  const rows = await sql`
+    UPDATE publications SET summary = ${summary}, updated_at = now()
+    WHERE article_id = ${articleId} AND visibility = 'public'
+    RETURNING article_id`;
+  return rows.length > 0;
 }
