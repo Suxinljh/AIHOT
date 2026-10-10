@@ -54,11 +54,11 @@ export const PRESETS: Record<string, ModelPreset> = {
     service: "dashscope", model: "qwen3-vl-flash", baseUrlEnv: "DASHSCOPE_BASE_URL", apiKeyEnv: "DASHSCOPE_API_KEY",
     extra: { enable_thinking: false }, jsonMode: false, vision: true,
   },
-  // 百炼（阿里云）的实时翻译模型：正文全文翻译与热榜条目的中文说明都用它（.env 里的 TRANSLATE_MODEL、
+  // 百炼（阿里云）的 qwen3.8-flash：正文全文翻译与热榜条目的中文说明都用它（.env 里的 TRANSLATE_MODEL、
   // LIST_TRANSLATE_MODEL）。用自己的地址与密钥变量，免得和上面的向量、qwen 预设共用 DASHSCOPE_* 时互相牵动。
-  "qwen-livetranslate-flash-realtime": {
-    service: "dashscope", model: "qwen3.8-livetranslate-flash-realtime", baseUrlEnv: "BAILIAN_BASE_URL", apiKeyEnv: "BAILIAN_API_KEY",
-    jsonMode: true,
+  "qwen3.8-flash-bailian": {
+    service: "dashscope", model: "qwen3.8-flash", baseUrlEnv: "BAILIAN_BASE_URL", apiKeyEnv: "BAILIAN_API_KEY",
+    extra: { enable_thinking: false }, jsonMode: true,
   },
 };
 
