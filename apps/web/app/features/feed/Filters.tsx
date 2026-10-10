@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Form, Link, useNavigation, useSearchParams } from "react-router";
 import { CATEGORY_KEYS, CATEGORY_LABELS, CHANNEL_LABELS, type CategoryKey, type ChannelKey } from "@aihot/contracts/taxonomy";
-import { SITE } from "@aihot/site";
+import { FEED_LISTS, SITE } from "@aihot/site";
 import { IconCheck, IconClose, IconFilter, IconSearch } from "../../components/icons";
 import { PillTabs } from "../../components/ui/Tabs";
 import { Sheet } from "../../components/ui/Sheet";
@@ -31,31 +31,47 @@ function hrefWith(base: string, params: URLSearchParams, patch: Record<string, s
  */
 function filterOptions(base: string, params: URLSearchParams, noneLabel: string) {
   return [
-    { key: "all", label: noneLabel, to: hrefWith(base, params, { category: null, channel: null }) },
-    { key: "firstParty", label: CHANNEL_LABELS.firstParty, to: hrefWith(base, params, { category: null, channel: "firstParty" }) },
-    ...CATEGORY_KEYS.map((k) => ({ key: k, label: CATEGORY_LABELS[k], to: hrefWith(base, params, { category: k, channel: null }) })),
+    { key: "all", label: noneLabel, to: hrefWith(base, params, { category: null, channel: null, list: null }) },
+    { key: "firstParty", label: CHANNEL_LABELS.firstParty, to: hrefWith(base, params, { category: null, channel: "firstParty", list: null }) },
+    ...CATEGORY_KEYS.map((k) => ({ key: k, label: CATEGORY_LABELS[k], to: hrefWith(base, params, { category: k, channel: null, list: null }) })),
   ];
 }
 
-function filterKey(category: CategoryKey | null, channel: ChannelKey): string {
+/** The key of the tab that shows a site-configured source list (site/site.ts FEED_LISTS). */
+const listKey = (slug: string) => `list:${slug}`;
+
+/** The source lists the site configured, as further tabs after the categories on 精选 (and only there). */
+function listOptions(base: string, params: URLSearchParams) {
+  if (base !== "/") return [];
+  return FEED_LISTS.map((l) => ({ key: listKey(l.slug), label: l.label, to: hrefWith(base, params, { category: null, channel: null, tag: null, list: l.slug }) }));
+}
+
+/** Everything the filter row offers: none, 一手, each category, then the site's source lists. */
+function filterChoices(base: string, params: URLSearchParams, noneLabel: string) {
+  return [...filterOptions(base, params, noneLabel), ...listOptions(base, params)];
+}
+
+function filterKey(category: CategoryKey | null, channel: ChannelKey, list: string | null = null): string {
+  if (list) return listKey(list);
   return channel === "firstParty" ? "firstParty" : (category ?? "all");
 }
 
 /** Desktop: the filter as a row of tabs beside the search field. */
-export function CategoryTabs({ base, category, channel = "all", layoutId, className = "" }: { base: string; category: CategoryKey | null; channel?: ChannelKey; layoutId: string; className?: string }) {
+export function CategoryTabs({ base, category, channel = "all", list = null, layoutId, className = "" }: { base: string; category: CategoryKey | null; channel?: ChannelKey; list?: string | null; layoutId: string; className?: string }) {
   const [params] = useSearchParams();
-  return <PillTabs items={filterOptions(base, params, "全部").map(o => ({ ...o, prefetch: 'intent' as const }))} active={filterKey(category, channel)} layoutId={layoutId} label="筛选" className={className} />;
+  return <PillTabs items={filterChoices(base, params, "全部").map(o => ({ ...o, prefetch: 'intent' as const }))} active={filterKey(category, channel, list)} layoutId={layoutId} label="筛选" className={className} />;
 }
 
 /**
  * The phone bar of 精选 and 全部: the brand, the 精选 | 全部 switch (a filter in use carries over), and
  * buttons for the filter sheet and search.
  */
-export function FeedBar({ base, category, channel }: { base: "/" | "/all"; category: CategoryKey | null; channel: ChannelKey }) {
+export function FeedBar({ base, category, channel, list = null }: { base: "/" | "/all"; category: CategoryKey | null; channel: ChannelKey; list?: string | null }) {
   const [params] = useSearchParams();
   const [sheet, setSheet] = useState(false);
-  const scope = (to: string) => hrefWith(to, params, { q: null, tab: null, search: null });
-  const filtered = filterKey(category, channel) !== "all";
+  // The list is a tab of 精选, not a filter: switching to 全部 drops it.
+  const scope = (to: string) => hrefWith(to, params, { q: null, tab: null, search: null, ...(to === "/all" ? { list: null } : {}) });
+  const filtered = !list && filterKey(category, channel) !== "all";
   return (
     <>
       <PhoneBar
@@ -86,7 +102,7 @@ export function FeedBar({ base, category, channel }: { base: "/" | "/all"; categ
           </>
         }
       />
-      <FilterSheet open={sheet} onClose={() => setSheet(false)} base={base} active={filterKey(category, channel)} />
+      <FilterSheet open={sheet} onClose={() => setSheet(false)} base={base} active={filterKey(category, channel, list)} />
     </>
   );
 }
@@ -97,7 +113,7 @@ function FilterSheet({ open, onClose, base, active }: { open: boolean; onClose: 
   return (
     <Sheet open={open} onClose={onClose} title="筛选">
       <ul className="mx-4 divide-y divide-line-soft">
-        {filterOptions(base, params, "不限").map((o) => {
+        {filterChoices(base, params, "不限").map((o) => {
           const on = o.key === active;
           return (
             <li key={o.key}>

@@ -118,6 +118,32 @@ export interface PoolResponse {
   freshness: string;
 }
 
+/**
+ * One entry of a site-configured source list (site/site.ts FEED_LISTS): a post as its source published
+ * it. These are raw feed entries — no model output, no ranking — so the title, the lead and the link
+ * come from the source itself.
+ */
+export interface SourceListItem {
+  id: string;
+  title: string;
+  /** The source's own title, when the site's own title differs from it (选填). */
+  originalTitle: string | null;
+  /** The source's own lead/summary, trimmed (选填). */
+  excerpt: string | null;
+  url: string;
+  source: SourceRef;
+  /** When the source published it, falling back to when the site first saw it. */
+  publishedAt: string;
+}
+
+export interface SourceListResponse {
+  source: { id: string; name: string };
+  items: SourceListItem[];
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+}
+
 export interface OutlineEntry {
   id: string;
   text: string;

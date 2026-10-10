@@ -301,6 +301,30 @@ export const FEED_COPY = {
 };
 
 /**
+ * 精选页的筛选条上、分类之后追加的独立列表（选填）：每个是一页，只列某个信源自己最新的条目。
+ * 这类条目不走模型、不进精选和日报（那个信源在后台的参与方式选「氛围」即可），文字和链接都用信源原文。
+ */
+export const FEED_LISTS = [
+  {
+    /** 地址里的名字：网页是 /?list=<slug>，接口是 /api/site/lists/<slug>。 */
+    slug: "github",
+    /** 筛选条上的名字。 */
+    label: "GitHub 热榜",
+    /** 列哪个信源的最新条目（后台里的信源 id）。 */
+    sourceId: "github-trending",
+    /** 列表顶部的一句话说明。 */
+    blurb: "GitHub Trending 的每日热门仓库，按当天榜单顺序列出。",
+    /** 信源自己的页面（选填）：页面上的「去源头看」指向这里。 */
+    officialUrl: "https://github.com/trending",
+    /** 每页多少条。 */
+    pageSize: 10,
+  },
+] as const;
+
+/** 上面列表里的一项（站点配置，不是接口数据）。 */
+export type FeedList = (typeof FEED_LISTS)[number];
+
+/**
  * 公开接口（API、RSS、MCP）里和网页不同的类别（选填）。上线后不要改：接口参数和订阅地址里有类别的 key。
  * merge：并进另一类发布的类别，key 是行业包里的类别，值是它并进的类别（公开接口比网页少一类时用）；
  * feedLabels：分类 RSS 标题里的名字，替换行业包里的 feedLabel（并进了别的类别时，名字常常也要跟着改）。

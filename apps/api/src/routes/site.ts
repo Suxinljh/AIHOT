@@ -15,6 +15,7 @@ import { loadContact, loadMakerAvatar } from "@aihot/backend/site/contact";
 import { loadSiteStats } from "@aihot/backend/site/stats";
 import { itemAvailability } from "@aihot/backend/publication/availability";
 import { listTopicSummaries, loadTopicPage, topicBrowseLinks } from "@aihot/backend/publication/topics";
+import { loadSourceList } from "@aihot/backend/publication/source-list";
 import { registerFeedback } from "./feedback.ts";
 import { loadHot, loadStoryDetail, resolveStory } from "@aihot/backend/publication/stories";
 import { listReports, loadReport, reportNavigation, loadReportNavigation, loadReportMonth, type ReportKind } from "@aihot/backend/publication/reports";
@@ -146,6 +147,14 @@ export function registerSite(app: FastifyInstance) {
     const data = await loadTopicPage(slug, Number(looseQuery(req).page ?? 1));
     if (!data) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "topic page not found", cacheControl: "public, max-age=60" });
     return sendJsonWithEtag(req, reply, data, { etagPrefix: "topic", cacheControl: "public, max-age=60, s-maxage=60" });
+  }));
+
+  // A site-configured source list (site/site.ts FEED_LISTS): one source's own latest posts.
+  app.get("/api/site/lists/:slug", siteHandler(async (req, reply) => {
+    const slug = (req.params as { slug: string }).slug;
+    const data = await loadSourceList(slug, Number(looseQuery(req).page ?? 1));
+    if (!data) return sendProblem(req, reply, { status: 404, code: "not_found", detail: "list not found", cacheControl: "public, max-age=60" });
+    return sendJsonWithEtag(req, reply, data, { etagPrefix: "list", cacheControl: "public, max-age=60, s-maxage=60" });
   }));
 
   registerFeedback(app);
