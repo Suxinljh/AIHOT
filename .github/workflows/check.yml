@@ -122,12 +122,13 @@ jobs:
         if: always()
         run: docker compose down -v
 
-  # 把镜像推到镜像仓库，只在 main 上、且上面两个 job 都过了之后跑（PR 不推）。
+  # 把镜像推到镜像仓库，只在 main 上、且上面两个 job 都过了之后跑（PR 不推；手动 dispatch 也推，
+  # 方便在不动代码的情况下重出一版镜像）。
   # ghcr.io 用内置的 GITHUB_TOKEN，不需要配任何 secret；想同时推 Docker Hub，
   # 就在仓库的 Settings → Secrets and variables → Actions 里加 DOCKERHUB_USERNAME 和 DOCKERHUB_TOKEN。
   # 部署端只 pull，不构建：见 docs/deploy.md 的「从镜像仓库部署」。
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: [check, docker]
     runs-on: ubuntu-latest
     timeout-minutes: 30
