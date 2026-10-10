@@ -27,6 +27,9 @@ services:
   db:
     image: postgres:17-alpine
     restart: unless-stopped
+    # 只绑本机回环，方便在宿主直接跑 scripts/*.ts（服务之间仍走 compose 内部的 db:5432）。
+    ports:
+      - "127.0.0.1:5433:5432"
     environment:
       POSTGRES_USER: aihot
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aihot}
