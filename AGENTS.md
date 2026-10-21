@@ -2,6 +2,39 @@
 
 这是一个行业热点网站的框架：采集信源、用模型筛选和写作、归组事件、出日报周报月报，并通过网站、RSS、公开 API、Agent Markdown 和 MCP 对外提供。默认配置是一个 AI 行业的示例站。先读 README，再按任务读 `docs/` 里对应的文档。
 
+## 当前产品：WeChatHot
+
+本仓库正在改造成 **WeChatHot**：面向微信公众号科技内容创作者的单用户 AI 内容工作台。管理员登录就是唯一使用者，不设计注册、团队、权限和协作；`/studio` 是产品主界面，`/` 重定向到 `/studio`，AIHOT 的公开阅读界面按阶段退场。
+
+- PRD：`docs/WeChatHot/PRD.md`。产品范围、7 类行业、数据模型、页面、验收和阶段计划以它为准。
+- 行业固定 7 类：AI 大模型、汽车、数码硬件、软件与互联网、具身智能、电影与剧集、游戏。行业知识仍在 `industry/`，工作台私有表使用 `wc_` 前缀。
+- 产品代码放在 `modules/wechathot/`，通过 `site/modules/` 的三份清单注册；框架代码不导入模块。
+- 公开阅读页下线前，公开内容仍匿名；`wc_` 私有数据不得进入 RSS、API v1、MCP、站点地图和分享图。
+- 开发顺序：M0 基础底座 → P0-A 热点与信源 → P0-B 选题与写作 → P0-C 排版与交付 → P1 扩展。7 类行业迁移可与 P0 并行。
+
+## 任务管理：Backlog.md
+
+本项目用 Backlog.md 管理任务，任务前缀 `WCH`，配置文件是 `backlog.config.yml`，任务在 `backlog/tasks/`。不要手工编辑这些 Markdown 文件，统一用 `backlog` CLI。
+
+常用命令：
+
+```bash
+backlog instructions overview              # 每次对话开始先读
+backlog task list --plain                 # 查看任务
+backlog task view WCH-12 --plain          # 查看任务详情
+backlog task list --status "In Progress" --plain
+backlog task edit WCH-12 --status "In Progress" --plan $'实施步骤'
+backlog task edit WCH-12 --status "Done" --final-summary $'验证结果'
+backlog board                             # 打开看板
+```
+
+规则：
+
+- 非机械性的开发、设计、迁移和调研，先搜索是否已有任务，再创建任务；创建和拆分任务前读 `backlog instructions task-creation`，开始或变更状态前读 `backlog instructions task-execution`，完成前读 `backlog instructions task-finalization`。
+- 每个任务写清目标、验收标准、里程碑、依赖和标签；一个任务应当能在一次会话或一个 PR 内完成。当前里程碑和任务是 M0、P0-A、P0-B、P0-C、P1、行业分类迁移。
+- 进入实现时先把任务改为 `In Progress` 并写实施计划；完成必须逐条核对验收标准、跑对应检查，再写 `final-summary` 并改为 `Done`。不要只改状态不记录结果。
+- Backlog 的 `auto_commit` 关闭；任务文件和代码一起手动提交，提交信息写任务 ID（如 `WCH-12`）。
+
 ## 最常见的任务：改成另一个行业
 
 按 `docs/customize.md` 的顺序做。这个站自己的东西在 `site/`：站名文案（`site.ts`）、每一步的模型（`models.ts`）、品牌与 Logo（`brand/`）、条款页（`pages/`）、发布在网站根目录的固定文件（`public/`，替换占位符后发布）、更新日志（`changelog.json`）。行业知识在 `industry/`：分类标签（`taxonomy.ts`）、主题（`topics.json`）、示范信源（`sources.json`）、提示词（`prompts/`）、门槛（`selection.ts`）。通常不需要改 `apps/` 和 `packages/`；框架里没有、只有这个站要的功能，做成模块放进 `modules/`（`docs/architecture.md` 的“模块”）。
@@ -49,3 +82,27 @@
 - **先找现有的。** 加函数、插口或配置前先搜一遍，常见能力多半已有一份：模块发自己的文件用 `apps/api/src/routes/static.ts` 的 `sendFile`，接中转站填 `LLM_BASE_URL`。再写一份，两处迟早不一致。
 - **测试只证明你想到的情况。** 动了采集、日期、正文清洗、精选或归组的，拿一批公开的真实订阅和网页跑改动前后，在 PR 里写有多少条结果变了、变的是否都对。中文网页的时间常不带时区，按信源时区读（默认 `+08:00`），上面的 “CST” 一般指北京时间；测试结果不能取决于运行机器的时区。
 - **改全。** 新的环境变量写进 `.env.example`，新的站点配置写进 `site/`；改了配置字段的意思，示例配置跟着改，让已部署的站升级后行为不变（比如改成只给声明了 `vision` 的模型附图，本来就能看图的预设要补上声明）；改一个读者看到的名字或入口，出现它的地方一起改。新增或更改导航配置时，分别核对默认配置与非默认配置的电脑侧栏、手机底栏、返回和“我的”入口，入口变少时的标签布局也要在浏览器里看；默认值不变只能证明原行为，不能证明配置可用。
+
+<!-- BACKLOG.MD GUIDELINES START -->
+<!-- backlog.md-instructions-version: 1.55.0 -->
+<CRITICAL_INSTRUCTION>
+
+## Backlog.md Workflow
+
+This project uses Backlog.md for task and project management.
+
+**At the beginning of each conversation in this project, run `backlog instructions overview` before answering or taking action. Re-read it only if you have not read it yet in the current conversation.**
+
+Use the overview to decide whether to search, read, create, or update Backlog tasks.
+
+Before task lifecycle actions, read the matching detailed guide:
+- `backlog instructions task-creation` before creating or splitting tasks
+- `backlog instructions task-execution` before planning, changing status or assignee, adding a plan or implementation notes, or implementing task work
+- `backlog instructions task-finalization` before checking acceptance criteria, writing final summaries, or moving tasks to terminal statuses
+
+Use `backlog <command> --help` before running unfamiliar commands. Help shows options, fields, and examples.
+
+Do not edit Backlog task, draft, document, decision, or milestone markdown files directly. Use the `backlog` CLI so metadata, relationships, and history stay consistent.
+
+</CRITICAL_INSTRUCTION>
+<!-- BACKLOG.MD GUIDELINES END -->
