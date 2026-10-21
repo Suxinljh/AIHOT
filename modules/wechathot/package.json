@@ -1,0 +1,14 @@
+{
+  "name": "@aihot/wechathot",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./server.ts",
+    "./module": "./module.ts",
+    "./web": "./web.tsx"
+  },
+  "dependencies": {
+    "@aihot/backend": "*",
+    "@aihot/contracts": "*"
+  }
+}
