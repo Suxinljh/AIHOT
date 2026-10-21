@@ -29,14 +29,15 @@ export async function loader({ request }: Route.LoaderArgs) {
   const tab = url.searchParams.get("tab") === "relevance" ? "relevance" : null;
   // Older deep-paging parameters (deep, anchorAt) still open a normal page.
   const page = Math.min(Math.max(Number.parseInt(url.searchParams.get("page") ?? "1", 10) || 1, 1), 50);
+  const upstream = new Headers();
   const data = await loadOr404<PoolResponse>(
     listPath("/api/site/pool", { ...filterParams(readFilters(url.searchParams)), q, tab, page: page > 1 ? page : null }),
     // The busy page keeps the search, so it can be tried again as it was.
-    { signal: request.signal, busyRedirect: `/all/search-busy${url.search}` },
+    { responseHeaders: upstream, signal: request.signal, busyRedirect: `/all/search-busy${url.search}` },
   );
   // Past the last page of what there is: the last page, with the same search and filters.
   if (data.total > 0 && data.page > data.pageCount) throw redirect(pageHref(url.searchParams, data.pageCount));
-  return cachedPage(60, { data });
+  return cachedPage(60, { data }, upstream);
 }
 
 export function meta({ loaderData }: Route.MetaArgs) {

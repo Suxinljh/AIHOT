@@ -120,8 +120,8 @@ export default function App() {
     document.addEventListener("touchstart", noop, { passive: true });
     return () => document.removeEventListener("touchstart", noop);
   }, []);
-  // The admin has its own chrome.
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) return <Outlet />;
+  // The admin and the studio have their own chrome.
+  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/studio" || pathname.startsWith("/studio/")) return <Outlet />;
   return (
     <>
       <SiteShell changelogVersion={meta.changelogVersion}>
@@ -139,6 +139,7 @@ export function ErrorBoundary() {
   const { pathname, search, hash } = useLocation();
   const status = isRouteErrorResponse(error) ? error.status : 500;
   const notFound = status === 404;
+  const studio = pathname === "/studio" || pathname.startsWith("/studio/");
   const body = (
     <div className="flex min-h-[70vh] items-center justify-center px-2 py-16">
       <div className="max-w-sm text-center">
@@ -152,17 +153,19 @@ export function ErrorBoundary() {
           {!notFound && <Link reloadDocument to={pathname + search + hash} className={buttonClass("primary")}>
             重新加载
           </Link>}
-          <Link reloadDocument to="/" className={buttonClass(notFound ? "primary" : "secondary")}>
-            回到精选
+          <Link reloadDocument to={studio ? "/studio" : "/"} className={buttonClass(notFound ? "primary" : "secondary")}>
+            {studio ? "回到工作台" : "回到精选"}
           </Link>
-          <Link reloadDocument to="/all" className={buttonClass("secondary")}>
-            浏览全部动态
-          </Link>
+          {!studio && (
+            <Link reloadDocument to="/all" className={buttonClass("secondary")}>
+              浏览全部动态
+            </Link>
+          )}
         </div>
       </div>
     </div>
   );
-  // Admin errors stay inside the admin's own chrome.
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) return body;
+  // Admin and studio errors stay outside the public reader chrome.
+  if (pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/studio" || pathname.startsWith("/studio/")) return body;
   return <SiteShell changelogVersion={site?.changelogVersion ?? null}>{body}</SiteShell>;
 }

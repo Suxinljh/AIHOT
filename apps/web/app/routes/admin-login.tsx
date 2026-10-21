@@ -13,14 +13,19 @@ const ERRORS: Record<string, string> = {
   "too-many": "尝试次数太多，请 15 分钟后再试。",
 };
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const url = new URL(request.url);
-  const returnTo = url.searchParams.get("return") ?? "/admin";
-  const options = await apiGet<{ password: boolean; feishu: boolean }>("/api/auth/options", { signal: request.signal }).catch(() => ({ password: true, feishu: false }));
-  return { returnTo: returnTo.startsWith("/admin") ? returnTo : "/admin", error: url.searchParams.get("error"), ...options };
+/** The sign-in page returns to the studio or the admin, never to another site or an arbitrary path. */
+function loginReturn(value: string | null): string {
+  return value && /^\/(?:admin|studio)(?:\/|\?|$)/.test(value) && !value.startsWith("//") ? value : "/admin";
 }
 
-export const meta: Route.MetaFunction = () => [{ title: `登录 · ${SITE.name} 后台` }, { name: "robots", content: "noindex, nofollow" }];
+export async function loader({ request }: Route.LoaderArgs) {
+  const url = new URL(request.url);
+  const returnTo = loginReturn(url.searchParams.get("return"));
+  const options = await apiGet<{ password: boolean; feishu: boolean }>("/api/auth/options", { signal: request.signal }).catch(() => ({ password: true, feishu: false }));
+  return { returnTo, error: url.searchParams.get("error"), ...options };
+}
+
+export const meta: Route.MetaFunction = () => [{ title: `登录 · ${SITE.name}` }, { name: "robots", content: "noindex, nofollow" }];
 
 export const headers: Route.HeadersFunction = () => ({ "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" });
 
@@ -32,7 +37,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-[360px]">
         <div className="flex items-center justify-center gap-2">
           <Wordmark size={28} className="text-ink" />
-          <span className="text-[15px] font-semibold text-ink-3">后台</span>
+          <span className="text-[15px] font-semibold text-ink-3">登录</span>
         </div>
         <form method="post" action="/api/auth/password" className="card mt-8 p-6">
           <input type="hidden" name="return" value={returnTo} />
@@ -63,8 +68,8 @@ export default function AdminLogin() {
           )}
         </form>
         <p className="mt-6 text-center text-[12px] text-ink-4">
-          <a href="/" className="hover:text-ink-2">
-            回到 {SITE.name}
+          <a href="/all" className="hover:text-ink-2">
+            浏览公开内容
           </a>
         </p>
       </div>

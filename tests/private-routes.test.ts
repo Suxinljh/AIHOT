@@ -7,9 +7,12 @@ import { after, test } from "node:test";
 import { closeDb, sql } from "@aihot/backend/db";
 import { stopBoss } from "@aihot/backend/jobs/queue";
 import { sha256 } from "@aihot/backend/lib/ids";
+import { installModules } from "@aihot/backend/modules";
+import { wechatHotServer } from "@aihot/wechathot";
 import { buildApp } from "../apps/api/src/app.ts";
 
 process.env.INGEST_TOKEN = "private-route-test-ingest-token";
+installModules([wechatHotServer]);
 const app = await buildApp();
 after(async () => {
   await app.close();
@@ -41,13 +44,27 @@ test("an unrelated malformed cookie leaves a real admin session usable without a
   assert.equal(me.statusCode, 200);
   assert.equal(me.json().name, "Cookie test");
   assert.equal(me.json().csrf, "cookie-test-csrf");
+  const studioGuest = await app.inject({ url: "/api/studio/me" });
+  assert.equal(studioGuest.statusCode, 401);
+  assert.equal(studioGuest.headers["cache-control"], "no-store");
+  assert.equal(studioGuest.headers["x-robots-tag"], "noindex, nofollow");
+  const studioMe = await app.inject({ url: "/api/studio/me", headers });
+  assert.equal(studioMe.statusCode, 200);
+  assert.equal(studioMe.json().name, "Cookie test");
+  assert.equal(studioMe.headers["cache-control"], "no-store");
   const write = await app.inject({ method: "POST", url: "/api/admin/sources", headers, payload: {} });
   assert.equal(write.statusCode, 403, "the usable session still needs CSRF for writes");
 
-  const logout = await app.inject({ method: "POST", url: "/api/auth/logout", headers });
+  const logout = await app.inject({
+    method: "POST",
+    url: "/api/auth/logout",
+    headers: { ...headers, "content-type": "application/x-www-form-urlencoded" },
+    payload: "confirm=1",
+  });
   assert.equal(logout.statusCode, 303);
   const ended = await app.inject({ url: "/api/auth/check", headers });
   assert.equal(ended.statusCode, 401);
+  assert.equal((await app.inject({ url: "/api/studio/me", headers })).statusCode, 401);
 });
 
 test("ingest skips malformed entries and still accepts and deduplicates the valid entries in their batch", async () => {

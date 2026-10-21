@@ -14,6 +14,10 @@ const api = createServer((req, res) => {
   if (req.url?.startsWith("/api/site/timeline")) return res.end(JSON.stringify({
     cards: [], nextCursor: null, dayCounts: {}, hot: [], filters: { category: null, channel: null, tag: null },
   }));
+  if (req.url?.startsWith("/api/site/pool")) return res.end(JSON.stringify({
+    filters: { channel: "all", category: null, tag: null, q: null, tab: "time" },
+    items: [], page: 1, pageCount: 0, total: 0, todayCount: 0, freshness: new Date().toISOString(),
+  }));
   res.writeHead(404);
   res.end("{}");
 });
@@ -35,9 +39,13 @@ function raw(path: string, method: "GET" | "HEAD") {
   });
 }
 
-test("origin-form slashes keep the router's homepage and unknown-route semantics", async () => {
+test("origin-form slashes keep a public page's semantics and the product entry redirects", async () => {
   for (const method of ["GET", "HEAD"] as const) {
-    const home = await raw("/", method);
+    const entry = await raw("/", method);
+    assert.equal(entry.status, 302, web.logs());
+    assert.equal(entry.headers.location, "/studio");
+    if (method === "HEAD") assert.equal(entry.body, "");
+    const home = await raw("/all", method);
     assert.equal(home.status, 200, web.logs());
     for (const path of ["//", "////", "//?category=ai-models"]) {
       const res = await raw(path, method);

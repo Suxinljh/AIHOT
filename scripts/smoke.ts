@@ -6,7 +6,12 @@ import { SITE } from "@aihot/site";
 const at = process.argv.indexOf("--base");
 const base = (at > 0 ? process.argv[at + 1] : process.env.SITE_URL) ?? "http://localhost:3000";
 
-const PAGES = ["/", "/all", "/hot", "/daily", "/daily/archive", "/topics", "/starred", "/agent", "/about", "/changelog", "/feedback", "/terms", "/privacy", "/more", "/admin/login"];
+const PAGES = ["/all", "/hot", "/daily", "/daily/archive", "/topics", "/starred", "/agent", "/about", "/changelog", "/feedback", "/terms", "/privacy", "/more", "/admin/login"];
+/** The product entry and the private studio's sign-in gate. */
+const REDIRECTS: Array<[path: string, status: number, location: RegExp]> = [
+  ["/", 302, /^\/studio$/],
+  ["/studio", 302, /^\/api\/auth\/login\?return=%2Fstudio$/],
+];
 const MACHINE: Array<[path: string, type: RegExp]> = [
   ["/api/health", /json/],
   ["/api/v1/items", /json/],
@@ -41,6 +46,19 @@ async function check(path: string, expect: (res: Response, body: string) => stri
 // Pages write the name as HTML text: a name such as "MyF&B" appears as "MyF&amp;B".
 const htmlName = SITE.name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
 for (const path of PAGES) await check(path, (_res, body) => (body.includes(SITE.name) || body.includes(htmlName) ? null : `the page does not name ${SITE.name}`));
+for (const [path, status, location] of REDIRECTS) {
+  try {
+    const res = await fetch(base + path, { redirect: "manual", signal: AbortSignal.timeout(30_000) });
+    const actual = res.headers.get("location") ?? "";
+    const problem = res.status !== status ? `HTTP ${res.status}` : location.test(actual) ? null : `Location ${actual}`;
+    console.log(`${problem ? "✗" : "✓"} ${path}${problem ? `  ${problem}` : ""}`);
+    if (problem) failed += 1;
+    await res.text();
+  } catch (error) {
+    console.log(`✗ ${path}  ${String(error)}`);
+    failed += 1;
+  }
+}
 for (const [path, type] of MACHINE) await check(path, (res) => (type.test(res.headers.get("content-type") ?? "") ? null : `content-type ${res.headers.get("content-type")}`));
 // MCP: the handshake answers with the site's server name.
 const mcp = await fetch(`${base}/api/mcp`, {

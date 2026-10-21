@@ -57,7 +57,15 @@ const api=createServer((req,res)=>{
   }
   if(p==='/api/site/pool'){
     const page=Number(url.searchParams.get('page')||1);
-    return res.end(JSON.stringify({filters:{channel:'all',category:null,tag:null,q:null,tab:'time'},items:[{...item,title:'全部第 '+page+' 页'}],page,pageCount:3,total:3,todayCount:1,freshness:at}));
+    const category=url.searchParams.get('category');
+    const tag=url.searchParams.get('tag');
+    res.setHeader('X-Accel-Expires','@'+(Math.floor(Date.now()/1000)+ttl));
+    if(tag==='long-reading'){
+      const items=Array.from({length:180},(_,i)=>({...item,id:'long-'+i,title:'长列表文章 '+i,summary:'用于核实深处阅读返回的固定摘要。'.repeat(3),timelineAt:i<60?at:'2026-10-03T08:00:00.000Z'}));
+      return res.end(JSON.stringify({filters:{channel:'all',category:null,tag:'long-reading',q:null,tab:'time'},items,page:1,pageCount:1,total:180,todayCount:60,freshness:at}));
+    }
+    const title=page>1?'全部第 '+page+' 页':category?'分类 '+category:'性能检查文章';
+    return res.end(JSON.stringify({filters:{channel:'all',category,tag:null,q:null,tab:'time'},items:[{...item,title}],page,pageCount:3,total:3,todayCount:1,freshness:at}));
   }
   if(p==='/api/site/items/navigation-fixture')return res.end(JSON.stringify(detail));
   if(p==='/api/site/items/navigation-fixture/original')return res.end(JSON.stringify({...detail,body:{zh:null,original:'<p>Original fixture</p>',zhKind:null,complete:true},bodyLanguage:'original'}));
@@ -89,7 +97,7 @@ test('SSR list and visited query variants return offline without another read',a
   const context=await safari.newContext({viewport:{width:390,height:844}});
   const page=await context.newPage();
   try{
-    await page.goto(origin+'/');
+    await page.goto(origin+'/all');
     await expect(page.getByRole('link',{name:'性能检查文章',exact:true})).toBeVisible();
     await page.getByRole('link',{name:'性能检查文章',exact:true}).click();
     await expect(page.getByText('固定正文',{exact:true})).toBeVisible();
@@ -98,26 +106,26 @@ test('SSR list and visited query variants return offline without another read',a
     await expect(page.getByRole('link',{name:'性能检查文章',exact:true})).toBeVisible({timeout:1500});
     await context.setOffline(false);
     await page.getByRole('button',{name:/^筛选/}).click();
-    await page.getByRole('link',{name:'大模型',exact:true}).click();
+    await page.getByRole('link',{name:'大模型',exact:true}).first().click();
     await expect(page.getByRole('link',{name:'分类 ai-models',exact:true})).toBeVisible();
     await page.getByRole('button',{name:/^筛选/}).click();
-    await page.getByRole('link',{name:'软件',exact:true}).click();
+    await page.getByRole('link',{name:'软件',exact:true}).first().click();
     await expect(page.getByRole('link',{name:'分类 software',exact:true})).toBeVisible();
     await context.setOffline(true);
     await page.goBack();
     await expect(page.getByRole('link',{name:'分类 ai-models',exact:true})).toBeVisible({timeout:1500});
-    await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href',origin+'/?category=ai-models');
+    await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href',origin+'/all?category=ai-models');
   }finally{await context.close();}
 });
 
 test('hover still fetches article data, touches that move do not, and failed prefetch does not replace the current page',async()=>{
   const context=await chrome.newContext();const page=await context.newPage();
   try{
-    await page.goto(origin+'/');
+    await page.goto(origin+'/all');
     const link=page.getByRole('link',{name:'性能检查文章',exact:true});
     const start=hits.length;
     await link.dispatchEvent('touchstart');await link.dispatchEvent('touchmove');
-    await page.getByRole('heading',{name:'精选',exact:true}).click();
+    await page.locator('h1').click();
     assert.equal(hits.slice(start).filter(x=>x.startsWith('/api/site/items/')).length,0);
     const response=page.waitForResponse(r=>r.url().includes('/items/navigation-fixture.data'));
     await link.hover();await response;
@@ -126,10 +134,10 @@ test('hover still fetches article data, touches that move do not, and failed pre
     assert.equal(hits.slice(start).filter(x=>x.startsWith('/api/site/items/')).length,1,'navigation reuses its intent-prefetched response');
     const fresh=await chrome.newContext();const freshPage=await fresh.newPage();
     try{
-      await freshPage.goto(origin+'/');failing='/api/site/items/navigation-fixture';
+      await freshPage.goto(origin+'/all');failing='/api/site/items/navigation-fixture';
       const failed=freshPage.waitForResponse(r=>r.url().includes('/items/navigation-fixture.data')&&r.status()===503);
       await freshPage.getByRole('link',{name:'性能检查文章',exact:true}).hover();await failed;
-      await expect(freshPage.getByRole('heading',{name:'精选',exact:true})).toBeVisible();
+      await expect(freshPage.locator('h1')).toBeVisible();
     }finally{await fresh.close();}
   }finally{failing='';await context.close();}
 });
@@ -141,7 +149,7 @@ test('SSR all-pages and report kinds return offline with their own content',asyn
     await page.locator('a[href="/all?page=2"]').first().click();
     await expect(page.getByRole('link',{name:'全部第 2 页',exact:true})).toBeVisible();
     await context.setOffline(true);await page.goBack();
-    await expect(page.getByRole('link',{name:'全部第 1 页',exact:true})).toBeVisible({timeout:1500});
+    await expect(page.getByRole('link',{name:'性能检查文章',exact:true})).toBeVisible({timeout:1500});
     await context.setOffline(false);await page.goto(origin+'/daily');
     await page.getByRole('link',{name:'周报',exact:true}).click();
     await expect(page.locator('#report-start')).toContainText('周报');
@@ -158,44 +166,45 @@ test('intent on a selected link preserves visited data and the next revisit star
   await context.route('**/*.data*',route=>route.continue());
   page.on('request',request=>{if(request.url().includes('.data'))requests.push(request.url());});
   try{
-    await page.goto(origin+'/');
-    await page.getByRole('link',{name:'大模型',exact:true}).click();
+    await page.goto(origin+'/all');
+    await page.getByRole('link',{name:'大模型',exact:true}).first().click();
     await expect(page.getByRole('link',{name:'分类 ai-models',exact:true})).toBeVisible();
-    await page.getByRole('link',{name:'大模型',exact:true}).focus();
+    await page.getByRole('link',{name:'大模型',exact:true}).first().focus();
     await page.waitForTimeout(150);
-    await page.getByRole('link',{name:'软件',exact:true}).click();
+    await page.getByRole('link',{name:'软件',exact:true}).first().click();
     await expect(page.getByRole('link',{name:'分类 software',exact:true})).toBeVisible();
-    await page.getByRole('link',{name:'软件',exact:true}).focus();
+    await page.getByRole('link',{name:'软件',exact:true}).first().focus();
     await page.waitForTimeout(150);
     const before=requests.length;
-    await page.getByRole('link',{name:'大模型',exact:true}).click();
+    await page.getByRole('link',{name:'大模型',exact:true}).first().click();
     await expect(page.getByRole('link',{name:'分类 ai-models',exact:true})).toBeVisible();
     assert.deepEqual(requests.slice(before),[],'neither prefetch nor navigation may evict and reload a still-valid visited page');
   }finally{await context.close();}
 });
 
-test('a revisit never renews the original deadline; an expired read shows an error and a reload asks again',async()=>{
+test('a revisit never renews the original deadline; an expired read shows the busy page and the list recovers',async()=>{
   const context=await chrome.newContext();const page=await context.newPage();
   try{
     await page.clock.install();ttl=1;
-    await page.goto(origin+'/');
+    await page.goto(origin+'/all');
     await page.getByRole('link',{name:'性能检查文章',exact:true}).click();await expect(page.getByText('固定正文',{exact:true})).toBeVisible();
-    failing='/api/site/timeline';
+    failing='/api/site/pool';
     await page.clock.runFor(1500);
-    await page.goBack();await expect(page.getByRole('heading',{name:'暂时无法加载',exact:true})).toBeVisible();
+    await page.goBack();await expect(page.getByRole('heading',{name:'搜索有点忙',exact:true})).toBeVisible();
     failing='';ttl=60;
-    await page.reload();await expect(page.getByRole('link',{name:'性能检查文章',exact:true})).toBeVisible();
+    await page.getByRole('link',{name:'浏览全部动态',exact:true}).click();
+    await expect(page.getByRole('link',{name:'性能检查文章',exact:true})).toBeVisible();
   }finally{ttl=60;failing='';await context.close();}
 });
 
 test('SSR freshness spent in an upstream cache is not renewed by HTML hydration',async()=>{
   const context=await chrome.newContext();const page=await context.newPage();
   try{
-    ttl=0;await page.goto(origin+'/');
+    ttl=0;await page.goto(origin+'/all');
     await page.getByRole('link',{name:'性能检查文章',exact:true}).click();await expect(page.getByText('固定正文',{exact:true})).toBeVisible();
     const start=hits.length;ttl=60;
     await page.goBack();await expect(page.getByRole('link',{name:'性能检查文章',exact:true})).toBeVisible();
-    assert.equal(hits.slice(start).filter(x=>x.startsWith('/api/site/timeline')).length,1);
+    assert.equal(hits.slice(start).filter(x=>x.startsWith('/api/site/pool')).length,1);
   }finally{ttl=60;await context.close();}
 });
 
@@ -229,7 +238,7 @@ test('Agent tabs finish offline with matching canonical; invalid direct tabs and
 test('phone suggestions load only on opening, use one small read, retry failures and update on reopening',async()=>{
   const context=await safari.newContext({viewport:{width:390,height:844}});const page=await context.newPage();
   try{
-    suggestionsVersion=1;await page.goto(origin+'/');
+    suggestionsVersion=1;await page.goto(origin+'/all');
     assert.equal(hits.filter(x=>x==='/api/site/search/suggestions').length,0);
     let start=hits.length;
     await page.getByRole('button',{name:'搜索',exact:true}).click();
@@ -282,24 +291,20 @@ test('reader enhancements wait for visible code and update only the picture that
   }finally{await context.close();}
 });
 
-test('deep reading returns to its anchor, including folded dates',async()=>{
+test('deep reading returns to its position on the all page',async()=>{
   const context=await safari.newContext({viewport:{width:390,height:844}});
   const page=await context.newPage();
   try{
-    await page.goto(origin+'/?tag=long-reading');
-    await expect(page.locator('[data-card-key]')).toHaveCount(180);
-    await page.getByRole('button',{name:'收起10月4日',exact:true}).click();
-    await expect(page.locator('[data-card-key]')).toHaveCount(120);
-    await page.getByRole('link',{name:'长列表文章 160',exact:true}).scrollIntoViewIfNeeded();
-    const before=await page.evaluate(()=>{
-      const first=[...document.querySelectorAll<HTMLElement>('[data-card-key]')].find(e=>e.getBoundingClientRect().bottom>72)!;
-      return {key:first.dataset.cardKey!,top:first.getBoundingClientRect().top};
-    });
-    await page.getByRole('link',{name:'长列表文章 160',exact:true}).click();
+    await page.goto(origin+'/all?tag=long-reading');
+    const rows=page.getByRole('link',{name:/^长列表文章 /});
+    await expect(rows).toHaveCount(180);
+    const target=page.getByRole('link',{name:'长列表文章 160',exact:true});
+    await target.scrollIntoViewIfNeeded();
+    const before=await target.evaluate(e=>e.getBoundingClientRect().top);
+    await target.click();
     await expect(page.getByText('固定正文',{exact:true})).toBeVisible();
     await page.goBack();
-    await expect(page.locator('[data-card-key]')).toHaveCount(120);
-    await expect.poll(()=>page.locator(`[data-card-key="${before.key}"]`).evaluate((e,top)=>Math.abs(e.getBoundingClientRect().top-top),before.top)).toBeLessThan(2);
-    await expect(page.getByRole('button',{name:'展开10月4日',exact:true})).toBeVisible();
+    await expect(rows).toHaveCount(180);
+    await expect.poll(()=>target.evaluate((e,top)=>Math.abs(e.getBoundingClientRect().top-top),before)).toBeLessThan(2);
   }finally{await context.close();}
 });

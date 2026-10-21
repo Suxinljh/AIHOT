@@ -6,7 +6,7 @@ import Fastify from "fastify";
 import { config } from "@aihot/backend/config";
 import { closeDb, sql } from "@aihot/backend/db";
 import { sha256 } from "@aihot/backend/lib/ids";
-import { completeLogin, endSession, loginRedirect, passwordLogin, SESSION_COOKIE, sessionPrincipal } from "@aihot/backend/admin/auth";
+import { completeLogin, endSession, loginRedirect, passwordLogin, safeReturn, SESSION_COOKIE, sessionPrincipal } from "@aihot/backend/admin/auth";
 import { adminHandler, registerAdminAuth } from "../apps/api/src/routes/admin-auth.ts";
 
 const T = tag();
@@ -233,6 +233,17 @@ test("malformed bindings and Feishu claims fail closed", async () => {
     await sql`UPDATE admin_sessions SET auth_claims=${claims === null ? null : sql.json(claims as never)} WHERE id_hash=${sha256(token)}`;
     await revoked(token); assert.equal(await exists(token), false);
   }
+});
+
+test("sign-in returns to the studio as well as the admin, and rejects other targets", async () => {
+  assert.equal(safeReturn("/studio"), "/studio");
+  assert.equal(safeReturn("/studio/topics?tab=research"), "/studio/topics?tab=research");
+  assert.equal(safeReturn("https://example.test/studio/articles/42"), "/studio/articles/42");
+  assert.equal(safeReturn("/studiox"), "/admin");
+  assert.equal(safeReturn("//example.test/studio"), "/admin");
+  assert.equal(safeReturn("/admin/sources"), "/admin/sources");
+  const login = await passwordLogin(PASSWORD_A, "/studio/topics?tab=research", "synthetic-agent");
+  assert.equal(login.returnTo, "/studio/topics?tab=research");
 });
 
 test("expiry, unknown token, logout isolation and explicit development mode retain their guards", async () => {
