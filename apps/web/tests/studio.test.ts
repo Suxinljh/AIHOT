@@ -23,6 +23,44 @@ const api = createServer((req, res) => {
     res.statusCode = 401;
     return res.end(JSON.stringify({ detail: "Sign in to the studio first." }));
   }
+  if (url.pathname === "/api/studio/presets") {
+    if (!req.headers.cookie?.includes(SESSION)) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ detail: "Sign in to the studio first." }));
+    }
+    return res.end(JSON.stringify({
+      writing: [{
+        id: "writing-news",
+        kind: "writing",
+        name: "科技快讯",
+        columnType: "news",
+        targetReader: "关注科技行业的公众号读者",
+        wordCount: 1200,
+        tone: "冷静、直接",
+        titlePreference: "事实在前",
+        forbiddenExpressions: ["震惊"],
+        format: {},
+        builtin: true,
+      }],
+      format: [{
+        id: "format-wechat-default",
+        kind: "format",
+        name: "公众号默认",
+        columnType: null,
+        targetReader: null,
+        wordCount: null,
+        tone: null,
+        titlePreference: null,
+        forbiddenExpressions: [],
+        format: {
+          title: { fontSize: 22, fontWeight: 700, lineHeight: 1.35, marginBottom: 18, color: "#1a1a1a" },
+          body: { fontSize: 16, lineHeight: 1.85, color: "#333333", letterSpacing: 0.5, paragraphSpacing: 16, align: "justify" },
+          image: { borderRadius: 4 },
+        },
+        builtin: true,
+      }],
+    }));
+  }
   res.statusCode = 404;
   res.end(JSON.stringify({ code: "not_found" }));
 });
@@ -70,4 +108,12 @@ test("signed-in studio pages are private and carry the workbench navigation", as
   const topics = await fetch(`${web.origin}/studio/topics`, { headers: { cookie: SESSION } });
   assert.equal(topics.status, 200);
   assert.match(await topics.text(), /<title>选题管理 · WeChatHot Studio<\/title>/);
+});
+
+test("signed-in settings reads the built-in writing and formatting presets", async () => {
+  const settings = await fetch(`${web.origin}/studio/settings`, { headers: { cookie: SESSION } });
+  assert.equal(settings.status, 200);
+  assert.equal(settings.headers.get("Cache-Control"), "private, no-store");
+  const html = await settings.text();
+  for (const label of ["写作风格", "排版预设", "科技快讯", "公众号默认", "震惊"]) assert.ok(html.includes(label), label);
 });

@@ -191,9 +191,15 @@
 6. 不要自动把“同名 GitHub 用户”当成官方组织；至少确认 `type=Organization`、有官方仓库、官网互链。
 7. 同一集团下的产品号（如 `@GeminiApp`、`@PlayStation`）可以单独成为渠道，但归属到父品牌，不单独成为顶级品牌。
 
+## WCH-5 首批落地范围（2026-10-21）
+
+- 首批品牌只取 `industry/taxonomy.ts` 的 `ENTITIES` 现有 39 个；`industry/topics.json` 的公司主题与之一一对应。百度、阿里集团、汽车、游戏和影视的额外品牌等 7 类行业迁移与 `ENTITIES` 扩充后再补，不在 WCH-5 重复建品牌。
+- 渠道只写入本文已核对或明确标为候选的官网新闻页、X、GitHub 和公众号。未确认的 X/GitHub 不写；公众号只有显示名，统一保持 `pending`，不标 `verified`。
+- 内置预设先落 2 个写作风格（科技快讯、行业洞察）和 2 个排版预设（公众号默认、紧凑排版）。
+
 ## 还需要你确认的部分
 
-- 首批是否只做上面这些品牌，还是把 `industry/topics.json` 里已有的 Microsoft、NVIDIA、AMD、Intel、Qualcomm、Sony、Unitree、Figure、Boston Dynamics、Waymo、DJI、Disney、Netflix、Warner Bros、A24、Runway 全部纳入。
+- 后续扩充时，是否把百度、阿里集团和汽车品牌，以及游戏、影视领域的额外品牌纳入；WCH-5 已先覆盖 `ENTITIES` 现有 39 个。
 - 游戏和影视领域首批关注哪 5–10 个品牌；上表只是建议。
 - 每个品牌的公众号是否已有明确候选；如果没有，我可以先按“集团号 + 核心产品号”生成待核清单。
 - 是否接受“X 只作为辅助渠道，公众号和官网新闻为主”的优先级。国内品牌尤其如此。

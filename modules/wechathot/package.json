@@ -6,10 +6,14 @@
     ".": "./server.ts",
     "./events": "./events.ts",
     "./module": "./module.ts",
+    "./seed": "./seed.ts",
+    "./seed-data": "./seed-data.ts",
+    "./studio-types": "./studio-types.ts",
     "./web": "./web.tsx"
   },
   "dependencies": {
     "@aihot/backend": "*",
-    "@aihot/contracts": "*"
+    "@aihot/contracts": "*",
+    "@aihot/industry": "*"
   }
 }

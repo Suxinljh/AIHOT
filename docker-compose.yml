@@ -44,11 +44,11 @@ services:
       timeout: 5s
       retries: 30
 
-  # Applies the database migrations and seeds the demo sources, then exits.
+  # Applies the database migrations, seeds the demo sources and the workbench, then exits.
   setup:
     <<: *backend
     restart: "no"
-    command: ["sh", "-c", "node scripts/migrate.ts && node scripts/seed.ts"]
+    command: ["sh", "-c", "node scripts/migrate.ts && node scripts/seed.ts && node modules/wechathot/scripts/seed.ts"]
 
   api:
     <<: *backend
