@@ -1,5 +1,6 @@
 import type { MetaFunction } from "react-router";
 import { IconPlug } from "@aihot/web/components/icons";
+import { ButtonLink } from "@aihot/web/features/admin/ui";
 import { StudioPage } from "./studio-ui";
 import { studioMeta } from "./studio-nav";
 
@@ -14,6 +15,7 @@ export default function StudioSources() {
       emptyTitle="还没有关注品牌或信源"
       emptyBody="添加品牌，或接入 RSS、官网和 GitHub Release 后，采集状态与最近更新会显示在这里。"
       stage="P0-A · 关注与信源"
+      action={<ButtonLink to="/studio/brands" tone="primary">打开品牌库</ButtonLink>}
     />
   );
 }

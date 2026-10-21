@@ -16,6 +16,8 @@ export const wechatHot = defineModule({
         { path: "studio/topics", file: "web/studio-topics.tsx", id: "studio-topics" },
         { path: "studio/articles", file: "web/studio-articles.tsx", id: "studio-articles" },
         { path: "studio/sources", file: "web/studio-sources.tsx", id: "studio-sources" },
+        { path: "studio/brands", file: "web/studio-brands.tsx", id: "studio-brands" },
+        { path: "studio/brands/:id", file: "web/studio-brand.tsx", id: "studio-brand" },
         { path: "studio/settings", file: "web/studio-settings.tsx", id: "studio-settings" },
       ],
     },

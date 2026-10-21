@@ -33,6 +33,10 @@ export const STUDIO_NAV: StudioNavItem[] = [
 
 /** The entry a path belongs to; the index entry matches only /studio itself. */
 export function studioNavFor(pathname: string): StudioNavItem | undefined {
+  // The brand library is part of 关注与信源, not a sixth first-level entry.
+  if (pathname === "/studio/brands" || pathname.startsWith("/studio/brands/")) {
+    return STUDIO_NAV.find((item) => item.to === "/studio/sources");
+  }
   return STUDIO_NAV.find((item) => item.end ? pathname === item.to : pathname === item.to || pathname.startsWith(`${item.to}/`));
 }
 

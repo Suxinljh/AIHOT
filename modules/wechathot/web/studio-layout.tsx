@@ -4,6 +4,7 @@ import { Link, NavLink, Outlet, useLoaderData, useLocation, useNavigation, type 
 import type { AdminMe } from "@aihot/contracts/admin";
 import { RingMark } from "@aihot/site/brand/Logo.tsx";
 import { NavigationProgress } from "@aihot/web/components/shell/Chrome";
+import { Toaster } from "@aihot/web/features/admin/toast";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import { STUDIO_NAV, STUDIO_PRODUCT, studioNavFor } from "./studio-nav";
 
@@ -131,6 +132,8 @@ export default function StudioLayout() {
           {STUDIO_NAV.map((item) => <TabLink key={item.to} item={item} />)}
         </div>
       </nav>
+
+      <Toaster className="bottom-[calc(74px+env(safe-area-inset-bottom))] lg:bottom-4" />
     </div>
   );
 }

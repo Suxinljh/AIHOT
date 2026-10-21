@@ -27,7 +27,7 @@ export function toast(text: string, tone: Tone = "info") {
   }, tone === "error" ? 6500 : 3200);
 }
 
-export function Toaster() {
+export function Toaster({ className = "bottom-4" }: { className?: string } = {}) {
   const [list, setList] = useState<Item[]>([]);
   useEffect(() => {
     listeners.push(setList);
@@ -36,7 +36,7 @@ export function Toaster() {
     };
   }, []);
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[80] flex flex-col items-center gap-2 px-4" role="status" aria-live="polite">
+    <div className={`pointer-events-none fixed inset-x-0 ${className} z-[80] flex flex-col items-center gap-2 px-4`} role="status" aria-live="polite">
       <AnimatePresence initial={false}>
         {list.map((t) => (
           <motion.div
