@@ -3,9 +3,15 @@
 import type { AdminMe } from "@aihot/contracts/admin";
 import { sessionPrincipal } from "@aihot/backend/admin/auth";
 import { defineServerModule } from "@aihot/backend/modules";
+import { projectRecentEvents } from "./events.ts";
 
 export const wechatHotServer = defineServerModule({
   name: "wechathot",
+  schedules: [
+    // The workbench reads its event list from wc_event_meta; a failed event stays out of date until
+    // the next run without affecting collection or the public publication pipeline.
+    { name: "wechathot.events.project", cron: "*/5 * * * *", run: projectRecentEvents, missed: "skip" },
+  ],
   http(app) {
     // The shell reads who is signed in here. A visitor without a live session gets 401, and the web
     // layout turns that into the sign-in page with /studio as its return path.
