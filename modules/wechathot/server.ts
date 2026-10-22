@@ -23,7 +23,7 @@ import {
   updateTopic,
 } from "./topics.ts";
 import { articleDetail, articleSources, createArticleFromTopic, generateReview, listArticles, updateArticle, updateReview } from "./articles.ts";
-import { markdown, plainText } from "./export.ts";
+import { markdown, markdownLosesEvidence, markdownToDoc, plainText } from "./export.ts";
 import { queueArticleStep, queueWriteStep } from "./writing.ts";
 import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
@@ -263,6 +263,16 @@ export const wechatHotServer = defineServerModule({
       return article;
     }));
 
+    // Markdown source mode: the editor applies a whole document; claim kinds and citations are not
+    // representable in Markdown, so the caller is warned before this runs.
+    app.post("/api/studio/articles/:id/markdown", studioHandler(async (req, reply) => {
+      const body = (req.body ?? {}) as { markdown?: unknown };
+      if (typeof body.markdown !== "string") return problem(req, reply, 400, "invalid_request", "markdown 必须是字符串");
+      const article = await updateArticle(Number(param(req, "id")), { content: markdownToDoc(body.markdown) });
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return article;
+    }));
+
     app.patch("/api/studio/articles/:id", studioHandler(async (req, reply) => {
       const body = (req.body ?? {}) as Record<string, unknown>;
       const status = body.status;
@@ -327,7 +337,7 @@ export const wechatHotServer = defineServerModule({
       const sources = withSources ? await articleSources(article.id) : [];
       const kind = queryValue(req, "format") === "text" ? "text" : "markdown";
       const text = kind === "markdown" ? markdown(article.content, sources) : plainText(article.content, sources);
-      return { format: kind, text };
+      return { format: kind, text, losesEvidence: markdownLosesEvidence(article.content) };
     }));
 
     // The 公众号 body: whitelisted tags, inline styles and a sanitize pass before anything is copied.

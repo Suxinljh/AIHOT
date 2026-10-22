@@ -1,6 +1,6 @@
 // The draft as text and Markdown. Both follow the body's own structure (heading levels, lists, quotes,
 // links and images) and never touch the editor's document; the optional source list is appended last.
-import type { ArticleDoc } from "./articles.ts";
+import type { ArticleDoc, ArticleText } from "./articles.ts";
 
 type Loose = { type?: string; attrs?: Record<string, unknown>; content?: Loose[]; text?: string; marks?: Array<{ type: string; attrs?: Record<string, unknown> }> };
 
@@ -92,4 +92,106 @@ export function markdown(doc: ArticleDoc | null | undefined, sources: ExportSour
   if (!sources.length) return `${body}\n`;
   const tail = sources.map((source) => `- [${source.title}](${source.url})（${source.source}）`).join("\n");
   return `${body}\n\n## 来源\n\n${tail}\n`;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Markdown → document. The source mode only promises the subset the exporter writes: headings,
+// paragraphs, lists, quotes, images, bold/italic/strike/code and links. Claim kinds and the
+// paragraph→report links are not representable in Markdown, so switching back marks them as the
+// author's own text; the UI warns about that before applying.
+
+type MarkdownNode = { type: "paragraph"; content: ArticleText[]; attrs: { kind: "author"; sources: string[] } }
+  | { type: "heading"; attrs: { level: number }; content: ArticleText[] };
+
+function parseInline(text: string): ArticleText[] {
+  const out: ArticleText[] = [];
+  const pattern = /(\*\*[^*]+\*\*|\*[^*]+\*|~~[^~]+~~|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
+  let last = 0;
+  for (const match of text.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    if (index > last) out.push({ type: "text", text: text.slice(last, index) });
+    const token = match[0];
+    if (token.startsWith("**")) out.push({ type: "text", text: token.slice(2, -2), marks: [{ type: "bold" }] });
+    else if (token.startsWith("~~")) out.push({ type: "text", text: token.slice(2, -2), marks: [{ type: "strike" }] });
+    else if (token.startsWith("`")) out.push({ type: "text", text: token.slice(1, -1), marks: [{ type: "code" }] });
+    else if (token.startsWith("*")) out.push({ type: "text", text: token.slice(1, -1), marks: [{ type: "italic" }] });
+    else {
+      const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(token);
+      if (link) out.push({ type: "text", text: link[1]!, marks: [{ type: "link", attrs: { href: link[2]! } }] });
+      else out.push({ type: "text", text: token });
+    }
+    last = index + token.length;
+  }
+  if (last < text.length) out.push({ type: "text", text: text.slice(last) });
+  return out.length ? out : [{ type: "text", text: "" }];
+}
+
+/** Parses the Markdown this module writes back into the editor's document. */
+export function markdownToDoc(markdownText: string): ArticleDoc {
+  const lines = markdownText.replace(/\r\n/g, "\n").split("\n");
+  const content: Array<Record<string, unknown>> = [];
+  let paragraph: string[] = [];
+  let list: { ordered: boolean; items: Array<{ text: string; children: unknown[] }> } | null = null;
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return;
+    const text = paragraph.join(" ").trim();
+    if (text) content.push({ type: "paragraph", attrs: { kind: "author", sources: [] }, content: parseInline(text) });
+    paragraph = [];
+  };
+  const flushList = () => {
+    if (!list) return;
+    content.push({
+      type: list.ordered ? "orderedList" : "bulletList",
+      content: list.items.map((item) => ({ type: "listItem", content: [{ type: "paragraph", content: parseInline(item.text) }, ...item.children] })),
+    });
+    list = null;
+  };
+
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    const heading = /^(#{2,4})\s+(.*)$/.exec(line);
+    const bullet = /^(\s*)[-*]\s+(.*)$/.exec(line);
+    const ordered = /^(\s*)\d+\.\s+(.*)$/.exec(line);
+    const image = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(line.trim());
+    if (heading) {
+      flushParagraph(); flushList();
+      content.push({ type: "heading", attrs: { level: heading[1]!.length }, content: parseInline(heading[2]!) });
+    } else if (image) {
+      flushParagraph(); flushList();
+      content.push({ type: "image", attrs: { src: image[2]!, alt: image[1]! } });
+    } else if (!line.trim()) {
+      flushParagraph(); flushList();
+    } else if (/^---+\s*$/.test(line)) {
+      flushParagraph(); flushList();
+      content.push({ type: "horizontalRule" });
+    } else if (line.startsWith(">")) {
+      flushParagraph(); flushList();
+      content.push({ type: "blockquote", content: [{ type: "paragraph", content: parseInline(line.replace(/^>\s?/, "")) }] });
+    } else if (bullet || ordered) {
+      flushParagraph();
+      const orderedFlag = !bullet;
+      const depth = Math.floor(((bullet ?? ordered)![1]!.length) / 2);
+      if (!list || list.ordered !== orderedFlag) { flushList(); list = { ordered: orderedFlag, items: [] }; }
+      const text = (bullet ?? ordered)![2]!;
+      if (depth === 0 || !list.items.length) list.items.push({ text, children: [] });
+      else {
+        const parent = list.items[list.items.length - 1]!;
+        parent.children.push({
+          type: orderedFlag ? "orderedList" : "bulletList",
+          content: [{ type: "listItem", content: [{ type: "paragraph", content: parseInline(text) }] }],
+        });
+      }
+    } else {
+      flushList();
+      paragraph.push(line.trim());
+    }
+  }
+  flushParagraph(); flushList();
+  return { type: "doc", content: content as unknown as ArticleDoc["content"] };
+}
+
+/** Paragraph claim kinds and report citations are not expressible in Markdown. */
+export function markdownLosesEvidence(doc: ArticleDoc | null | undefined): boolean {
+  return ((doc?.content ?? []) as unknown as Loose[]).some((node) => node.type === "paragraph" && Array.isArray(node.attrs?.sources) && node.attrs!.sources.length > 0);
 }

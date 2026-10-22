@@ -79,3 +79,26 @@ test("empty documents and nested lists export without breaking", () => {
   assert.ok(text.includes("- 第一条"));
   assert.ok(text.includes("  - 子项"));
 });
+
+test("Markdown source mode round-trips headings, paragraphs and marks", async () => {
+  const { markdownToDoc, markdownLosesEvidence } = await import("../export.ts");
+  const source = "## 价格怎么变的\n\n官方把新价格定为 **10 美元**，详见[公告](https://example.org/a1)。\n\n- 第一条\n  - 子项\n\n![图](https://example.org/a.png)\n";
+  const doc = markdownToDoc(source);
+  const types = doc.content.map((node) => node.type);
+  assert.deepEqual(types, ["heading", "paragraph", "bulletList", "image"]);
+  const paragraph = doc.content[1];
+  assert.ok(paragraph && paragraph.type === "paragraph");
+  assert.equal(paragraph.content.map((part) => part.text).join(""), "官方把新价格定为 10 美元，详见公告。");
+  assert.deepEqual(paragraph.content[1]?.marks, [{ type: "bold" }]);
+  assert.deepEqual(paragraph.content[3]?.marks, [{ type: "link", attrs: { href: "https://example.org/a1" } }]);
+
+  // The export of the parsed document keeps the same structure.
+  const again = markdown(doc, []);
+  assert.ok(again.includes("## 价格怎么变的"));
+  assert.ok(again.includes("**10 美元**"));
+  assert.ok(again.includes("![图](https://example.org/a.png)"));
+
+  // Citations are not representable in Markdown; the UI warns before applying.
+  assert.equal(markdownLosesEvidence(doc), false);
+  assert.equal(markdownLosesEvidence({ type: "doc", content: [{ type: "paragraph", attrs: { kind: "official", sources: ["a-1"] }, content: [{ type: "text", text: "有出处" }] }] }), true);
+});

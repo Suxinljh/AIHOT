@@ -1,10 +1,10 @@
 ---
 id: WCH-32
 title: Markdown 源码模式
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-21T03:12:00Z'
-updated_date: '2026-10-21T03:12:00Z'
+updated_date: '2026-10-22T04:45:00Z'
 labels:
   - frontend
   - editor
@@ -28,3 +28,9 @@ ordinal: 44000
 - [ ] #2 不支持或会丢失的样式在切换前提示
 - [ ] #3 Markdown 内容可继续导出和复制，不破坏正文数据
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. export.ts 增加 markdownToDoc（标题/段落/列表/引用/图片/加粗/斜体/删除线/代码/链接）。2. POST /api/studio/articles/:id/markdown 应用整篇源码。3. 文章页 Markdown tab：源码编辑、应用、丢失提示（来源引用/事实类型不可表示）。4. 单测覆盖往返与丢失检测。
+<!-- SECTION:PLAN:END -->

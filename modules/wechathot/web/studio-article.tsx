@@ -45,11 +45,27 @@ export default function StudioArticlePage() {
   const revalidator = useRevalidator();
   const [title, setTitle] = useState(article.title);
   const [sectionIndex, setSectionIndex] = useState(0);
-  const [view, setView] = useState<"content" | "layout" | "wechat">("content");
+  const [view, setView] = useState<"content" | "layout" | "wechat" | "markdown">("content");
+  const [mdText, setMdText] = useState("");
+  const [mdLoses, setMdLoses] = useState(false);
   const [wechatHtml, setWechatHtml] = useState<string | null>(null);
   const [includeSources, setIncludeSources] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [format, setFormat] = useState<Record<string, unknown>>(article.format ?? {});
+  useEffect(() => {
+    if (view !== "markdown") return;
+    let live = true;
+    fetch(`/api/studio/articles/${article.id}/export?format=markdown&sources=0`, { credentials: "same-origin" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { text?: string; losesEvidence?: boolean } | null) => {
+        if (!live) return;
+        setMdText(data?.text ?? "");
+        setMdLoses(data?.losesEvidence ?? false);
+      })
+      .catch(() => { if (live) setMdText(""); });
+    return () => { live = false; };
+  }, [view, article.id, article.version]);
+
   useEffect(() => {
     if (view !== "wechat") return;
     let live = true;
@@ -169,6 +185,7 @@ export default function StudioArticlePage() {
           <button type="button" onClick={() => setView("content")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "content" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>内容</button>
           <button type="button" onClick={() => setView("layout")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "layout" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>排版</button>
           <button type="button" onClick={() => setView("wechat")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "wechat" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>公众号</button>
+          <button type="button" onClick={() => setView("markdown")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "markdown" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>Markdown</button>
         </div>
       </header>
 
@@ -190,6 +207,34 @@ export default function StudioArticlePage() {
               {!article.content?.content?.length && (
                 <p className="mt-3 text-[13px] text-ink-4">还没有正文。确认大纲后点「生成正文」。</p>
               )}
+            </section>
+          ) : view === "markdown" ? (
+            <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-[14px] font-semibold text-ink">Markdown 源码</h2>
+                <Button
+                  size="sm"
+                  tone="primary"
+                  busy={pending === `article-markdown-${article.id}`}
+                  onClick={() => run("POST", `/api/studio/articles/${article.id}/markdown`, { markdown: mdText }, { label: `article-markdown-${article.id}`, success: "源码已应用" })}
+                >
+                  应用源码
+                </Button>
+              </div>
+              {mdLoses && (
+                <p className="mt-2 rounded-control bg-bg-sunk px-3 py-2 text-[11.5px] leading-relaxed text-hot">
+                  正文里有来源引用和事实类型，Markdown 不能保存它们；应用后这些段落会变成作者判断。需要保留证据时请用富文本模式。
+                </p>
+              )}
+              <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">
+                只支持标题、段落、列表、引用、图片、加粗、斜体、删除线、代码和链接；其他样式在切换时会丢失。
+              </p>
+              <textarea
+                aria-label="Markdown 源码"
+                className="mt-3 h-[420px] w-full rounded-control border border-line bg-bg-sunk p-3 font-mono text-[12.5px] leading-relaxed text-ink-2 outline-none focus:ring-1 focus:ring-line-strong"
+                value={mdText}
+                onChange={(event) => setMdText(event.target.value)}
+              />
             </section>
           ) : view === "wechat" ? (
             <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
