@@ -21,7 +21,7 @@ import {
   topicDetail,
   updateTopic,
 } from "./topics.ts";
-import { articleDetail, createArticleFromTopic, generateReview, updateArticle, updateReview } from "./articles.ts";
+import { articleDetail, createArticleFromTopic, generateReview, listArticles, updateArticle, updateReview } from "./articles.ts";
 import { queueArticleStep, queueWriteStep } from "./writing.ts";
 import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
@@ -249,6 +249,10 @@ export const wechatHotServer = defineServerModule({
     }));
 
     // A draft: its content and versions, and the two paid writing steps.
+    app.get("/api/studio/articles", studioHandler(async (req) => ({
+      items: await listArticles({ status: queryValue(req, "status"), q: queryValue(req, "q") }),
+    })));
+
     app.get("/api/studio/articles/:id", studioHandler(async (req, reply) => {
       const article = await articleDetail(Number(param(req, "id")));
       if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");

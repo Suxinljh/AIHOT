@@ -180,6 +180,20 @@ export async function articleOfTopic(topicId: number): Promise<StudioArticle | n
   return row ? articleDetail(Number(row.id)) : null;
 }
 
+/** The drafts list: every article, newest change first. The detail reads the body it lists. */
+export async function listArticles(filters: { status?: string; q?: string } = {}): Promise<StudioArticle[]> {
+  const status = filters.status && filters.status !== "all" ? filters.status : null;
+  const pattern = filters.q?.trim() ? `%${filters.q.trim()}%` : null;
+  const rows = await sql<{ id: number }[]>`
+    SELECT id FROM wc_articles
+    WHERE (${status}::text IS NULL OR status = ${status})
+      AND (${pattern}::text IS NULL OR title ILIKE ${pattern})
+    ORDER BY updated_at DESC, id DESC
+    LIMIT 200`;
+  const articles = await Promise.all(rows.map((row) => articleDetail(Number(row.id))));
+  return articles.filter((article): article is StudioArticle => article !== null);
+}
+
 interface TopicMaterial {
   id: number;
   column_type: "news" | "insight";
