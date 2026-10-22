@@ -1,19 +1,25 @@
-import { isRouteErrorResponse, Link, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useRouteError } from "react-router";
+import { isRouteErrorResponse, Link, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, useRouteError, useRouteLoaderData } from "react-router";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { APPEARANCE_BOOT_SCRIPT, useAppearanceSync } from "./lib/local-state";
 import { buttonClass } from "./components/ui/Controls";
+
+/** The release this document was rendered by; entry.client reloads once a newer one is deployed. */
+export function loader() {
+  return { release: process.env.AIHOT_RELEASE ?? null };
+}
 
 /**
  * The document around every page. The public reading site is retired, so there is no reader chrome
  * here: the admin and the studio bring their own sidebars, top bars and footers.
  */
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useRouteLoaderData<typeof loader>("root");
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
-        {process.env.AIHOT_RELEASE && <meta name="aihot-release" content={process.env.AIHOT_RELEASE} />}
+        {data?.release && <meta name="aihot-release" content={data.release} />}
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#faf9f6" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#13191c" />
