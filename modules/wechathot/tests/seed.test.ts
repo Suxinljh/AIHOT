@@ -44,14 +44,16 @@ test("brand seeds expose the canonical name, aliases, industries and website", a
   assert.equal(openai.verified_status, "verified");
   assert.match(openai.notes ?? "", /OpenAI/);
 
-  const [counts] = await sql<{ brands: number; channels: number; links: number; presets: number }[]>`
+  const [counts] = await sql<{ brands: number; channels: number; links: number; linked: number; presets: number }[]>`
     SELECT (SELECT count(*) FROM wc_brands)::int AS brands,
            (SELECT count(*) FROM wc_channels)::int AS channels,
            (SELECT count(*) FROM wc_channel_brands)::int AS links,
+           (SELECT count(DISTINCT brand_id) FROM wc_channel_brands)::int AS linked,
            (SELECT count(*) FROM wc_style_presets)::int AS presets`;
   assert.equal(counts.brands, Object.keys(ENTITIES).length);
-  assert.ok(counts.channels >= counts.brands);
-  assert.ok(counts.links >= counts.brands);
+  // The auto, game and film brands land with WCH-35; their channels and sources follow with WCH-36.
+  assert.ok(counts.channels > 0);
+  assert.ok(counts.links >= counts.linked);
   assert.equal(counts.presets, 4);
 });
 

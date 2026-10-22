@@ -129,7 +129,7 @@ before(async () => {
     }),
     await addReport({
       storyId: mainStory.id, factId: secondFact!.id, sourceId: media, at: new Date(NOW.getTime() - HOUR),
-      category: "industry", tags: ["融资/并购", "Google"], subjects: ["Google"], score: 80,
+      category: "auto", tags: ["融资/并购", "Google"], subjects: ["Google"], score: 80,
     }),
     await addReport({
       storyId: mainStory.id, factId: mainStory.factId, sourceId: xSource, at: new Date(NOW.getTime() - 30 * 60_000),
@@ -152,7 +152,7 @@ test("projection aggregates the event's reports and maps existing brands", async
   assert.ok(result.projected >= 1);
   const meta = await row(mainStory.id);
   assert.ok(meta);
-  assert.deepEqual(meta!.categories, ["ai-models", "industry"]);
+  assert.deepEqual(meta!.categories, ["ai-models", "auto"]);
   assert.deepEqual(meta!.brand_ids, ["google", "openai"]);
   assert.deepEqual(meta!.channel_types, ["custom", "official_site", "wechat", "x"]);
   assert.deepEqual(meta!.source_tiers, ["T1", "T2"]);

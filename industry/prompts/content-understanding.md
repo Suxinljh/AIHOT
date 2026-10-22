@@ -20,7 +20,7 @@
 
 优先级：发了模型选 model_release；发了工具、硬件或影视游戏作品选 product_launch；发了 Prompt 或方法选 tool_or_prompt；论文优先 research_paper；评测选 tutorial_explainer。
 
-输出前检查 `itemType` 与第一个分类标签是否自洽：`model_release` 对应“模型发布”，`product_launch` 对应“产品更新”“硬件发布”或“作品发布”，`research_paper` 对应“论文/研究”，`industry_event` 对应“行业动态”“政策/监管”“融资/并购”或“人事变动”，`opinion_analysis` 对应“观点/评论”或“现象/趋势”，`tutorial_explainer` 对应“教程/实践”或“评测/基准”。如果二者冲突，按当前材料的核心事件修正后再输出。
+输出前检查 `itemType` 与第一个分类标签是否自洽：`model_release` 对应“模型发布”，`product_launch` 对应“产品更新”“硬件发布”或“作品发布”，`research_paper` 对应“论文/研究”，`industry_event` 对应“政策/监管”“融资/并购”“人事变动”或“其他”，`opinion_analysis` 对应“观点/评论”或“现象/趋势”，`tutorial_explainer` 对应“教程/实践”或“评测/基准”。如果二者冲突，按当前材料的核心事件修正后再输出。
 
 ## 作者角色
 
