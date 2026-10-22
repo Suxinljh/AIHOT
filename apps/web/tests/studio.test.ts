@@ -61,6 +61,16 @@ const api = createServer((req, res) => {
       }],
     }));
   }
+  if (url.pathname === "/api/studio/notify/settings") {
+    if (!req.headers.cookie?.includes(SESSION)) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ detail: "Sign in to the studio first." }));
+    }
+    return res.end(JSON.stringify({
+      settings: { immediate: true, digestHour: 9, minScore: null, eventTypes: [], channelTypes: [], feishu: false, email: false },
+      targets: [{ key: "feishu-alerts", enabled: false }, { key: "email-alerts", enabled: false }],
+    }));
+  }
   if (url.pathname === "/api/studio/events") {
     if (!req.headers.cookie?.includes(SESSION)) {
       res.statusCode = 401;

@@ -7,7 +7,8 @@ import { z } from "zod";
 import { audit, Conflict } from "../audit.ts";
 import { config, credential } from "../config.ts";
 import { sql } from "../db.ts";
-import { postWebhook } from "./feishu.ts";
+import { postWebhook, sendAlert } from "./feishu.ts";
+import { sendEmail } from "./email.ts";
 import { selectedContent } from "./selected-content.ts";
 
 export interface DeliveryRequest {
@@ -169,4 +170,61 @@ export async function resolveDelivery(id: number, input: { outcome: "sent" | "dr
   }
   await audit(actor, `delivery.${input.outcome}`, `delivery:${id}`, input.note, { status: before.status }, { status });
   return { id, status };
+}
+
+export interface MessageSenders {
+  feishu?: (title: string, lines: string[]) => Promise<"sent" | "disabled">;
+  email?: (subject: string, text: string) => Promise<"sent" | "disabled" | "failed">;
+}
+
+export interface MessageRequest {
+  subjectKind: string;
+  subjectId: string;
+  dedupeKey: string;
+  title: string;
+  lines: string[];
+  targetKeys?: string[];
+}
+
+/**
+ * Delivers one short message to the enabled `alert` targets. The delivery row is the dedupe and retry
+ * record: sent/unknown/sending is never repeated, a failed row is retried at most three times.
+ */
+export async function deliverMessage(req: MessageRequest, senders: MessageSenders = {}): Promise<Array<{ target: string; status: string }>> {
+  const targets = await sql<{ key: string; kind: string }[]>`
+    SELECT key, kind FROM notify_targets WHERE purpose = 'alert' AND enabled
+      AND (${req.targetKeys ?? null}::text[] IS NULL OR key = ANY(${req.targetKeys ?? null}::text[]))
+    ORDER BY key`;
+  const results: Array<{ target: string; status: string }> = [];
+  for (const target of targets) {
+    const [inserted] = await sql<{ id: number }[]>`
+      INSERT INTO deliveries (target_key, subject_kind, subject_id, dedupe_key, status)
+      VALUES (${target.key}, ${req.subjectKind}, ${req.subjectId}, ${req.dedupeKey}, 'pending')
+      ON CONFLICT (target_key, dedupe_key) DO NOTHING RETURNING id`;
+    let id = inserted ? Number(inserted.id) : null;
+    if (!id) {
+      const [existing] = await sql<{ id: number; status: string; attempts: number }[]>`
+        SELECT id, status, attempts FROM deliveries WHERE target_key = ${target.key} AND dedupe_key = ${req.dedupeKey}`;
+      if (!existing) continue;
+      if (["sent", "unknown", "sending", "skipped"].includes(existing.status) || existing.attempts >= 3) continue;
+      await sql`UPDATE deliveries SET status = 'pending', updated_at = now() WHERE id = ${existing.id}`;
+      id = Number(existing.id);
+    }
+    await sql`UPDATE deliveries SET status = 'sending', attempts = attempts + 1, updated_at = now() WHERE id = ${id}`;
+    let status: string;
+    try {
+      if (target.kind === "feishu_chat") status = await (senders.feishu ?? sendAlert)(req.title, req.lines);
+      else if (target.kind === "email") status = await (senders.email ?? sendEmail)(req.title, req.lines.join("\n"));
+      else status = "skipped";
+    } catch (error) {
+      status = "unknown";
+      await sql`UPDATE deliveries SET status = ${status}, response = ${String(error).slice(0, 500)}, updated_at = now() WHERE id = ${id}`;
+      results.push({ target: target.key, status });
+      continue;
+    }
+    await sql`UPDATE deliveries SET status = ${status === "disabled" ? "skipped" : status},
+      sent_at = ${status === "sent" ? new Date() : null}, updated_at = now() WHERE id = ${id}`;
+    results.push({ target: target.key, status });
+  }
+  return results;
 }

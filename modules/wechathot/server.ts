@@ -30,6 +30,8 @@ import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, upd
 import { checkGithubRepo, githubOwner, subscribeGithubReleases } from "./github.ts";
 import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
 import { renderWechatHtml } from "./wechat-html.ts";
+import { generateAlerts } from "./alerts.ts";
+import { loadNotifySettings, saveNotifySettings, sendAlertDigest, sendNotifyTest } from "./notify.ts";
 import { readUpload, saveUpload } from "./uploads.ts";
 import { currentMonth, loadCalendar } from "./calendar.ts";
 import { loadMetrics } from "./metrics.ts";
@@ -147,6 +149,19 @@ export const wechatHotServer = defineServerModule({
     // The workbench reads its event list from wc_event_meta; a failed event stays out of date until
     // the next run without affecting collection or the public publication pipeline.
     { name: "wechathot.events.project", cron: "*/5 * * * *", run: projectRecentEvents, missed: "skip" },
+    // Followed brands leave alerts here; the immediate ones are delivered as they are created.
+    { name: "wechathot.alerts.generate", cron: "*/10 * * * *", run: () => generateAlerts(), missed: "skip" },
+    // The digest runs hourly and only sends at the configured Beijing hour.
+    {
+      name: "wechathot.alerts.digest",
+      cron: "5 * * * *",
+      missed: "skip",
+      run: async () => {
+        const settings = await loadNotifySettings();
+        const beijingHour = new Date(Date.now() + 8 * 3600_000).getUTCHours();
+        if (beijingHour === settings.digestHour) await sendAlertDigest();
+      },
+    },
   ],
   http(app) {
     // The shell reads who is signed in here. A visitor without a live session gets 401, and the web
@@ -498,6 +513,19 @@ export const wechatHotServer = defineServerModule({
       );
       return reply.code(201).send(subscribed);
     }));
+
+    // External notifications: the settings, a test message, and the delivery targets' state.
+    app.get("/api/studio/notify/settings", studioHandler(async () => {
+      const [settings, targets] = await Promise.all([
+        loadNotifySettings(),
+        sql<{ key: string; kind: string; enabled: boolean }[]>`SELECT key, kind, enabled FROM notify_targets WHERE purpose = 'alert' ORDER BY key`,
+      ]);
+      return { settings, targets };
+    }));
+
+    app.patch("/api/studio/notify/settings", studioHandler(async (req) => saveNotifySettings(req.body ?? {})));
+
+    app.post("/api/studio/notify/test", studioHandler(async () => ({ results: await sendNotifyTest() })));
 
     // The settings page reads the built-in writing and formatting presets from here. Custom presets
     // are returned too, so the page does not need a second endpoint when WCH-23 adds them.

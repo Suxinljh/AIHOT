@@ -1,12 +1,58 @@
+import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Link, useLoaderData } from "react-router";
 import { IconDoc, IconGrid, IconSparkles } from "@aihot/web/components/icons";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import type { StylePreset, StudioPresets } from "../studio-types.ts";
+import type { NotifySettings } from "../notify.ts";
+import { Field, Input } from "@aihot/web/features/admin/ui";
+import { useStudioAction } from "./studio-action";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return { presets: await adminGet<StudioPresets>(request, "/api/studio/presets") };
+  const [presets, notify] = await Promise.all([
+    adminGet<StudioPresets>(request, "/api/studio/presets"),
+    adminGet<{ settings: NotifySettings; targets: Array<{ key: string; enabled: boolean }> }>(request, "/api/studio/notify/settings"),
+  ]);
+  return { presets, notify: notify.settings };
+}
+
+function NotifySection({ initial }: { initial: NotifySettings }) {
+  const { run, pending } = useStudioAction();
+  const [form, setForm] = useState(initial);
+  const [result, setResult] = useState<string | null>(null);
+
+  async function test() {
+    const response = await run<{ results: Array<{ target: string; status: string }> }>("POST", "/api/studio/notify/test", undefined, { label: "notify-test" });
+    if (!response) { setResult("测试没有发出，请检查渠道是否开启。"); return; }
+    setResult(response.results.length ? response.results.map((row) => `${row.target}: ${row.status}`).join("；") : "没有启用的渠道。");
+  }
+
+  return (
+    <section className="mt-8 rounded-panel bg-surface p-5 ring-1 ring-line">
+      <h2 className="text-[17px] font-semibold text-ink">外部通知</h2>
+      <p className="mt-1 text-[13px] text-ink-3">站内通知之后，再把关注更新发到飞书或邮箱。密钥只在后端环境变量里。</p>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <label className="flex items-center gap-2 text-[13px] text-ink-2"><input type="checkbox" checked={form.feishu} onChange={(e) => setForm({ ...form, feishu: e.target.checked })} />飞书提醒</label>
+        <label className="flex items-center gap-2 text-[13px] text-ink-2"><input type="checkbox" checked={form.email} onChange={(e) => setForm({ ...form, email: e.target.checked })} />邮件提醒</label>
+        <label className="flex items-center gap-2 text-[13px] text-ink-2"><input type="checkbox" checked={form.immediate} onChange={(e) => setForm({ ...form, immediate: e.target.checked })} />关注规则为「立即」时马上发送</label>
+        <Field label="每日摘要时间（北京时间）">
+          <select aria-label="摘要时间" className="h-9 w-full rounded-control bg-surface px-3 text-[13.5px] text-ink ring-1 ring-line-strong outline-none" value={form.digestHour} onChange={(e) => setForm({ ...form, digestHour: Number(e.target.value) })}>
+            {Array.from({ length: 24 }, (_, hour) => <option key={hour} value={hour}>{String(hour).padStart(2, "0")}:00</option>)}
+          </select>
+        </Field>
+        <Field label="最低新闻价值" hint="留空表示不过滤">
+          <Input type="number" value={form.minScore ?? ""} onChange={(e) => setForm({ ...form, minScore: e.target.value === "" ? null : Number(e.target.value) })} />
+        </Field>
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <button type="button" disabled={pending === "notify-save"} onClick={() => run("PATCH", "/api/studio/notify/settings", form, { label: "notify-save", success: "通知设置已保存" })} className="rounded-control bg-ink px-3 py-1.5 text-[12.5px] font-medium text-bg disabled:opacity-50">{pending === "notify-save" ? "保存中…" : "保存"}</button>
+        <button type="button" disabled={pending === "notify-test"} onClick={test} className="rounded-control bg-surface px-3 py-1.5 text-[12.5px] text-ink-2 ring-1 ring-line disabled:opacity-50">{pending === "notify-test" ? "发送中…" : "发送测试消息"}</button>
+        {result && <span className="text-[11.5px] text-ink-4">{result}</span>}
+      </div>
+      <p className="mt-3 text-[11px] leading-relaxed text-ink-4">飞书使用 FEISHU_ALERT_CHAT_ID；邮件使用 SMTP_URL、SMTP_FROM 和 ALERT_EMAIL_TO。发送失败会在投递记录里显示原因，未知结果不会自动重试。</p>
+    </section>
+  );
 }
 
 export const meta: MetaFunction = () => studioMeta("设置");
@@ -164,7 +210,7 @@ function FormatCard({ preset }: { preset: StylePreset }) {
 }
 
 export default function StudioSettings() {
-  const { presets } = useLoaderData<typeof loader>();
+  const { presets, notify } = useLoaderData<typeof loader>();
   const writing = presets.writing;
   const formatting = presets.format;
 
@@ -221,8 +267,10 @@ export default function StudioSettings() {
         )}
       </section>
 
+      <NotifySection initial={notify} />
+
       <p className="mt-6 max-w-[760px] text-[12px] leading-[1.8] text-ink-4">
-        内置预设只读；自定义预设、模型选择和通知配置会在后续阶段接入。
+        内置预设只读；自定义预设和模型选择会在后续阶段接入。
       </p>
     </div>
   );

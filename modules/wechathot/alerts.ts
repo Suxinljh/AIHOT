@@ -4,6 +4,7 @@
 import { z } from "zod";
 import { sql } from "@aihot/backend/db";
 import { followMatches, followMuted, type FollowEvent, type FollowSettings } from "./follows.ts";
+import { deliverAlert, loadNotifySettings } from "./notify.ts";
 
 export type AlertKind = "new_event" | "follow_update" | "source_error";
 export type AlertStatus = "unread" | "read" | "muted";
@@ -98,6 +99,8 @@ export async function generateAlerts(options: { now?: Date; since?: Date } = {})
   const now = options.now ?? new Date();
   const since = options.since ?? new Date(now.getTime() - 15 * 60_000);
   const result: AlertRunResult = { created: 0, merged: 0, sourceErrors: 0, skipped: 0 };
+  const notifySettings = await loadNotifySettings();
+  const immediate: number[] = [];
 
   const follows = await sql<FollowRow[]>`
     SELECT f.id, f.target_id, f.rule, f.keywords, f.blocked_keywords, f.event_types, f.notify,
@@ -167,11 +170,22 @@ export async function generateAlerts(options: { now?: Date; since?: Date } = {})
                 ${follow.frequency === "immediate" ? now : null})
         ON CONFLICT (dedupe_key) DO NOTHING
         RETURNING id`;
-      if (row) result.created += 1;
+      if (row) {
+        result.created += 1;
+        if (notifySettings.immediate && follow.frequency === "immediate") immediate.push(Number(row.id));
+      }
     }
   }
 
   await collectSourceErrors(result, now);
+  // An immediate follow is delivered as it is created; the digest covers everything else.
+  for (const alertId of immediate) {
+    try {
+      await deliverAlert(alertId);
+    } catch {
+      // A failed delivery is recorded on its own row and retried by the next run; it never fails the alert pass.
+    }
+  }
   return result;
 }
 
