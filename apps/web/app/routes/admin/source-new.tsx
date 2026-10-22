@@ -17,6 +17,7 @@ const TEMPLATES: Record<string, Record<string, unknown>> = {
   x_search: { query: "from:handle -filter:replies", searchType: "Latest" },
   mp_account: { ghid: "gh_", nickname: "" },
   external: {},
+  github: { repo: "openai/openai-python", feed: "tags", perPage: 20 },
 };
 
 
@@ -54,7 +55,7 @@ export default function NewSource() {
               <Select
                 value={form.kind}
                 onChange={(e) => {
-                  setForm({ ...form, kind: e.target.value });
+                  setForm({ ...form, kind: e.target.value, interval_minutes: e.target.value === "github" ? 240 : form.interval_minutes });
                   setConfig(JSON.stringify(TEMPLATES[e.target.value] ?? {}, null, 2));
                   setPreview(null);
                 }}

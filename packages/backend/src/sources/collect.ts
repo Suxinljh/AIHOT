@@ -12,6 +12,7 @@ import { fetchDetail, fetchWebList, isCallToActionTitle, needsTitle, type Detail
 import { unsupportedConfig } from "./config-keys.ts";
 import { admitListing, filterPublicationWindow } from "./filters.ts";
 import { fetchJsonList } from "./json-list.ts";
+import { fetchGithub } from "./github.ts";
 import { fetchXSearch, planXShards, readXSearch, shardHandle, shardQuery, selfThreadHandle, SHARDABLE_SQL, tweetToCandidate, type XBacklog } from "./x.ts";
 import { FetchError, type Candidate, type SourceRow } from "./types.ts";
 
@@ -136,6 +137,14 @@ export async function collectSource(sourceId: string, opts: { force?: boolean } 
     }
     else if (source.kind === "web_list") candidates = await fetchWebList(source);
     else if (source.kind === "json_list") candidates = await fetchJsonList(source);
+    else if (source.kind === "github") {
+      const gh = await fetchGithub(source, { force: opts.force });
+      candidates = gh.candidates;
+      // The validator is kept per feed: changing tags→issues must not reuse the tags ETag.
+      if (!firstImport && gh.etag) nextCursor.github = { etag: gh.etag, feed: gh.feed };
+      else delete nextCursor.github;
+      if (gh.notModified) detail = { notModified: true, httpStatus: 304 };
+    }
     else {
       const x = await fetchXSearch(source);
       candidates = x.candidates;
@@ -365,7 +374,7 @@ async function scheduleXShards(): Promise<number> {
 export async function scheduleDueSources(): Promise<{ enqueued: number; shards: number }> {
   const rows = await sql<{ id: string }[]>`
     SELECT id FROM sources
-    WHERE enabled AND kind IN ('rss', 'web_list', 'json_list', 'x_search') AND (next_fetch_at IS NULL OR next_fetch_at <= now()) AND NOT (${sharded()})
+    WHERE enabled AND kind IN ('rss', 'web_list', 'json_list', 'x_search', 'github') AND (next_fetch_at IS NULL OR next_fetch_at <= now()) AND NOT (${sharded()})
     ORDER BY next_fetch_at NULLS FIRST LIMIT 40`;
   let enqueued = 0;
   for (const r of rows) {
@@ -387,7 +396,7 @@ export async function adaptIntervals(): Promise<{ updated: number }> {
   const rows = await sql<Array<Pick<SourceRow, "id" | "participation_mode" | "kind" | "config" | "cursor"> & { paid_listing: boolean; per_day: number }>>`
     SELECT s.id, s.participation_mode, s.kind, s.config, s.cursor, coalesce(s.config->>'url', '') LIKE 'https://r.jina.ai/%' AS paid_listing,
       (SELECT count(*) FROM articles a WHERE a.source_id = s.id AND a.discovered_at > now() - interval '7 days' AND NOT a.backfill) / 7.0 AS per_day
-    FROM sources s WHERE s.enabled AND s.kind IN ('rss', 'web_list', 'json_list', 'x_search')`;
+    FROM sources s WHERE s.enabled AND s.kind IN ('rss', 'web_list', 'json_list', 'x_search', 'github')`;
   let updated = 0;
   for (const r of rows) {
     const perDay = Number(r.per_day);

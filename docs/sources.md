@@ -2,7 +2,7 @@
 
 信源在后台“信源”页管理：新建、试抓一次看看抓到什么、改频率、启停、看失败原因和最近的条目。首次启动时，`industry/sources.json` 里的示范信源会被导入。
 
-## 六种信源
+## 七种信源
 
 | 类型 | 适合 | 需要 |
 |---|---|---|
@@ -12,6 +12,7 @@
 | `x_search` | X（推特）账号 | SocialData 的 key，按请求计费 |
 | `mp_account` | 微信公众号 | 极致了（Dajiala）的 key，按请求计费 |
 | `external` | 你自己的脚本推送进来的内容 | `INGEST_TOKEN`，见下文 |
+| `github` | GitHub 仓库的 Tags、默认分支 Commits、Issues、Pull Requests | 写 `repo` 与 `feed`；可选 `GITHUB_TOKEN` |
 
 `json_list` 的地址或配置可能携带凭据，只跟随同源重定向（协议、主机和端口都相同）。若接口搬到另一个来源，请直接更新信源地址；不要依赖跨源跳转传递认证信息。
 
@@ -23,7 +24,7 @@
 
 名称里全角括号中的备注（比如“某媒体（热点 RSS）”）只给后台看，读者在网页、RSS、Agent Markdown、MCP 和搜索里看到的是去掉备注的名字；X 账号写成 `X：显示名 (@handle)` 的，读者只看到显示名。公开 API 的 JSON 里仍是完整的名字。
 
-`rss`、`web_list`、`json_list`、`x_search` 可以点“预览抓取”：显示条目总数和前 20 条的标题、原文链接、发布时间、摘要，不把条目存入文章库。检查抓到的是文章而不是导航，日期与原文一致，再点“创建”。预览和正式采集套用同一组过滤（地址前缀、分类、噪声词、地址改写、`publishedAfter`），看到的就是正式采集会收的条目；但它不等于完成生产采集，也不经过后续详情补齐、精选和公开发布流程。
+`rss`、`web_list`、`json_list`、`x_search`、`github` 可以点“预览抓取”：显示条目总数和前 20 条的标题、原文链接、发布时间、摘要，不把条目存入文章库。检查抓到的是文章而不是导航，日期与原文一致，再点“创建”。预览和正式采集套用同一组过滤（地址前缀、分类、噪声词、地址改写、`publishedAfter`），看到的就是正式采集会收的条目；但它不等于完成生产采集，也不经过后续详情补齐、精选和公开发布流程。
 
 预览仍会发出抓取请求；X 和 Jina 预览也可能产生费用，经过付费回执和预算。`COLLECT_ENABLED=false` 只关闭后台自动采集，不能用它来保证手动预览不访问外部服务。下面的本地 HTML/JSON 示例不需要任何 API key。
 
@@ -197,6 +198,26 @@ http.createServer((req, res) => {
 在后端运行环境的 `.env` 配置 `SOCIALDATA_API_KEY`，重启 API（预览）和 worker（定时采集）后生效；不要把 key 写进信源 JSON 或提交到仓库。先在后台“设置 → 付费请求上限”检查 SocialData 额度，再按需预览。未配置 key 会报 `SOCIALDATA_API_KEY is not configured`；服务拒绝请求或预算熔断时看后台错误原因。预览可能有付费请求，本文不要求用真实服务验证，结果取决于账号和服务当时的返回。
 
 生产自动采集时，普通账号会被自动合并成一次搜索（每次最多二十几个账号），省请求数；单个信源的手动预览不是合并采集。
+
+### github
+
+直接读 GitHub 的 REST API，不经过 RSS。创建时选 `GitHub API`，配置：
+
+```json
+{ "repo": "openai/openai-python", "feed": "tags", "perPage": 20 }
+```
+
+- `repo`：`owner/name`，必填。
+- `feed`：`tags`（默认）、`commits`（默认分支）、`issues`、`pulls`。每种是一次列表读取，换 feed 会重新拉一次完整列表。
+- `perPage`：1–100，默认 20，只取最新一页。
+- `labels`：只收带这些标签的 Issues/PR，例如 `["bug", "enhancement"]`。
+
+默认是 `tags`、240 分钟一次：高频的 commits/issues/PR 需要你自己改成更长的间隔或按标签过滤，避免把仓库流水当新闻。Issues/PR 的正文直接作为材料正文（不再抓页面）；Tags/Commits 只记标题、时间和链接。
+
+- 有条件请求：每个 feed 的 ETag 存在 `cursor.github`，没变化时是一个 304，不占列表配额。
+- 限流：配置 `GITHUB_TOKEN`（在 `.env`，或用凭据目录的 `collectors.env`）后按 5000 次/小时；没 token 是 60 次/小时。限额用尽时后台显示带重置时间的错误，并在下一轮自动重试。
+- 建议：Tags 用 240 分钟；Commits 只用于重要的库，360 分钟以上；Issues/PR 用 `labels` 收窄，否则一天几十条。
+- 预览同样走 API，会产生一次请求。
 
 ### mp_account
 

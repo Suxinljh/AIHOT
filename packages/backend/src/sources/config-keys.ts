@@ -21,6 +21,7 @@ const KEYS: Record<SourceRow["kind"], string[]> = {
   // X accounts are mostly read in shards, which apply only these.
   x_search: [...PUBLISHER, "_aihot", "ingestNoiseFilter", "itemUrlPrefixRewrite", "query", "searchType"],
   mp_account: [...PUBLISHER, "wxid", "ghid", "nickname"],
+  github: [...PUBLISHER, "_aihot", "ingestNoiseFilter", "repo", "feed", "perPage", "labels"],
   external: [...PUBLISHER],
 };
 
