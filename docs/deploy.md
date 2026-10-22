@@ -12,13 +12,13 @@ node scripts/init-env.ts --llm-key <你的模型 API Key>
 
 `init-env.ts` 会生成 `.env`，填好随机密钥和管理员密码，并把密码打印一次。机器上没有 Node 的话，把 `.env.example` 复制成 `.env`，自己填 `ADMIN_PASSWORD`（至少 12 位）、`SESSION_SECRET`、`IMG_PROXY_SIGN_SECRET`、`POSTGRES_PASSWORD`（各用 `openssl rand -hex 32` 生成）和 `LLM_API_KEY`。
 
-启动前检查 `.env` 的 `SITE_URL`：本机试用保留 `http://localhost:3000`；部署到服务器时改成读者实际访问的地址。例如通过服务器 IP 访问时（把示例 IP 换成自己的）：
+启动前检查 `.env` 的 `SITE_URL`：本机试用保留 `http://localhost:3000`；部署到服务器时改成你自己实际访问的地址。例如通过服务器 IP 访问时（把示例 IP 换成自己的）：
 
 ```dotenv
 SITE_URL=http://192.0.2.10:3000
 ```
 
-RSS、分享链接、站点地图和 Agent Markdown 中的绝对链接都使用这个值，不会随浏览器访问的地址自动改变。使用域名和 HTTPS 时按下方「配域名和 HTTPS」设置。
+后台和工作台里的绝对链接使用这个值。使用域名和 HTTPS 时按下方「配域名和 HTTPS」设置。
 
 配置完成后启动：
 
@@ -26,7 +26,7 @@ RSS、分享链接、站点地图和 Agent Markdown 中的绝对链接都使用�
 docker compose up -d --build
 ```
 
-启动后打开 `http://服务器地址:3000`，后台在 `/admin`，用管理员密码登录。第一次启动会导入示范信源、工作台品牌与内置预设，一两分钟后开始出现内容；第一次导入的一百多条资料大约半小时处理完（每条都要预筛、评分、结构化、写标题摘要，再归组）。
+启动后打开 `http://服务器地址:3000`，会跳到工作台 `/studio`；后台仍在 `/admin`。两处都用管理员密码登录。第一次启动会导入示范信源、工作台品牌与内置预设，一两分钟后开始出现内容；第一次导入的一百多条资料大约半小时处理完（每条都要预筛、评分、结构化、写标题摘要，再归组）。
 
 `docker compose` 会起五个容器：`db`（PostgreSQL 17）、`setup`（每次启动先跑数据库迁移和种子数据，然后退出）、`api`、`worker`（抓取、模型处理、定时任务）、`web`（网页）。`web` 只接收网站地址、API 地址等网页配置，通过 HTTP 读取 API；数据库、模型和管理员密钥，以及数据卷，只交给后端容器。
 
@@ -76,13 +76,14 @@ TRUST_PROXY=true           # 访客地址从 Caddy 转来的请求头里读
 docker compose --profile https up -d --build
 ```
 
-已经有 Nginx 的话，不用 Caddy，把站点反向代理到 `http://127.0.0.1:3000`，带上 `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`，并在 `.env` 里设 `TRUST_PROXY=true`。`SITE_URL` 一定要写成读者实际访问的地址：生成的链接、RSS、分享图和 MCP 都用它。
+已经有 Nginx 的话，不用 Caddy，把站点反向代理到 `http://127.0.0.1:3000`，带上 `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`，并在 `.env` 里设 `TRUST_PROXY=true`。`SITE_URL` 写成你自己实际访问的地址。
 
-MCP 默认接受 `SITE_URL` 的主机以及 `localhost`、`127.0.0.1`、`[::1]`。额外主机用 `MCP_ALLOWED_HOSTS` 配置，以逗号分隔，例如 `extra.example:8443,[2001:db8::1]`。主机名不区分大小写，IPv6 必须加方括号；可带 0–65535 的十进制端口，匹配时忽略端口。包含路径、用户信息或非法端口的配置不会生效。`127.1` 等别名需要明确列入；此配置只影响 Host 校验，不扩大浏览器 Origin 许可。
 
-前面有 Nginx、CDN 这类缓存时，要遵循应用返回的缓存期限（`Cache-Control`）：公开网页、导航数据、API、RSS、条目 Markdown、报告分享图、站点地图，以及接入说明 `/api/v1/agent` 和 `/openapi-v1.json`（五分钟到期后也要重新验证），都不要另加更长的缓存期，不要在到期后离线返回旧内容，也不要在转发旧响应时重新起算它的寿命；不要让代理和 CDN 叠加缓存动态内容。框架不代管自建站的 CDN，也不替它清缓存。
+工作台和后台的所有响应都是 `Cache-Control: no-store`。用 Nginx、CDN 时不要缓存 `/studio`、`/admin` 和 `/api/`，也不要让代理把旧页面离线返回；公开阅读页已经下线，没有需要缓存的读者页面。
 
 ### 更新
+
+**公开站下线（WCH-33）**：`/` 只跳转到 `/studio`，公开阅读页、RSS、API v1、MCP、`llms.txt`、站点地图、`robots.txt`、manifest、分享图和图标都不再提供，相关请求返回 404。数据库结构和已有内容不变，不需要迁移；`wc_` 私有数据本来就没有进入这些出口。升级后确认反代或 CDN 不再缓存这些地址，并用 `node scripts/smoke.ts --base <地址>` 检查。
 
 正文原生视频修复会为已有可用视频补播放控件，并去掉空播放器，不写回文章、不调用模型。旧版清洗时已经丢弃的媒体地址无法从存档恢复；升级不批量重新抽取，已有成功正文会跳过抽取，内容哈希相同时重新抽取也可能保留原 HTML。后续新正文按[信源说明](sources.md)保留原生视频，文件继续由浏览器直连原站，签名地址可能过期。
 

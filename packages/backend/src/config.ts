@@ -44,9 +44,6 @@ export const config = {
   egressProxyUrl: env.EGRESS_PROXY_URL || null,
   allowPrivateNetworkFetch: bool("ALLOW_PRIVATE_NETWORK_FETCH", false),
   feishuContentPushEnabled: bool("FEISHU_CONTENT_PUSH_ENABLED", false),
-  indexNowSubmitEnabled: bool("INDEXNOW_SUBMIT_ENABLED", false),
-  /** IndexNow key (32 hex characters); without one nothing is submitted and no key file is served. */
-  indexNowKey: /^[0-9a-f]{32}$/.test(env.INDEXNOW_KEY ?? "") ? env.INDEXNOW_KEY! : null,
   /** Optional directory of per-group dotenv files (models.env, collectors.env, …); normally everything is in .env. */
   credentialsDir: credentialsDir ? path.resolve(REPO_ROOT, credentialsDir) : null,
   dataDir: str("AIHOT_DATA_DIR", path.join(REPO_ROOT, ".data")),

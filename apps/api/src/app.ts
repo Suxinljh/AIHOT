@@ -5,17 +5,9 @@ import { OAUTH_PROBE_PATHS, resolveRedirect } from "@aihot/contracts/http-policy
 import { sql } from "@aihot/backend/db";
 import { logError } from "@aihot/backend/lib/log-error";
 import { serverModules } from "@aihot/backend/modules";
-import { registerSite } from "./routes/site.ts";
-import { registerOg } from "./routes/og.ts";
 import { registerAdminAuth } from "./routes/admin-auth.ts";
 import { registerAdmin } from "./routes/admin.ts";
 import { registerIngest } from "./routes/ingest.ts";
-import { registerV1, registerV1Fallbacks } from "./routes/v1.ts";
-import { registerAgent } from "./routes/agent.ts";
-import { registerMedia } from "./routes/media.ts";
-import { registerFeeds } from "./routes/feeds.ts";
-import { registerStatic } from "./routes/static.ts";
-import { registerMcp } from "./routes/mcp.ts";
 import { sendProblem } from "./http/respond.ts";
 
 /** Quiet ordinary access logs, while keeping errors that happen after the route has returned. */
@@ -89,19 +81,10 @@ export async function buildApp(): Promise<FastifyInstance> {
     return reply.header("Cache-Control", "no-store").send({ ok: true, db: "ok", ms: Date.now() - started, release: process.env.AIHOT_RELEASE ?? "dev" });
   });
 
-  registerSite(app);
-  registerOg(app);
   registerAdminAuth(app);
   registerAdmin(app);
   registerIngest(app);
-  registerV1(app);
-  registerAgent(app);
-  registerMedia(app);
-  registerFeeds(app);
-  registerStatic(app);
-  registerMcp(app);
   for (const m of serverModules()) m.http?.(app);
-  registerV1Fallbacks(app);
 
   app.setNotFoundHandler((req, reply) => {
     if ((req.raw.url ?? "").startsWith("/api/")) {

@@ -183,10 +183,11 @@ export default function StudioBrands() {
                   </div>
                 </div>
 
-                <p className="mt-3 line-clamp-2 text-[12.5px] leading-relaxed text-ink-3">
+                {/* Two lines are reserved for aliases so cards line up; the tags below never shrink or get clipped. */}
+                <p className="mt-3 line-clamp-2 min-h-[2.7em] shrink-0 break-words text-[12.5px] leading-relaxed text-ink-3">
                   {brand.aliases.length ? `别名：${brand.aliases.join("、")}` : "还没有别名"}
                 </p>
-                <div className="mt-3 flex flex-wrap gap-1.5"><IndustryBadges industries={brand.industries} /></div>
+                <div className="mt-3 flex shrink-0 flex-wrap gap-1.5"><IndustryBadges industries={brand.industries} /></div>
                 <div className="mt-auto flex items-center justify-between gap-3 border-t border-line-soft pt-3 text-[11.5px] text-ink-4">
                   <span className="truncate">{brand.website ? hostOf(brand.website) : brand.entityId ?? "未关联实体"}</span>
                   <span className="mono shrink-0">{brand.id}</span>
