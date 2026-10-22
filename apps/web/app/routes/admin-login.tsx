@@ -67,11 +67,6 @@ export default function AdminLogin() {
             </a>
           )}
         </form>
-        <p className="mt-6 text-center text-[12px] text-ink-4">
-          <a href="/all" className="hover:text-ink-2">
-            浏览公开内容
-          </a>
-        </p>
       </div>
     </div>
   );
