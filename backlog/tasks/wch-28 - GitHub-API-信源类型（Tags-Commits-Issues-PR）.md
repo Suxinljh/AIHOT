@@ -1,10 +1,10 @@
 ---
 id: WCH-28
 title: GitHub API 信源类型（Tags/Commits/Issues/PR）
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-21T03:12:00Z'
-updated_date: '2026-10-21T03:12:00Z'
+updated_date: '2026-10-22T05:34:00Z'
 labels:
   - backend
   - source
@@ -29,3 +29,9 @@ ordinal: 40000
 - [ ] #2 默认关闭高频通知，限流和失败可诊断、可重试
 - [ ] #3 迁移、类型、配置、文档和测试同步更新
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. 新增 kind=github 与迁移（放宽 CHECK）。2. sources/github.ts：tags/commits/issues/pulls、ETag、限流错误。3. collect/调度/热度 SQL、后台表单与判重、文档。4. 单测覆盖四种 feed、304、限流和非法 repo。
+<!-- SECTION:PLAN:END -->
