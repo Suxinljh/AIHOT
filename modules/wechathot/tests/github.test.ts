@@ -64,6 +64,36 @@ test("an unknown owner is a third party, not an official organisation", async ()
   assert.match(owner.reason, /没有品牌/);
 });
 
+test("the check endpoint returns the repository and its brand match in one answer", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL | Request) => {
+    const url = String(input);
+    if (url.includes("/releases")) return new Response(JSON.stringify([]), { status: 200, headers: { "content-type": "application/json" } });
+    return new Response(JSON.stringify({
+      full_name: `gh-${T}/toolkit`,
+      html_url: `https://github.com/gh-${T}/toolkit`,
+      description: "官方工具",
+      private: false,
+      archived: false,
+      fork: false,
+      default_branch: "main",
+      pushed_at: "2026-05-01T10:00:00.000Z",
+      stargazers_count: 10,
+      owner: { login: `gh-${T}`, type: "Organization" },
+    }), { status: 200, headers: { "content-type": "application/json" } });
+  }) as typeof fetch;
+  try {
+    const response = await api("POST", "/api/studio/sources/github/check", { url: `https://github.com/gh-${T}/toolkit` });
+    assert.equal(response.statusCode, 200, response.body);
+    const body = response.json() as { repo: { fullName: string }; owner: { official: boolean; brandId: string | null } };
+    assert.equal(body.repo.fullName, `gh-${T}/toolkit`, "the page reads repo and owner separately");
+    assert.equal(body.owner.official, true);
+    assert.equal(body.owner.brandId, brandId);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("the source plan is an ordinary RSS source for the releases feed", () => {
   const plan = releaseSourcePlan({
     owner: "OpenAI",

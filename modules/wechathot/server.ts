@@ -27,7 +27,7 @@ import { markdown, markdownLosesEvidence, markdownToDoc, plainText } from "./exp
 import { queueArticleStep, queueWriteStep } from "./writing.ts";
 import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
-import { checkGithubRepo, subscribeGithubReleases } from "./github.ts";
+import { checkGithubRepo, githubOwner, subscribeGithubReleases } from "./github.ts";
 import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
 import { renderWechatHtml } from "./wechat-html.ts";
 import { readUpload, saveUpload } from "./uploads.ts";
@@ -482,7 +482,9 @@ export const wechatHotServer = defineServerModule({
     // GitHub repositories: check one, then subscribe to its releases as an RSS source.
     app.post("/api/studio/sources/github/check", studioHandler(async (req) => {
       const url = (req.body as { url?: unknown } | undefined)?.url;
-      return await checkGithubRepo(typeof url === "string" ? url : "");
+      const repo = await checkGithubRepo(typeof url === "string" ? url : "");
+      // The page shows the repository and the brand it might belong to in one card.
+      return { repo, owner: await githubOwner(repo.owner) };
     }));
 
     app.post("/api/studio/sources/github", studioHandler(async (req, reply, admin) => {
