@@ -87,6 +87,8 @@ export interface StudioArticle {
   format: Record<string, unknown>;
   /** The review checklist and per-item decisions; never mixed into the body. */
   review: ArticleReview;
+  /** The day the editor plans to publish it; null means unscheduled. */
+  plannedFor: string | null;
   /** The state of the last writing step: generating, done or failed with the reason. */
   writingState: { step: string; status: "pending" | "done" | "failed"; error: string | null; at: string } | null;
   version: number;
@@ -129,6 +131,7 @@ interface ArticleRow {
   style_preset_id: string | null;
   format: Record<string, unknown>;
   review: Record<string, unknown>;
+  planned_for: Date | null;
   writing_state: { step: string; status: "pending" | "done" | "failed"; error: string | null; at: string } | null;
   version: number;
   created_at: Date;
@@ -153,6 +156,7 @@ function articleView(row: ArticleRow, dropped: string[]): StudioArticle {
     stylePresetId: row.style_preset_id,
     format: row.format ?? {},
     review: (row.review ?? { items: [], generatedAt: null }) as unknown as ArticleReview,
+    plannedFor: row.planned_for?.toISOString() ?? null,
     writingState: row.writing_state ?? null,
     version: row.version,
     createdAt: row.created_at.toISOString(),
@@ -174,7 +178,7 @@ async function droppedSources(articleId: number): Promise<string[]> {
 export async function articleDetail(id: number): Promise<StudioArticle | null> {
   const [row] = await sql<ArticleRow[]>`
     SELECT a.id, a.topic_id, a.type, a.title, a.status, a.mode, a.angle, a.outline, a.content, a.title_options,
-           a.style_preset_id, a.format, a.review, a.writing_state, a.version, a.created_at, a.updated_at, t.angle AS topic_angle,
+           a.style_preset_id, a.format, a.review, a.planned_for, a.writing_state, a.version, a.created_at, a.updated_at, t.angle AS topic_angle,
            s.public_id::text AS topic_public_id
     FROM wc_articles a
     LEFT JOIN wc_topics t ON t.id = a.topic_id
@@ -264,7 +268,7 @@ export async function createArticleFromTopic(topicId: number, mode: "quick" | "s
             ${mode}, ${topic.angle}, ${sql.json(outline as never)}, ${topic.style_preset_id},
             ${sql.json((formatPreset?.format ?? {}) as never)})
     RETURNING id, topic_id, type, title, status, mode, angle, outline, content, title_options, style_preset_id,
-              format, version, created_at, updated_at`;
+              format, planned_for, version, created_at, updated_at`;
   await sql`
     INSERT INTO wc_article_versions (article_id, version, title, content, reason)
     VALUES (${row!.id}, 1, ${row!.title}, ${sql.json(row!.content as never)}, '创建稿件')`;
@@ -508,11 +512,12 @@ export async function updateReview(articleId: number, items: ReviewItem[]): Prom
 
 export async function updateArticle(
   id: number,
-  patch: { title?: string; content?: ArticleDoc; status?: "draft" | "review" | "done" | "archived" },
+  patch: { title?: string; content?: ArticleDoc; status?: "draft" | "review" | "done" | "archived"; plannedFor?: string | null },
 ): Promise<StudioArticle | null> {
   const [before] = await sql<ArticleRow[]>`
     SELECT a.id, a.topic_id, a.type, a.title, a.status, a.mode, a.angle, a.outline, a.content, a.title_options,
-           a.style_preset_id, a.writing_state, a.version, a.created_at, a.updated_at, NULL::text AS topic_angle, NULL::text AS topic_public_id
+           a.style_preset_id, a.format, a.review, a.planned_for, a.writing_state, a.version, a.created_at, a.updated_at,
+           NULL::text AS topic_angle, NULL::text AS topic_public_id
     FROM wc_articles a WHERE a.id = ${id}`;
   if (!before) return null;
   const version = Number(before.version) + 1;
@@ -523,6 +528,7 @@ export async function updateArticle(
         title = ${patch.title === undefined ? before.title : patch.title},
         content = ${sql.json(content as never)},
         status = ${patch.status ?? before.status},
+        planned_for = ${patch.plannedFor === undefined ? before.planned_for : patch.plannedFor === null ? null : new Date(patch.plannedFor)},
         version = ${version}, updated_at = now()
       WHERE id = ${id}`;
     await tx`

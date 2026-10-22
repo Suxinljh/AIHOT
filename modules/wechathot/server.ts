@@ -31,6 +31,7 @@ import { checkGithubRepo, subscribeGithubReleases } from "./github.ts";
 import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
 import { renderWechatHtml } from "./wechat-html.ts";
 import { readUpload, saveUpload } from "./uploads.ts";
+import { currentMonth, loadCalendar } from "./calendar.ts";
 import type {
   ColumnType,
   PresetKind,
@@ -158,6 +159,11 @@ export const wechatHotServer = defineServerModule({
 
     }));
 
+    // The publishing calendar: what is scheduled this month, topics and drafts together.
+    app.get("/api/studio/calendar", studioHandler(async (req) => {
+      return await loadCalendar(queryValue(req, "month") ?? currentMonth());
+    }));
+
     // The hot list: filters, five orderings and the facet counts all come from one read model.
     app.get("/api/studio/events", studioHandler(async (req) => listStudioEvents(req.query)));
 
@@ -276,8 +282,10 @@ export const wechatHotServer = defineServerModule({
     app.patch("/api/studio/articles/:id", studioHandler(async (req, reply) => {
       const body = (req.body ?? {}) as Record<string, unknown>;
       const status = body.status;
-      const patch: { title?: string; content?: never; status?: "draft" | "review" | "done" | "archived" } = {};
+      const patch: { title?: string; content?: never; status?: "draft" | "review" | "done" | "archived"; plannedFor?: string | null } = {};
       if (typeof body.title === "string") patch.title = body.title;
+      if (body.plannedFor === null) patch.plannedFor = null;
+      else if (typeof body.plannedFor === "string") patch.plannedFor = body.plannedFor;
       if (body.content && typeof body.content === "object") patch.content = body.content as never;
       if (typeof status === "string" && ["draft", "review", "done", "archived"].includes(status)) {
         patch.status = status as "draft" | "review" | "done" | "archived";

@@ -264,6 +264,8 @@ export interface StudioTopic {
   snapshot: TopicSnapshot | null;
   /** The candidate angles, the outline and the state of the last writing step. */
   writing: TopicWriting | null;
+  /** The day the editor plans to publish it; null means unscheduled. */
+  plannedFor: string | null;
   createdAt: string;
   updatedAt: string;
   /** The preset this topic chose for itself; null means it follows its column. */

@@ -56,6 +56,9 @@ export default function StudioArticles() {
             资讯与洞察草稿、写作进度和排版入口集中在这里。打开一篇继续写，或在选题页创建新稿。
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <Link to="/studio/calendar" className="text-[12.5px] text-accent hover:underline">发布日历</Link>
+        </div>
         <form
           className="flex w-full max-w-[380px] items-end gap-2"
           onSubmit={(event) => {

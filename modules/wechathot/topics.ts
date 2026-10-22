@@ -74,6 +74,8 @@ const UpdateSchema = z
     status: z.enum(TOPIC_STATUSES as [TopicStatus, ...TopicStatus[]]).optional(),
     /** The outline the editor rewrote by hand. */
     outline: OutlineSchema.nullable().optional(),
+    /** The day the editor plans to publish it; null clears the plan. */
+    plannedFor: z.string().datetime({ offset: true }).nullable().optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, "请至少指定一项内容");
@@ -88,6 +90,7 @@ interface TopicRow {
   source_snapshot: TopicSnapshot | null;
   style_preset_id: string | null;
   writing: TopicWriting | null;
+  planned_for: Date | null;
   created_at: Date;
   updated_at: Date;
   public_id: string | null;
@@ -115,6 +118,7 @@ async function topicView(row: TopicRow): Promise<StudioTopic> {
     notes: row.notes,
     snapshot: row.source_snapshot ?? null,
     writing: row.writing ?? null,
+    plannedFor: row.planned_for?.toISOString() ?? null,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
     stylePresetId: row.style_preset_id,
@@ -134,7 +138,7 @@ async function topicView(row: TopicRow): Promise<StudioTopic> {
 
 const SELECT_TOPIC = sql`
   SELECT t.id, t.story_id, t.angle, t.column_type, t.status, t.notes, t.source_snapshot, t.style_preset_id, t.writing,
-         t.created_at, t.updated_at, s.public_id::text AS public_id, s.title AS event_title,
+         t.planned_for, t.created_at, t.updated_at, s.public_id::text AS public_id, s.title AS event_title,
          m.verification_status, m.heat, m.editorial_score, m.latest_at
   FROM wc_topics t
   LEFT JOIN stories s ON s.id = t.story_id
@@ -221,7 +225,7 @@ export async function createTopic(input: unknown, actor: string): Promise<Studio
   const [row] = await sql<TopicRow[]>`
     INSERT INTO wc_topics (story_id, angle, column_type, status, notes, source_snapshot)
     VALUES (${draft.storyId}, ${draft.angle ?? null}, ${draft.columnType ?? "news"}, 'pending', ${draft.notes ?? null}, ${sql.json(snapshot as never)})
-    RETURNING id, story_id, angle, column_type, status, notes, source_snapshot, style_preset_id, writing, created_at, updated_at`;
+    RETURNING id, story_id, angle, column_type, status, notes, source_snapshot, style_preset_id, writing, planned_for, created_at, updated_at`;
   await audit(actor, "topic.create", `topic:${row!.id}`, draft.angle ?? null, null, { storyId: draft.storyId, columnType: row!.column_type }, { db: sql });
   return await topicView({ ...row!, public_id: null, event_title: snapshot.title, verification_status: null, heat: null, editorial_score: null, latest_at: null });
 }
@@ -230,7 +234,7 @@ export async function createTopic(input: unknown, actor: string): Promise<Studio
 async function lockTopic(tx: Db, id: number): Promise<TopicRow | null> {
   const [row] = await tx<TopicRow[]>`
     SELECT t.id, t.story_id, t.angle, t.column_type, t.status, t.notes, t.source_snapshot, t.style_preset_id, t.writing,
-           t.created_at, t.updated_at, NULL::text AS public_id, NULL::text AS event_title,
+           t.planned_for, t.created_at, t.updated_at, NULL::text AS public_id, NULL::text AS event_title,
            NULL::text AS verification_status, NULL::numeric AS heat, NULL::numeric AS editorial_score,
            NULL::timestamptz AS latest_at
     FROM wc_topics t
@@ -256,11 +260,12 @@ export async function updateTopic(id: number, input: unknown, actor: string): Pr
         column_type = ${patch.columnType ?? locked.column_type},
         notes = ${patch.notes === undefined ? locked.notes : patch.notes},
         status = ${patch.status ?? locked.status},
+        planned_for = ${patch.plannedFor === undefined ? locked.planned_for : patch.plannedFor === null ? null : new Date(patch.plannedFor)},
         writing = CASE WHEN ${patch.outline === undefined} THEN writing
                        ELSE coalesce(writing, '{}'::jsonb) || ${sql.json({ outline: patch.outline } as never)} END,
         updated_at = now()
       WHERE id = ${id}
-      RETURNING id, story_id, angle, column_type, status, notes, source_snapshot, style_preset_id, writing, created_at, updated_at`;
+      RETURNING id, story_id, angle, column_type, status, notes, source_snapshot, style_preset_id, writing, planned_for, created_at, updated_at`;
     await audit(actor, "topic.update", `topic:${id}`, patch.status && patch.status !== before.status ? `状态 ${TOPIC_STATUS_LABELS[before.status]} → ${TOPIC_STATUS_LABELS[patch.status]}` : null, before, after, { db: tx });
     return await topicView({
       ...after!,
@@ -286,7 +291,7 @@ export async function refreshTopicSnapshot(id: number, actor: string): Promise<S
     const [after] = await tx<TopicRow[]>`
       UPDATE wc_topics SET source_snapshot = ${sql.json(snapshot as never)}, updated_at = now()
       WHERE id = ${id}
-      RETURNING id, story_id, angle, column_type, status, notes, source_snapshot, style_preset_id, writing, created_at, updated_at`;
+      RETURNING id, story_id, angle, column_type, status, notes, source_snapshot, style_preset_id, writing, planned_for, created_at, updated_at`;
     await audit(actor, "topic.snapshot", `topic:${id}`, "刷新来源快照", before.source_snapshot, snapshot, { db: tx });
     return await topicView({
       ...after!,

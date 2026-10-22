@@ -61,6 +61,9 @@ export default function StudioTopics() {
             把值得写的事件变成有角度、有来源、有状态的创作任务。
           </p>
         </div>
+        <div className="flex flex-col items-end gap-2">
+          <Link to="/studio/calendar" className="text-[12.5px] text-accent hover:underline">发布日历</Link>
+        </div>
         <form
           className="flex w-full max-w-[420px] items-end gap-2"
           onSubmit={(event) => {
