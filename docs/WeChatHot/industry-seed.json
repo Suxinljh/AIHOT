@@ -1,0 +1,1636 @@
+{
+  "$comment": "由 docs/WeChatHot/industry-seed.md 解析，供 WCH-35/36 使用；重点=是 表示优先监测。",
+  "industries": {
+    "auto": {
+      "title": "汽车（39 条）",
+      "brands": [
+        {
+          "name": "比亚迪",
+          "englishName": "BYD",
+          "aliases": [
+            "比亚迪汽车",
+            "BYD Auto"
+          ],
+          "products": [
+            "王朝",
+            "海洋",
+            "腾势",
+            "仰望",
+            "方程豹"
+          ],
+          "website": "byd.com",
+          "focus": true
+        },
+        {
+          "name": "特斯拉",
+          "englishName": "Tesla",
+          "aliases": [
+            "特斯拉汽车",
+            "Tesla Motors"
+          ],
+          "products": [
+            "Model 3",
+            "Model Y",
+            "Model S",
+            "Model X",
+            "Cybertruck",
+            "FSD"
+          ],
+          "website": "tesla.com",
+          "focus": true
+        },
+        {
+          "name": "理想汽车",
+          "englishName": "Li Auto",
+          "aliases": [
+            "理想",
+            "理想汽车公司"
+          ],
+          "products": [
+            "L系列",
+            "i系列",
+            "MEGA",
+            "理想同学"
+          ],
+          "website": "lixiang.com",
+          "focus": true
+        },
+        {
+          "name": "小鹏汽车",
+          "englishName": "XPENG",
+          "aliases": [
+            "小鹏",
+            "Xpeng Motors"
+          ],
+          "products": [
+            "MONA",
+            "P7",
+            "G6",
+            "G9",
+            "X9"
+          ],
+          "website": "xiaopeng.com",
+          "focus": true
+        },
+        {
+          "name": "蔚来",
+          "englishName": "NIO",
+          "aliases": [
+            "蔚来汽车",
+            "蔚来公司"
+          ],
+          "products": [
+            "乐道",
+            "萤火虫",
+            "ET系列",
+            "ES系列",
+            "EC系列"
+          ],
+          "website": "nio.com",
+          "focus": true
+        },
+        {
+          "name": "零跑汽车",
+          "englishName": "Leapmotor",
+          "aliases": [
+            "零跑",
+            "零跑科技"
+          ],
+          "products": [
+            "A系列",
+            "B系列",
+            "C系列",
+            "D系列",
+            "T03"
+          ],
+          "website": "leapmotor.cn",
+          "focus": true
+        },
+        {
+          "name": "小米汽车",
+          "englishName": "Xiaomi EV",
+          "aliases": [
+            "小米造车",
+            "小米电动车"
+          ],
+          "products": [
+            "SU7",
+            "YU7",
+            "Xiaomi HyperOS"
+          ],
+          "website": "mi.com",
+          "focus": true
+        },
+        {
+          "name": "吉利汽车",
+          "englishName": "Geely Auto",
+          "aliases": [
+            "吉利",
+            "吉利汽车集团"
+          ],
+          "products": [
+            "吉利银河",
+            "中国星",
+            "缤越",
+            "博越"
+          ],
+          "website": "geely.com",
+          "focus": true
+        },
+        {
+          "name": "极氪",
+          "englishName": "ZEEKR",
+          "aliases": [
+            "极氪汽车",
+            "极氪智能科技"
+          ],
+          "products": [
+            "001",
+            "007",
+            "7X",
+            "009",
+            "MIX"
+          ],
+          "website": "zeekr.com",
+          "focus": true
+        },
+        {
+          "name": "领克",
+          "englishName": "Lynk & Co",
+          "aliases": [
+            "领克汽车",
+            "LynkCo"
+          ],
+          "products": [
+            "01",
+            "03",
+            "06",
+            "07",
+            "08",
+            "09",
+            "Z10",
+            "Z20"
+          ],
+          "website": "lynkco.com",
+          "focus": false
+        },
+        {
+          "name": "长安汽车",
+          "englishName": "CHANGAN",
+          "aliases": [
+            "长安",
+            "重庆长安"
+          ],
+          "products": [
+            "长安启源",
+            "深蓝汽车",
+            "阿维塔",
+            "UNI系列"
+          ],
+          "website": "changan.com.cn",
+          "focus": true
+        },
+        {
+          "name": "深蓝汽车",
+          "englishName": "DEEPAL",
+          "aliases": [
+            "深蓝",
+            "长安深蓝"
+          ],
+          "products": [
+            "S05",
+            "S07",
+            "S09",
+            "L07",
+            "L06",
+            "G318"
+          ],
+          "website": "deepal.com.cn",
+          "focus": false
+        },
+        {
+          "name": "阿维塔",
+          "englishName": "AVATR",
+          "aliases": [
+            "阿维塔汽车",
+            "阿维塔科技"
+          ],
+          "products": [
+            "阿维塔06",
+            "07",
+            "11",
+            "12"
+          ],
+          "website": "avatr.com",
+          "focus": true
+        },
+        {
+          "name": "奇瑞汽车",
+          "englishName": "Chery",
+          "aliases": [
+            "奇瑞",
+            "奇瑞集团"
+          ],
+          "products": [
+            "瑞虎",
+            "艾瑞泽",
+            "星途",
+            "捷途",
+            "iCAR"
+          ],
+          "website": "chery.cn",
+          "focus": true
+        },
+        {
+          "name": "捷途汽车",
+          "englishName": "JETOUR",
+          "aliases": [
+            "捷途",
+            "奇瑞捷途"
+          ],
+          "products": [
+            "旅行者",
+            "山海",
+            "自由者"
+          ],
+          "website": "jetour.com.cn",
+          "focus": false
+        },
+        {
+          "name": "长城汽车",
+          "englishName": "Great Wall Motor",
+          "aliases": [
+            "长城",
+            "GWM"
+          ],
+          "products": [
+            "哈弗",
+            "魏牌",
+            "欧拉",
+            "坦克",
+            "长城炮"
+          ],
+          "website": "gwm.com.cn",
+          "focus": true
+        },
+        {
+          "name": "广汽集团",
+          "englishName": "GAC Group",
+          "aliases": [
+            "广汽",
+            "广州汽车集团"
+          ],
+          "products": [
+            "广汽传祺",
+            "广汽埃安",
+            "昊铂"
+          ],
+          "website": "gac.com.cn",
+          "focus": true
+        },
+        {
+          "name": "广汽埃安",
+          "englishName": "GAC AION",
+          "aliases": [
+            "埃安",
+            "AION"
+          ],
+          "products": [
+            "AION系列",
+            "昊铂",
+            "霸王龙"
+          ],
+          "website": "aion.com.cn",
+          "focus": false
+        },
+        {
+          "name": "赛力斯",
+          "englishName": "SERES",
+          "aliases": [
+            "赛力斯集团",
+            "赛力斯汽车"
+          ],
+          "products": [
+            "问界合作车型",
+            "赛力斯超级工厂"
+          ],
+          "website": "seres.cn",
+          "focus": true
+        },
+        {
+          "name": "鸿蒙智行",
+          "englishName": "HIMA",
+          "aliases": [
+            "华为鸿蒙智行",
+            "鸿蒙智能汽车技术生态联盟"
+          ],
+          "products": [
+            "问界",
+            "智界",
+            "享界",
+            "尊界",
+            "尚界"
+          ],
+          "website": "hima.auto",
+          "focus": true
+        },
+        {
+          "name": "上汽集团",
+          "englishName": "SAIC Motor",
+          "aliases": [
+            "上汽",
+            "上海汽车集团"
+          ],
+          "products": [
+            "荣威",
+            "名爵MG",
+            "智己汽车",
+            "上汽大通"
+          ],
+          "website": "saicmotor.com",
+          "focus": false
+        },
+        {
+          "name": "智己汽车",
+          "englishName": "IM Motors",
+          "aliases": [
+            "智己",
+            "IM汽车"
+          ],
+          "products": [
+            "L6",
+            "L7",
+            "LS6",
+            "LS7"
+          ],
+          "website": "immotors.com",
+          "focus": false
+        },
+        {
+          "name": "五菱汽车",
+          "englishName": "Wuling",
+          "aliases": [
+            "五菱",
+            "上汽通用五菱"
+          ],
+          "products": [
+            "宏光MINIEV",
+            "缤果",
+            "星光",
+            "宝骏"
+          ],
+          "website": "sgmw.com.cn",
+          "focus": true
+        },
+        {
+          "name": "红旗",
+          "englishName": "Hongqi",
+          "aliases": [
+            "一汽红旗",
+            "红旗汽车"
+          ],
+          "products": [
+            "H系列",
+            "E系列",
+            "金葵花",
+            "天工"
+          ],
+          "website": "hongqi.com.cn",
+          "focus": false
+        },
+        {
+          "name": "大众汽车",
+          "englishName": "Volkswagen",
+          "aliases": [
+            "大众",
+            "VW",
+            "德国大众"
+          ],
+          "products": [
+            "ID.系列",
+            "Golf",
+            "Passat",
+            "Tiguan"
+          ],
+          "website": "volkswagen.com.cn",
+          "focus": true
+        },
+        {
+          "name": "丰田汽车",
+          "englishName": "Toyota",
+          "aliases": [
+            "丰田",
+            "丰田中国"
+          ],
+          "products": [
+            "卡罗拉",
+            "凯美瑞",
+            "汉兰达",
+            "雷凌",
+            "bZ系列"
+          ],
+          "website": "toyota.com.cn",
+          "focus": false
+        },
+        {
+          "name": "本田汽车",
+          "englishName": "Honda",
+          "aliases": [
+            "本田",
+            "本田中国"
+          ],
+          "products": [
+            "雅阁",
+            "思域",
+            "CR-V",
+            "皓影",
+            "e:N系列"
+          ],
+          "website": "honda.com.cn",
+          "focus": false
+        },
+        {
+          "name": "日产汽车",
+          "englishName": "Nissan",
+          "aliases": [
+            "日产",
+            "日产中国"
+          ],
+          "products": [
+            "轩逸",
+            "天籁",
+            "奇骏",
+            "N系列",
+            "逍客"
+          ],
+          "website": "nissan.com.cn",
+          "focus": false
+        },
+        {
+          "name": "梅赛德斯-奔驰",
+          "englishName": "Mercedes-Benz",
+          "aliases": [
+            "奔驰",
+            "梅赛德斯",
+            "Mercedes"
+          ],
+          "products": [
+            "梅赛德斯-AMG",
+            "梅赛德斯-迈巴赫",
+            "G级",
+            "EQ系列"
+          ],
+          "website": "mercedes-benz.com.cn",
+          "focus": true
+        },
+        {
+          "name": "宝马",
+          "englishName": "BMW",
+          "aliases": [
+            "宝马汽车",
+            "BMW Group"
+          ],
+          "products": [
+            "BMW M",
+            "BMW i",
+            "MINI",
+            "X系列"
+          ],
+          "website": "bmw.com.cn",
+          "focus": true
+        },
+        {
+          "name": "奥迪",
+          "englishName": "Audi",
+          "aliases": [
+            "奥迪汽车",
+            "奥迪中国"
+          ],
+          "products": [
+            "Audi Sport",
+            "RS",
+            "e-tron",
+            "AUDI"
+          ],
+          "website": "audichina.cn",
+          "focus": true
+        },
+        {
+          "name": "保时捷",
+          "englishName": "Porsche",
+          "aliases": [
+            "保时捷汽车"
+          ],
+          "products": [
+            "911",
+            "Taycan",
+            "Cayenne",
+            "Macan",
+            "Panamera"
+          ],
+          "website": "porsche.com",
+          "focus": false
+        },
+        {
+          "name": "福特汽车",
+          "englishName": "Ford",
+          "aliases": [
+            "福特",
+            "福特中国"
+          ],
+          "products": [
+            "Mustang",
+            "Bronco",
+            "F-150",
+            "探险者"
+          ],
+          "website": "ford.com.cn",
+          "focus": false
+        },
+        {
+          "name": "现代汽车",
+          "englishName": "Hyundai",
+          "aliases": [
+            "现代",
+            "现代汽车集团"
+          ],
+          "products": [
+            "IONIQ",
+            "N高性能",
+            "途胜",
+            "伊兰特"
+          ],
+          "website": "hyundai.com",
+          "focus": false
+        },
+        {
+          "name": "起亚",
+          "englishName": "Kia",
+          "aliases": [
+            "起亚汽车",
+            "KIA Motors"
+          ],
+          "products": [
+            "EV系列",
+            "狮铂拓界",
+            "赛图斯"
+          ],
+          "website": "kia.com",
+          "focus": false
+        },
+        {
+          "name": "沃尔沃汽车",
+          "englishName": "Volvo Cars",
+          "aliases": [
+            "沃尔沃",
+            "富豪汽车"
+          ],
+          "products": [
+            "EX系列",
+            "XC系列",
+            "S系列"
+          ],
+          "website": "volvocars.com",
+          "focus": false
+        },
+        {
+          "name": "雷克萨斯",
+          "englishName": "Lexus",
+          "aliases": [
+            "凌志",
+            "雷克萨斯中国"
+          ],
+          "products": [
+            "ES",
+            "RX",
+            "NX",
+            "LX",
+            "RZ"
+          ],
+          "website": "lexus.com.cn",
+          "focus": false
+        },
+        {
+          "name": "Rivian",
+          "englishName": "Rivian",
+          "aliases": [
+            "里维安",
+            "Rivian Automotive"
+          ],
+          "products": [
+            "R1T",
+            "R1S",
+            "R2",
+            "R3"
+          ],
+          "website": "rivian.com",
+          "focus": false
+        },
+        {
+          "name": "Lucid",
+          "englishName": "Lucid Motors",
+          "aliases": [
+            "路西德汽车",
+            "Lucid Group"
+          ],
+          "products": [
+            "Lucid Air",
+            "Lucid Gravity"
+          ],
+          "website": "lucidmotors.com",
+          "focus": false
+        }
+      ]
+    },
+    "game": {
+      "title": "游戏（35 条）",
+      "brands": [
+        {
+          "name": "腾讯游戏",
+          "englishName": "Tencent Games",
+          "aliases": [
+            "腾讯游戏业务",
+            "Tencent Gaming"
+          ],
+          "products": [
+            "天美工作室群",
+            "光子工作室群",
+            "魔方工作室群",
+            "王者荣耀",
+            "和平精英",
+            "三角洲行动"
+          ],
+          "website": "game.qq.com",
+          "focus": true
+        },
+        {
+          "name": "拳头游戏",
+          "englishName": "Riot Games",
+          "aliases": [
+            "拳头",
+            "Riot"
+          ],
+          "products": [
+            "英雄联盟",
+            "无畏契约",
+            "云顶之弈",
+            "英雄联盟手游"
+          ],
+          "website": "riotgames.com",
+          "focus": true
+        },
+        {
+          "name": "网易游戏",
+          "englishName": "NetEase Games",
+          "aliases": [
+            "网易游戏事业部",
+            "网易互娱"
+          ],
+          "products": [
+            "梦幻西游",
+            "逆水寒",
+            "永劫无间",
+            "阴阳师",
+            "第五人格"
+          ],
+          "website": "neteasegames.com",
+          "focus": true
+        },
+        {
+          "name": "米哈游",
+          "englishName": "miHoYo",
+          "aliases": [
+            "米哈游游戏"
+          ],
+          "products": [
+            "HoYoverse（国际品牌）",
+            "原神",
+            "崩坏：星穹铁道",
+            "绝区零",
+            "崩坏3",
+            "未定事件簿"
+          ],
+          "website": "mihoyo.com",
+          "focus": true
+        },
+        {
+          "name": "叠纸游戏",
+          "englishName": "Papergames",
+          "aliases": [
+            "叠纸",
+            "上海叠纸"
+          ],
+          "products": [
+            "恋与深空",
+            "闪耀暖暖",
+            "无限暖暖",
+            "恋与制作人",
+            "万物契约"
+          ],
+          "website": "papegames.com",
+          "focus": true
+        },
+        {
+          "name": "鹰角网络",
+          "englishName": "Hypergryph",
+          "aliases": [
+            "鹰角",
+            "鹰角游戏"
+          ],
+          "products": [
+            "明日方舟",
+            "明日方舟：终末地",
+            "来自星尘",
+            "泡姆泡姆"
+          ],
+          "website": "hypergryph.com",
+          "focus": true
+        },
+        {
+          "name": "库洛游戏",
+          "englishName": "KURO GAMES",
+          "aliases": [
+            "库洛",
+            "库洛科技"
+          ],
+          "products": [
+            "鸣潮",
+            "战双帕弥什"
+          ],
+          "website": "kurogames.com",
+          "focus": true
+        },
+        {
+          "name": "游戏科学",
+          "englishName": "Game Science",
+          "aliases": [
+            "游戏科学公司",
+            "GameScience"
+          ],
+          "products": [
+            "黑神话：悟空",
+            "黑神话系列",
+            "战争艺术：赤潮"
+          ],
+          "website": "gamesci.cn",
+          "focus": true
+        },
+        {
+          "name": "心动网络",
+          "englishName": "XD Games",
+          "aliases": [
+            "心动",
+            "心动公司",
+            "XD"
+          ],
+          "products": [
+            "TapTap",
+            "心动小镇",
+            "香肠派对",
+            "火炬之光：无限"
+          ],
+          "website": "xd.com",
+          "focus": true
+        },
+        {
+          "name": "三七互娱",
+          "englishName": "37 Interactive Entertainment",
+          "aliases": [
+            "37互娱"
+          ],
+          "products": [
+            "三七游戏",
+            "37手游",
+            "37GAMES",
+            "寻道大千",
+            "斗罗大陆：魂师对决"
+          ],
+          "website": "37.com",
+          "focus": false
+        },
+        {
+          "name": "莉莉丝游戏",
+          "englishName": "Lilith Games",
+          "aliases": [
+            "莉莉丝",
+            "Lilith"
+          ],
+          "products": [
+            "万国觉醒",
+            "剑与远征",
+            "众神派对"
+          ],
+          "website": "lilithgames.com",
+          "focus": false
+        },
+        {
+          "name": "完美世界游戏",
+          "englishName": "Perfect World Games",
+          "aliases": [
+            "完美游戏",
+            "完美世界"
+          ],
+          "products": [
+            "诛仙",
+            "幻塔",
+            "完美世界",
+            "诛仙世界"
+          ],
+          "website": "wanmei.com",
+          "focus": false
+        },
+        {
+          "name": "盛趣游戏",
+          "englishName": "Shengqu Games",
+          "aliases": [
+            "盛趣",
+            "盛大游戏（旧称）"
+          ],
+          "products": [
+            "传奇",
+            "龙之谷",
+            "最终幻想14国服"
+          ],
+          "website": "shengqugames.com",
+          "focus": false
+        },
+        {
+          "name": "游族网络",
+          "englishName": "YOOZOO Games",
+          "aliases": [
+            "游族",
+            "游族游戏"
+          ],
+          "products": [
+            "少年三国志",
+            "三体游戏IP"
+          ],
+          "website": "yoozoo.com",
+          "focus": false
+        },
+        {
+          "name": "沐瞳科技",
+          "englishName": "MOONTON Games",
+          "aliases": [
+            "沐瞳",
+            "Moonton"
+          ],
+          "products": [
+            "Mobile Legends: Bang Bang",
+            "决胜巅峰"
+          ],
+          "website": "moonton.com",
+          "focus": false
+        },
+        {
+          "name": "哔哩哔哩游戏",
+          "englishName": "Bilibili Games",
+          "aliases": [
+            "B站游戏",
+            "Bilibili游戏"
+          ],
+          "products": [
+            "游戏发行",
+            "游戏联运",
+            "FGO国服"
+          ],
+          "website": "game.bilibili.com",
+          "focus": false
+        },
+        {
+          "name": "Valve",
+          "englishName": "Valve",
+          "aliases": [
+            "维尔福",
+            "V社"
+          ],
+          "products": [
+            "Steam",
+            "Counter-Strike 2",
+            "Dota 2",
+            "Steam Deck"
+          ],
+          "website": "valvesoftware.com",
+          "focus": true
+        },
+        {
+          "name": "Epic Games",
+          "englishName": "Epic Games",
+          "aliases": [
+            "Epic",
+            "Epic游戏"
+          ],
+          "products": [
+            "堡垒之夜",
+            "虚幻引擎",
+            "Epic游戏商城"
+          ],
+          "website": "epicgames.com",
+          "focus": true
+        },
+        {
+          "name": "暴雪娱乐",
+          "englishName": "Blizzard Entertainment",
+          "aliases": [
+            "暴雪",
+            "Blizzard"
+          ],
+          "products": [
+            "魔兽世界",
+            "暗黑破坏神",
+            "守望先锋",
+            "炉石传说"
+          ],
+          "website": "blizzard.com",
+          "focus": true
+        },
+        {
+          "name": "任天堂",
+          "englishName": "Nintendo",
+          "aliases": [
+            "老任",
+            "任天堂公司"
+          ],
+          "products": [
+            "Switch",
+            "Switch 2",
+            "马力欧",
+            "塞尔达传说",
+            "宝可梦（关联IP）"
+          ],
+          "website": "nintendo.com",
+          "focus": true
+        },
+        {
+          "name": "PlayStation",
+          "englishName": "PlayStation",
+          "aliases": [
+            "索尼PlayStation",
+            "PS",
+            "索尼互动娱乐"
+          ],
+          "products": [
+            "PS5",
+            "PlayStation Studios",
+            "PS Plus",
+            "Astro Bot"
+          ],
+          "website": "playstation.com",
+          "focus": true
+        },
+        {
+          "name": "Xbox",
+          "englishName": "Xbox",
+          "aliases": [
+            "微软Xbox",
+            "Xbox游戏业务"
+          ],
+          "products": [
+            "Xbox Series X/S",
+            "Game Pass",
+            "Xbox Game Studios"
+          ],
+          "website": "xbox.com",
+          "focus": true
+        },
+        {
+          "name": "育碧",
+          "englishName": "Ubisoft",
+          "aliases": [
+            "育碧娱乐",
+            "UBI"
+          ],
+          "products": [
+            "刺客信条",
+            "孤岛惊魂",
+            "彩虹六号"
+          ],
+          "website": "ubisoft.com",
+          "focus": true
+        },
+        {
+          "name": "艺电",
+          "englishName": "Electronic Arts",
+          "aliases": [
+            "EA",
+            "EA Games"
+          ],
+          "products": [
+            "EA SPORTS",
+            "FC",
+            "Apex英雄",
+            "模拟人生",
+            "战地"
+          ],
+          "website": "ea.com",
+          "focus": true
+        },
+        {
+          "name": "Take-Two",
+          "englishName": "Take-Two Interactive",
+          "aliases": [
+            "T2",
+            "Take Two"
+          ],
+          "products": [
+            "Rockstar Games",
+            "2K",
+            "Zynga"
+          ],
+          "website": "take2games.com",
+          "focus": false
+        },
+        {
+          "name": "Rockstar Games",
+          "englishName": "Rockstar Games",
+          "aliases": [
+            "R星",
+            "Rockstar"
+          ],
+          "products": [
+            "侠盗猎车手",
+            "荒野大镖客",
+            "GTA 6"
+          ],
+          "website": "rockstargames.com",
+          "focus": true
+        },
+        {
+          "name": "卡普空",
+          "englishName": "Capcom",
+          "aliases": [
+            "CAPCOM",
+            "卡普空公司"
+          ],
+          "products": [
+            "生化危机",
+            "怪物猎人",
+            "街头霸王",
+            "鬼泣"
+          ],
+          "website": "capcom.com",
+          "focus": true
+        },
+        {
+          "name": "世嘉",
+          "englishName": "SEGA",
+          "aliases": [
+            "SEGA Games",
+            "世嘉游戏"
+          ],
+          "products": [
+            "索尼克",
+            "如龙",
+            "人中之龙",
+            "女神异闻录（Atlus）"
+          ],
+          "website": "sega.com",
+          "focus": false
+        },
+        {
+          "name": "万代南梦宫娱乐",
+          "englishName": "Bandai Namco Entertainment",
+          "aliases": [
+            "万代南梦宫",
+            "万南"
+          ],
+          "products": [
+            "艾尔登法环（发行）",
+            "铁拳",
+            "吃豆人",
+            "传说系列"
+          ],
+          "website": "bandainamcoent.com",
+          "focus": false
+        },
+        {
+          "name": "史克威尔艾尼克斯",
+          "englishName": "Square Enix",
+          "aliases": [
+            "SE",
+            "SE社",
+            "史艾"
+          ],
+          "products": [
+            "最终幻想",
+            "勇者斗恶龙",
+            "王国之心"
+          ],
+          "website": "square-enix.com",
+          "focus": false
+        },
+        {
+          "name": "科乐美",
+          "englishName": "KONAMI",
+          "aliases": [
+            "Konami Digital Entertainment",
+            "科乐美数字娱乐"
+          ],
+          "products": [
+            "合金装备",
+            "寂静岭",
+            "实况足球",
+            "游戏王"
+          ],
+          "website": "konami.com",
+          "focus": false
+        },
+        {
+          "name": "KRAFTON",
+          "englishName": "KRAFTON",
+          "aliases": [
+            "魁匠团",
+            "蓝洞（旧关联称谓）"
+          ],
+          "products": [
+            "PUBG",
+            "inZOI",
+            "PUBG Studios"
+          ],
+          "website": "krafton.com",
+          "focus": true
+        },
+        {
+          "name": "FromSoftware",
+          "englishName": "FromSoftware",
+          "aliases": [
+            "FS社",
+            "From Soft"
+          ],
+          "products": [
+            "艾尔登法环",
+            "装甲核心",
+            "黑暗之魂"
+          ],
+          "website": "fromsoftware.jp",
+          "focus": true
+        },
+        {
+          "name": "CD PROJEKT",
+          "englishName": "CD PROJEKT",
+          "aliases": [
+            "CDPR",
+            "波兰蠢驴（俗称）"
+          ],
+          "products": [
+            "CD PROJEKT RED",
+            "赛博朋克2077",
+            "巫师系列"
+          ],
+          "website": "cdprojekt.com",
+          "focus": false
+        },
+        {
+          "name": "Supercell",
+          "englishName": "Supercell",
+          "aliases": [
+            "超级细胞",
+            "Supercell公司"
+          ],
+          "products": [
+            "部落冲突",
+            "皇室战争",
+            "荒野乱斗"
+          ],
+          "website": "supercell.com",
+          "focus": false
+        }
+      ]
+    },
+    "film": {
+      "title": "影视（28 条）",
+      "brands": [
+        {
+          "name": "中国电影",
+          "englishName": "China Film",
+          "aliases": [
+            "中影",
+            "中影股份",
+            "中国电影集团"
+          ],
+          "products": [
+            "中影股份",
+            "CINITY",
+            "中国电影发行"
+          ],
+          "website": "chinafilm.com",
+          "focus": true
+        },
+        {
+          "name": "光线传媒",
+          "englishName": "Enlight Media",
+          "aliases": [
+            "光线传媒集团"
+          ],
+          "products": [
+            "光线影业",
+            "彩条屋影业",
+            "哪吒系列",
+            "动画电影"
+          ],
+          "website": "—",
+          "focus": true
+        },
+        {
+          "name": "博纳影业",
+          "englishName": "Bona Film Group",
+          "aliases": [
+            "博纳",
+            "博纳电影"
+          ],
+          "products": [
+            "博纳影城",
+            "长津湖系列",
+            "智取威虎山"
+          ],
+          "website": "bonafilm.cn",
+          "focus": true
+        },
+        {
+          "name": "华谊兄弟",
+          "englishName": "Huayi Brothers",
+          "aliases": [
+            "华谊",
+            "华谊兄弟传媒",
+            "ST华谊（证券简称）"
+          ],
+          "products": [
+            "华谊兄弟电影",
+            "前任系列"
+          ],
+          "website": "huayimedia.com",
+          "focus": false
+        },
+        {
+          "name": "华策影视",
+          "englishName": "Huace Media",
+          "aliases": [
+            "华策",
+            "华策集团"
+          ],
+          "products": [
+            "克顿传媒",
+            "国色芳华",
+            "去有风的地方"
+          ],
+          "website": "huacemedia.com",
+          "focus": true
+        },
+        {
+          "name": "柠萌影视",
+          "englishName": "Linmon Media",
+          "aliases": [
+            "柠萌",
+            "柠萌影业"
+          ],
+          "products": [
+            "猎罪图鉴系列",
+            "二十不惑系列",
+            "问心系列"
+          ],
+          "website": "linmon.cn",
+          "focus": false
+        },
+        {
+          "name": "新丽传媒",
+          "englishName": "New Classics Media",
+          "aliases": [
+            "新丽",
+            "新丽电视"
+          ],
+          "products": [
+            "庆余年系列",
+            "赘婿",
+            "玫瑰的故事"
+          ],
+          "website": "ncmchina.com",
+          "focus": true
+        },
+        {
+          "name": "正午阳光",
+          "englishName": "Daylight Entertainment",
+          "aliases": [
+            "东阳正午阳光",
+            "正午阳光影视"
+          ],
+          "products": [
+            "琅琊榜",
+            "山海情",
+            "开端",
+            "大江大河"
+          ],
+          "website": "—",
+          "focus": false
+        },
+        {
+          "name": "大麦娱乐",
+          "englishName": "Damai Entertainment",
+          "aliases": [
+            "阿里影业（旧称）",
+            "Alibaba Pictures",
+            "阿里巴巴影业"
+          ],
+          "products": [
+            "淘票票",
+            "灯塔",
+            "阿里鱼",
+            "大麦"
+          ],
+          "website": "damaiholdings.com",
+          "focus": true
+        },
+        {
+          "name": "阅文集团",
+          "englishName": "China Literature",
+          "aliases": [
+            "阅文",
+            "腾讯阅文"
+          ],
+          "products": [
+            "新丽传媒",
+            "起点中文网",
+            "IP影视开发"
+          ],
+          "website": "yuewen.com",
+          "focus": false
+        },
+        {
+          "name": "爱奇艺",
+          "englishName": "iQIYI",
+          "aliases": [
+            "爱奇艺视频",
+            "奇艺（旧称）"
+          ],
+          "products": [
+            "迷雾剧场",
+            "恋恋剧场",
+            "爱奇艺出品"
+          ],
+          "website": "iqiyi.com",
+          "focus": true
+        },
+        {
+          "name": "腾讯视频",
+          "englishName": "Tencent Video",
+          "aliases": [
+            "腾讯视频平台"
+          ],
+          "products": [
+            "腾讯视频出品",
+            "极光TV",
+            "企鹅影视（关联品牌）"
+          ],
+          "website": "v.qq.com",
+          "focus": true
+        },
+        {
+          "name": "优酷",
+          "englishName": "Youku",
+          "aliases": [
+            "优酷视频",
+            "YOUKU"
+          ],
+          "products": [
+            "优酷剧场",
+            "优酷出品"
+          ],
+          "website": "youku.com",
+          "focus": true
+        },
+        {
+          "name": "芒果TV",
+          "englishName": "Mango TV",
+          "aliases": [
+            "芒果视频",
+            "芒果TV平台"
+          ],
+          "products": [
+            "芒果TV出品",
+            "芒果超媒",
+            "湖南卫视（关联）"
+          ],
+          "website": "mgtv.com",
+          "focus": true
+        },
+        {
+          "name": "哔哩哔哩",
+          "englishName": "Bilibili",
+          "aliases": [
+            "B站",
+            "哔哩哔哩视频"
+          ],
+          "products": [
+            "B站纪录片",
+            "B站番剧",
+            "B站国创"
+          ],
+          "website": "bilibili.com",
+          "focus": false
+        },
+        {
+          "name": "Netflix",
+          "englishName": "Netflix",
+          "aliases": [
+            "奈飞",
+            "网飞",
+            "Netflix流媒体"
+          ],
+          "products": [
+            "Netflix Originals",
+            "Netflix Animation"
+          ],
+          "website": "netflix.com",
+          "focus": true
+        },
+        {
+          "name": "迪士尼",
+          "englishName": "The Walt Disney Company",
+          "aliases": [
+            "华特迪士尼",
+            "Disney"
+          ],
+          "products": [
+            "皮克斯",
+            "漫威影业",
+            "卢卡斯影业",
+            "迪士尼动画",
+            "Disney+",
+            "20世纪影业"
+          ],
+          "website": "disney.com",
+          "focus": true
+        },
+        {
+          "name": "环球影业",
+          "englishName": "Universal Pictures",
+          "aliases": [
+            "环球电影",
+            "环球影片"
+          ],
+          "products": [
+            "梦工厂动画",
+            "照明娱乐",
+            "速度与激情",
+            "侏罗纪系列"
+          ],
+          "website": "universalpictures.com",
+          "focus": true
+        },
+        {
+          "name": "Skydance",
+          "englishName": "Skydance Corporation",
+          "aliases": [
+            "天舞",
+            "派拉蒙天舞",
+            "Paramount Skydance（旧称）"
+          ],
+          "products": [
+            "派拉蒙影业",
+            "华纳兄弟",
+            "DC Studios",
+            "HBO",
+            "HBO Max",
+            "Paramount+"
+          ],
+          "website": "skydance.com",
+          "focus": true
+        },
+        {
+          "name": "索尼影业",
+          "englishName": "Sony Pictures",
+          "aliases": [
+            "索尼电影",
+            "Sony Pictures Entertainment"
+          ],
+          "products": [
+            "哥伦比亚影业",
+            "索尼动画",
+            "Crunchyroll"
+          ],
+          "website": "sonypictures.com",
+          "focus": true
+        },
+        {
+          "name": "亚马逊米高梅影业",
+          "englishName": "Amazon MGM Studios",
+          "aliases": [
+            "Amazon Studios（旧称）",
+            "米高梅",
+            "MGM"
+          ],
+          "products": [
+            "Prime Video",
+            "MGM",
+            "米高梅电影IP"
+          ],
+          "website": "amazonmgmstudios.com",
+          "focus": false
+        },
+        {
+          "name": "Apple TV",
+          "englishName": "Apple TV",
+          "aliases": [
+            "Apple TV+（旧称）",
+            "苹果流媒体"
+          ],
+          "products": [
+            "Apple Originals",
+            "Apple TV原创剧集"
+          ],
+          "website": "tv.apple.com",
+          "focus": true
+        },
+        {
+          "name": "A24",
+          "englishName": "A24",
+          "aliases": [
+            "A24影业",
+            "A24 Films"
+          ],
+          "products": [
+            "A24 Films",
+            "A24 TV",
+            "AAA24"
+          ],
+          "website": "a24films.com",
+          "focus": true
+        },
+        {
+          "name": "狮门影业",
+          "englishName": "Lionsgate",
+          "aliases": [
+            "Lions Gate",
+            "狮门电影"
+          ],
+          "products": [
+            "饥饿游戏",
+            "疾速追杀系列"
+          ],
+          "website": "lionsgate.com",
+          "focus": false
+        },
+        {
+          "name": "东宝",
+          "englishName": "TOHO",
+          "aliases": [
+            "东宝电影",
+            "东宝株式会社"
+          ],
+          "products": [
+            "哥斯拉",
+            "东宝动画",
+            "TOHO Animation"
+          ],
+          "website": "toho.co.jp",
+          "focus": false
+        },
+        {
+          "name": "吉卜力工作室",
+          "englishName": "Studio Ghibli",
+          "aliases": [
+            "吉卜力",
+            "宫崎骏工作室（俗称）"
+          ],
+          "products": [
+            "龙猫",
+            "千与千寻",
+            "天空之城"
+          ],
+          "website": "ghibli.jp",
+          "focus": false
+        },
+        {
+          "name": "CJ ENM",
+          "englishName": "CJ ENM",
+          "aliases": [
+            "希杰娱乐",
+            "CJ娱乐"
+          ],
+          "products": [
+            "CJ ENM Studios",
+            "tvN",
+            "Mnet",
+            "电影发行"
+          ],
+          "website": "cjenm.com",
+          "focus": false
+        },
+        {
+          "name": "BBC Studios",
+          "englishName": "BBC Studios",
+          "aliases": [
+            "BBC工作室",
+            "BBC影视"
+          ],
+          "products": [
+            "BBC Earth",
+            "BBC纪录片",
+            "英剧"
+          ],
+          "website": "bbcstudios.com",
+          "focus": false
+        }
+      ]
+    }
+  }
+}
