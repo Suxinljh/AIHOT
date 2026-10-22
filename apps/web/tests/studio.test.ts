@@ -127,6 +127,7 @@ test("signed-in studio pages are private and carry the workbench navigation", as
   const html = await studio.text();
   assert.match(html, /<meta name="robots" content="noindex, nofollow"\/>/);
   for (const label of ["热点发现", "选题管理", "我的文章", "关注与信源", "设置", "还没有可用的热点事件"]) assert.ok(html.includes(label), label);
+  assert.ok(html.includes('href="/studio/alerts"'), "the top bar links to the notifications");
 
   const topics = await fetch(`${web.origin}/studio/topics`, { headers: { cookie: SESSION } });
   assert.equal(topics.status, 200);

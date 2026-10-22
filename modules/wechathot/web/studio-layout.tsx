@@ -4,6 +4,7 @@ import { Link, NavLink, Outlet, useLoaderData, useLocation, useNavigation, type 
 import type { AdminMe } from "@aihot/contracts/admin";
 import { RingMark } from "@aihot/site/brand/Logo.tsx";
 import { NavigationProgress } from "@aihot/web/components/shell/Chrome";
+import { IconBell } from "@aihot/web/components/icons";
 import { Toaster } from "@aihot/web/features/admin/toast";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import { STUDIO_NAV, STUDIO_PRODUCT, studioNavFor } from "./studio-nav";
@@ -117,6 +118,14 @@ export default function StudioLayout() {
             </div>
             <div className="flex min-w-0 items-center gap-1.5">
               <span className="hidden max-w-[160px] truncate text-[12px] text-ink-4 sm:inline">{me.name}</span>
+              <Link
+                to="/studio/alerts"
+                aria-label="通知"
+                title="通知"
+                className="inline-flex size-8 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink"
+              >
+                <IconBell size={17} />
+              </Link>
               <Logout />
             </div>
           </div>
