@@ -1,10 +1,10 @@
 ---
 id: WCH-20
 title: 审核清单与事实核对
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-21T03:11:00Z'
-updated_date: '2026-10-22T02:09:00Z'
+updated_date: '2026-10-22T02:16:00Z'
 labels:
   - backend
   - ai
@@ -25,9 +25,9 @@ ordinal: 20000
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 每篇稿件可生成审核清单并显示风险项
-- [ ] #2 审核项可人工确认、修改和忽略，状态持久化
-- [ ] #3 审核不通过时保留草稿，不阻止用户继续编辑
+- [x] #1 每篇稿件可生成审核清单并显示风险项
+- [x] #2 审核项可人工确认、修改和忽略，状态持久化
+- [x] #3 审核不通过时保留草稿，不阻止用户继续编辑
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -42,3 +42,15 @@ ordinal: 20000
 
 风险：模型调用可能失败，失败时保留原草稿（AC3）；审核清单与正文版本不同步时只作参考。
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+验证：npm run typecheck；npm run build -w @aihot/web；npm test 634/634（含新增 articles review 用例）。
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+审核清单生成与逐项决策落地：模型生成、状态持久化、失败保留草稿，正文与版本不受影响。
+<!-- SECTION:FINAL_SUMMARY:END -->
