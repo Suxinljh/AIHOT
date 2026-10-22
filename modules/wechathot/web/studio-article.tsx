@@ -44,8 +44,18 @@ export default function StudioArticlePage() {
   const revalidator = useRevalidator();
   const [title, setTitle] = useState(article.title);
   const [sectionIndex, setSectionIndex] = useState(0);
-  const [view, setView] = useState<"content" | "layout">("content");
+  const [view, setView] = useState<"content" | "layout" | "wechat">("content");
+  const [wechatHtml, setWechatHtml] = useState<string | null>(null);
   const [format, setFormat] = useState<Record<string, unknown>>(article.format ?? {});
+  useEffect(() => {
+    if (view !== "wechat") return;
+    let live = true;
+    fetch(`/api/studio/articles/${article.id}/wechat-html`, { credentials: "same-origin" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { html?: string } | null) => { if (live) setWechatHtml(data?.html ?? ""); })
+      .catch(() => { if (live) setWechatHtml(""); });
+    return () => { live = false; };
+  }, [view, article.id, article.version]);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>(article.review?.items ?? []);
   const [saving, setSaving] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -131,6 +141,7 @@ export default function StudioArticlePage() {
         <div className="mt-4 flex gap-2 border-t border-line-soft pt-4">
           <button type="button" onClick={() => setView("content")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "content" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>内容</button>
           <button type="button" onClick={() => setView("layout")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "layout" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>排版</button>
+          <button type="button" onClick={() => setView("wechat")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "wechat" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>公众号</button>
         </div>
       </header>
 
@@ -151,6 +162,38 @@ export default function StudioArticlePage() {
               {saving && <p className="mt-2 text-[11.5px] text-ink-4">正在保存…</p>}
               {!article.content?.content?.length && (
                 <p className="mt-3 text-[13px] text-ink-4">还没有正文。确认大纲后点「生成正文」。</p>
+              )}
+            </section>
+          ) : view === "wechat" ? (
+            <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-[14px] font-semibold text-ink">公众号 HTML</h2>
+                <Button
+                  size="sm"
+                  tone="primary"
+                  disabled={!wechatHtml}
+                  onClick={() => { if (wechatHtml) navigator.clipboard?.writeText(wechatHtml); }}
+                >
+                  复制 HTML
+                </Button>
+              </div>
+              <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">
+                只输出公众号接受的基础标签，样式写成 inline style；正文宽度按 375px 预览。
+              </p>
+              {wechatHtml === null ? (
+                <p className="mt-3 text-[13px] text-ink-4">正在生成…</p>
+              ) : wechatHtml ? (
+                <div className="mt-3 overflow-x-auto rounded-control border border-line bg-white p-3">
+                  <div className="mx-auto w-[375px] max-w-full" dangerouslySetInnerHTML={{ __html: wechatHtml }} />
+                </div>
+              ) : (
+                <p className="mt-3 text-[13px] text-ink-4">还没有正文，先生成正文。</p>
+              )}
+              {wechatHtml !== null && (
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-[12px] text-ink-4">查看 HTML 源码</summary>
+                  <pre className="mt-2 max-h-[320px] overflow-auto rounded-control bg-bg-sunk p-3 text-[11px] leading-relaxed text-ink-3">{wechatHtml}</pre>
+                </details>
               )}
             </section>
           ) : (

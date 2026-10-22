@@ -27,6 +27,7 @@ import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
 import { checkGithubRepo, subscribeGithubReleases } from "./github.ts";
 import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
+import { renderWechatHtml } from "./wechat-html.ts";
 import type {
   ColumnType,
   PresetKind,
@@ -303,6 +304,13 @@ export const wechatHotServer = defineServerModule({
       const article = await generateReview(Number(param(req, "id")));
       if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
       return article;
+    }));
+
+    // The 公众号 body: whitelisted tags, inline styles and a sanitize pass before anything is copied.
+    app.get("/api/studio/articles/:id/wechat-html", studioHandler(async (req, reply) => {
+      const article = await articleDetail(Number(param(req, "id")));
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return { html: renderWechatHtml(article.content, article.format as never) };
     }));
 
     app.patch("/api/studio/articles/:id/review", studioHandler(async (req, reply) => {
