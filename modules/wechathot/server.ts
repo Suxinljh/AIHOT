@@ -6,6 +6,7 @@ import type { AdminMe } from "@aihot/contracts/admin";
 import { actorOf, sessionPrincipal, type AdminPrincipal } from "@aihot/backend/admin/auth";
 import { Conflict } from "@aihot/backend/audit";
 import { sql } from "@aihot/backend/db";
+import { config } from "@aihot/backend/config";
 import { listStudioEvents } from "./event-list.ts";
 import { defineServerModule } from "@aihot/backend/modules";
 import { BrandRejected, brandDetail, createBrand, deleteBrand, listBrands, mergeBrands, updateBrand } from "./brands.ts";
@@ -29,6 +30,7 @@ import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, upd
 import { checkGithubRepo, subscribeGithubReleases } from "./github.ts";
 import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
 import { renderWechatHtml } from "./wechat-html.ts";
+import { readUpload, saveUpload } from "./uploads.ts";
 import type {
   ColumnType,
   PresetKind,
@@ -307,6 +309,16 @@ export const wechatHotServer = defineServerModule({
       return article;
     }));
 
+    // Draft images: stored on disk under the data directory, read back by the editor through the same
+    // admin session. The shape of the URL is checked before anything is read.
+    app.post("/api/studio/uploads", studioHandler(async (req) => saveUpload(req.body ?? {})));
+
+    app.get("/api/studio/uploads/:folder/:name", studioHandler(async (req, reply) => {
+      const file = await readUpload(param(req, "folder"), param(req, "name"));
+      if (!file) return problem(req, reply, 404, "not_found", "图片不存在。");
+      return reply.type(file.contentType).header("Cache-Control", "private, max-age=3600").send(file.buffer);
+    }));
+
     // Plain text and Markdown exports: the same body, with an optional list of the cited sources.
     app.get("/api/studio/articles/:id/export", studioHandler(async (req, reply) => {
       const article = await articleDetail(Number(param(req, "id")));
@@ -322,7 +334,7 @@ export const wechatHotServer = defineServerModule({
     app.get("/api/studio/articles/:id/wechat-html", studioHandler(async (req, reply) => {
       const article = await articleDetail(Number(param(req, "id")));
       if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
-      return { html: renderWechatHtml(article.content, article.format as never) };
+      return { html: renderWechatHtml(article.content, article.format as never, config.siteUrl) };
     }));
 
     app.patch("/api/studio/articles/:id/review", studioHandler(async (req, reply) => {

@@ -223,14 +223,18 @@ export default function StudioArticlePage() {
                 </label>
               </div>
               <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">
-                只输出公众号接受的基础标签，样式写成 inline style；正文宽度按 375px 预览。
+                只输出公众号接受的基础标签，样式写成 inline style；图片用绝对地址，正文按 375px 预览。
+                粘贴验收清单见 docs/WeChatHot/wechat-paste-checklist.md。公众号访问不到本机图片地址时，请在公众号后台手动上传图片。
               </p>
               {wechatHtml === null ? (
                 <p className="mt-3 text-[13px] text-ink-4">正在生成…</p>
               ) : wechatHtml ? (
-                <div className="mt-3 overflow-x-auto rounded-control border border-line bg-white p-3">
-                  <div className="mx-auto w-[375px] max-w-full" dangerouslySetInnerHTML={{ __html: wechatHtml }} />
-                </div>
+                <>
+                  <div className="mt-3 overflow-x-auto rounded-control border border-line bg-white p-3">
+                    <div className="mx-auto w-[375px] max-w-full" dangerouslySetInnerHTML={{ __html: wechatHtml }} />
+                  </div>
+                  <p className="mt-2 text-[11px] text-ink-4">375px 手机预览 · 与复制出的富文本同源</p>
+                </>
               ) : (
                 <p className="mt-3 text-[13px] text-ink-4">还没有正文，先生成正文。</p>
               )}

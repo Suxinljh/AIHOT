@@ -51,7 +51,7 @@ function bodyStyle(format: Format): string {
 
 function imageStyle(format: Format): string {
   const radius = format.image?.borderRadius;
-  return style({ "max-width": "100%", height: "auto", "border-radius": radius !== undefined ? `${radius}px` : undefined });
+  return style({ width: "100%", "max-width": "100%", height: "auto", "border-radius": radius !== undefined ? `${radius}px` : undefined });
 }
 
 /** Inline marks inside one paragraph: bold, italic, code, strike and links, in WeChat's own tags. */
@@ -157,13 +157,18 @@ export function sanitizeWechatHtml(html: string): string {
   return clean.replace(/<img\b([^>]*?)>/g, (tag, attrs: string) => {
     if (/style="/.test(attrs)) {
       if (/max-width/.test(attrs)) return tag;
-      return `<img${attrs.replace(/style="([^"]*)"/, (_m, css: string) => `style="${css};max-width:100%;height:auto"`)}>`;
+      return `<img${attrs.replace(/style="([^"]*)"/, (_m, css: string) => `style="${css};width:100%;max-width:100%;height:auto"`)}>`;
     }
-    return `<img${attrs} style="max-width:100%;height:auto">`;
+    return `<img${attrs} style="width:100%;max-width:100%;height:auto">`;
   });
 }
 
-/** Serialize and clean in one call: what the studio copies into the 公众号 editor. */
-export function renderWechatHtml(doc: ArticleDoc | null | undefined, format: Format = {}): string {
-  return sanitizeWechatHtml(toWechatHtml(doc, format));
+/**
+ * Serialize and clean in one call: what the studio copies into the 公众号 editor. `baseUrl` turns the
+ * studio's own `/api/studio/uploads/...` images into absolute addresses WeChat can fetch.
+ */
+export function renderWechatHtml(doc: ArticleDoc | null | undefined, format: Format = {}, baseUrl?: string): string {
+  const html = sanitizeWechatHtml(toWechatHtml(doc, format));
+  if (!baseUrl) return html;
+  return html.replace(/src="\/api\/studio\/uploads\//g, `src="${baseUrl.replace(/\/+$/, "")}/api/studio/uploads/`);
 }
