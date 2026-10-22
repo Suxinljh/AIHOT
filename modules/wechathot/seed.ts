@@ -62,6 +62,18 @@ export async function seedWeChatHot(): Promise<SeedResult> {
     }
     if (!brandId) continue;
 
+    // Brands inserted before their industry data existed get it filled in; an admin's own website
+    // or industry list is never overwritten.
+    if (seed) {
+      await sql`
+        UPDATE wc_brands SET
+          website = coalesce(nullif(btrim(website), ''), ${seed.website ?? ""}),
+          industries = CASE WHEN cardinality(industries) = 0 THEN ${seed.industries}::text[] ELSE industries END,
+          updated_at = now()
+        WHERE id = ${brandId}
+          AND (website IS NULL OR btrim(website) = '' OR cardinality(industries) = 0)`;
+    }
+
     for (const channel of seed?.channels ?? []) {
       const channelId = `${brandId}-${channel.type}`;
       const [insertedChannel] = await sql<{ id: string }[]>`

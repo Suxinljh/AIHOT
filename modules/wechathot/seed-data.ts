@@ -21,7 +21,7 @@ export interface ChannelSeed {
 }
 
 export interface BrandSeed {
-  website: string;
+  website?: string;
   industries: string[];
   channels: ChannelSeed[];
 }
@@ -341,6 +341,487 @@ export const BRAND_SEEDS: Record<string, BrandSeed> = {
     website: "https://runwayml.com/",
     industries: ["film", "ai-models"],
     channels: [site("Runway News", "https://runwayml.com/news")],
+  },
+  // 汽车（WCH-35/36 首批）
+  "byd": {
+    website: "https://byd.com/",
+    industries: ["auto"],
+    channels: [site("比亚迪 官网", "https://byd.com/")],
+  },
+  "li-auto": {
+    website: "https://lixiang.com/",
+    industries: ["auto"],
+    channels: [site("理想汽车 官网", "https://lixiang.com/")],
+  },
+  "xpeng": {
+    website: "https://xiaopeng.com/",
+    industries: ["auto"],
+    channels: [site("小鹏汽车 官网", "https://xiaopeng.com/")],
+  },
+  "nio": {
+    website: "https://nio.com/",
+    industries: ["auto"],
+    channels: [site("蔚来 官网", "https://nio.com/")],
+  },
+  "leapmotor": {
+    website: "https://leapmotor.cn/",
+    industries: ["auto"],
+    channels: [site("零跑汽车 官网", "https://leapmotor.cn/")],
+  },
+  "geely-auto": {
+    website: "https://geely.com/",
+    industries: ["auto"],
+    channels: [site("吉利汽车 官网", "https://geely.com/")],
+  },
+  "zeekr": {
+    website: "https://zeekr.com/",
+    industries: ["auto"],
+    channels: [site("极氪 官网", "https://zeekr.com/")],
+  },
+  "lynk-and-co": {
+    website: "https://lynkco.com/",
+    industries: ["auto"],
+    channels: [site("领克 官网", "https://lynkco.com/")],
+  },
+  "changan": {
+    website: "https://changan.com.cn/",
+    industries: ["auto"],
+    channels: [site("长安汽车 官网", "https://changan.com.cn/")],
+  },
+  "deepal": {
+    website: "https://deepal.com.cn/",
+    industries: ["auto"],
+    channels: [site("深蓝汽车 官网", "https://deepal.com.cn/")],
+  },
+  "avatr": {
+    website: "https://avatr.com/",
+    industries: ["auto"],
+    channels: [site("阿维塔 官网", "https://avatr.com/")],
+  },
+  "chery": {
+    website: "https://chery.cn/",
+    industries: ["auto"],
+    channels: [site("奇瑞汽车 官网", "https://chery.cn/")],
+  },
+  "jetour": {
+    website: "https://jetour.com.cn/",
+    industries: ["auto"],
+    channels: [site("捷途汽车 官网", "https://jetour.com.cn/")],
+  },
+  "great-wall-motor": {
+    website: "https://gwm.com.cn/",
+    industries: ["auto"],
+    channels: [site("长城汽车 官网", "https://gwm.com.cn/")],
+  },
+  "gac-group": {
+    website: "https://gac.com.cn/",
+    industries: ["auto"],
+    channels: [site("广汽集团 官网", "https://gac.com.cn/")],
+  },
+  "gac-aion": {
+    website: "https://aion.com.cn/",
+    industries: ["auto"],
+    channels: [site("广汽埃安 官网", "https://aion.com.cn/")],
+  },
+  "seres": {
+    website: "https://seres.cn/",
+    industries: ["auto"],
+    channels: [site("赛力斯 官网", "https://seres.cn/")],
+  },
+  "hima": {
+    website: "https://hima.auto/",
+    industries: ["auto"],
+    channels: [site("鸿蒙智行 官网", "https://hima.auto/")],
+  },
+  "saic-motor": {
+    website: "https://saicmotor.com/",
+    industries: ["auto"],
+    channels: [site("上汽集团 官网", "https://saicmotor.com/")],
+  },
+  "im-motors": {
+    website: "https://immotors.com/",
+    industries: ["auto"],
+    channels: [site("智己汽车 官网", "https://immotors.com/")],
+  },
+  "wuling": {
+    website: "https://sgmw.com.cn/",
+    industries: ["auto"],
+    channels: [site("五菱汽车 官网", "https://sgmw.com.cn/")],
+  },
+  "hongqi": {
+    website: "https://hongqi.com.cn/",
+    industries: ["auto"],
+    channels: [site("红旗 官网", "https://hongqi.com.cn/")],
+  },
+  "volkswagen": {
+    website: "https://volkswagen.com.cn/",
+    industries: ["auto"],
+    channels: [site("大众汽车 官网", "https://volkswagen.com.cn/")],
+  },
+  "toyota": {
+    website: "https://toyota.com.cn/",
+    industries: ["auto"],
+    channels: [site("丰田汽车 官网", "https://toyota.com.cn/")],
+  },
+  "honda": {
+    website: "https://honda.com.cn/",
+    industries: ["auto"],
+    channels: [site("本田汽车 官网", "https://honda.com.cn/")],
+  },
+  "nissan": {
+    website: "https://nissan.com.cn/",
+    industries: ["auto"],
+    channels: [site("日产汽车 官网", "https://nissan.com.cn/")],
+  },
+  "mercedes-benz": {
+    website: "https://mercedes-benz.com.cn/",
+    industries: ["auto"],
+    channels: [site("梅赛德斯-奔驰 官网", "https://mercedes-benz.com.cn/")],
+  },
+  "bmw": {
+    website: "https://bmw.com.cn/",
+    industries: ["auto"],
+    channels: [site("宝马 官网", "https://bmw.com.cn/")],
+  },
+  "audi": {
+    website: "https://audichina.cn/",
+    industries: ["auto"],
+    channels: [site("奥迪 官网", "https://audichina.cn/")],
+  },
+  "porsche": {
+    website: "https://porsche.com/",
+    industries: ["auto"],
+    channels: [site("保时捷 官网", "https://porsche.com/")],
+  },
+  "ford": {
+    website: "https://ford.com.cn/",
+    industries: ["auto"],
+    channels: [site("福特汽车 官网", "https://ford.com.cn/")],
+  },
+  "hyundai": {
+    website: "https://hyundai.com/",
+    industries: ["auto"],
+    channels: [site("现代汽车 官网", "https://hyundai.com/")],
+  },
+  "kia": {
+    website: "https://kia.com/",
+    industries: ["auto"],
+    channels: [site("起亚 官网", "https://kia.com/")],
+  },
+  "volvo-cars": {
+    website: "https://volvocars.com/",
+    industries: ["auto"],
+    channels: [site("沃尔沃汽车 官网", "https://volvocars.com/")],
+  },
+  "lexus": {
+    website: "https://lexus.com.cn/",
+    industries: ["auto"],
+    channels: [site("雷克萨斯 官网", "https://lexus.com.cn/")],
+  },
+  "rivian": {
+    website: "https://rivian.com/",
+    industries: ["auto"],
+    channels: [site("Rivian 官网", "https://rivian.com/")],
+  },
+  "lucid-motors": {
+    website: "https://lucidmotors.com/",
+    industries: ["auto"],
+    channels: [site("Lucid 官网", "https://lucidmotors.com/")],
+  },
+  // 游戏（WCH-35/36 首批）
+  "riot-games": {
+    website: "https://riotgames.com/",
+    industries: ["game"],
+    channels: [site("拳头游戏 官网", "https://riotgames.com/")],
+  },
+  "netease-games": {
+    website: "https://neteasegames.com/",
+    industries: ["game"],
+    channels: [site("网易游戏 官网", "https://neteasegames.com/")],
+  },
+  "mihoyo": {
+    website: "https://mihoyo.com/",
+    industries: ["game"],
+    channels: [site("米哈游 官网", "https://mihoyo.com/")],
+  },
+  "papergames": {
+    website: "https://papegames.com/",
+    industries: ["game"],
+    channels: [site("叠纸游戏 官网", "https://papegames.com/")],
+  },
+  "hypergryph": {
+    website: "https://hypergryph.com/",
+    industries: ["game"],
+    channels: [site("鹰角网络 官网", "https://hypergryph.com/")],
+  },
+  "kuro-games": {
+    website: "https://kurogames.com/",
+    industries: ["game"],
+    channels: [site("库洛游戏 官网", "https://kurogames.com/")],
+  },
+  "game-science": {
+    website: "https://gamesci.cn/",
+    industries: ["game"],
+    channels: [site("游戏科学 官网", "https://gamesci.cn/")],
+  },
+  "xd-games": {
+    website: "https://xd.com/",
+    industries: ["game"],
+    channels: [site("心动网络 官网", "https://xd.com/")],
+  },
+  "37-interactive-entertainment": {
+    website: "https://37.com/",
+    industries: ["game"],
+    channels: [site("三七互娱 官网", "https://37.com/")],
+  },
+  "lilith-games": {
+    website: "https://lilithgames.com/",
+    industries: ["game"],
+    channels: [site("莉莉丝游戏 官网", "https://lilithgames.com/")],
+  },
+  "perfect-world-games": {
+    website: "https://wanmei.com/",
+    industries: ["game"],
+    channels: [site("完美世界游戏 官网", "https://wanmei.com/")],
+  },
+  "shengqu-games": {
+    website: "https://shengqugames.com/",
+    industries: ["game"],
+    channels: [site("盛趣游戏 官网", "https://shengqugames.com/")],
+  },
+  "yoozoo-games": {
+    website: "https://yoozoo.com/",
+    industries: ["game"],
+    channels: [site("游族网络 官网", "https://yoozoo.com/")],
+  },
+  "moonton-games": {
+    website: "https://moonton.com/",
+    industries: ["game"],
+    channels: [site("沐瞳科技 官网", "https://moonton.com/")],
+  },
+  "bilibili-games": {
+    website: "https://game.bilibili.com/",
+    industries: ["game"],
+    channels: [site("哔哩哔哩游戏 官网", "https://game.bilibili.com/")],
+  },
+  "valve": {
+    website: "https://valvesoftware.com/",
+    industries: ["game"],
+    channels: [site("Valve 官网", "https://valvesoftware.com/")],
+  },
+  "epic-games": {
+    website: "https://epicgames.com/",
+    industries: ["game"],
+    channels: [site("Epic Games 官网", "https://epicgames.com/")],
+  },
+  "blizzard-entertainment": {
+    website: "https://blizzard.com/",
+    industries: ["game"],
+    channels: [site("暴雪娱乐 官网", "https://blizzard.com/")],
+  },
+  "nintendo": {
+    website: "https://nintendo.com/",
+    industries: ["game"],
+    channels: [site("任天堂 官网", "https://nintendo.com/")],
+  },
+  "playstation": {
+    website: "https://playstation.com/",
+    industries: ["game"],
+    channels: [site("PlayStation 官网", "https://playstation.com/")],
+  },
+  "xbox": {
+    website: "https://xbox.com/",
+    industries: ["game"],
+    channels: [site("Xbox 官网", "https://xbox.com/")],
+  },
+  "ubisoft": {
+    website: "https://ubisoft.com/",
+    industries: ["game"],
+    channels: [site("育碧 官网", "https://ubisoft.com/")],
+  },
+  "electronic-arts": {
+    website: "https://ea.com/",
+    industries: ["game"],
+    channels: [site("艺电 官网", "https://ea.com/")],
+  },
+  "take-two-interactive": {
+    website: "https://take2games.com/",
+    industries: ["game"],
+    channels: [site("Take-Two 官网", "https://take2games.com/")],
+  },
+  "rockstar-games": {
+    website: "https://rockstargames.com/",
+    industries: ["game"],
+    channels: [site("Rockstar Games 官网", "https://rockstargames.com/")],
+  },
+  "capcom": {
+    website: "https://capcom.com/",
+    industries: ["game"],
+    channels: [site("卡普空 官网", "https://capcom.com/")],
+  },
+  "sega": {
+    website: "https://sega.com/",
+    industries: ["game"],
+    channels: [site("世嘉 官网", "https://sega.com/")],
+  },
+  "bandai-namco-entertainment": {
+    website: "https://bandainamcoent.com/",
+    industries: ["game"],
+    channels: [site("万代南梦宫娱乐 官网", "https://bandainamcoent.com/")],
+  },
+  "square-enix": {
+    website: "https://square-enix.com/",
+    industries: ["game"],
+    channels: [site("史克威尔艾尼克斯 官网", "https://square-enix.com/")],
+  },
+  "konami": {
+    website: "https://konami.com/",
+    industries: ["game"],
+    channels: [site("科乐美 官网", "https://konami.com/")],
+  },
+  "krafton": {
+    website: "https://krafton.com/",
+    industries: ["game"],
+    channels: [site("KRAFTON 官网", "https://krafton.com/")],
+  },
+  "fromsoftware": {
+    website: "https://fromsoftware.jp/",
+    industries: ["game"],
+    channels: [site("FromSoftware 官网", "https://fromsoftware.jp/")],
+  },
+  "cd-projekt": {
+    website: "https://cdprojekt.com/",
+    industries: ["game"],
+    channels: [site("CD PROJEKT 官网", "https://cdprojekt.com/")],
+  },
+  "supercell": {
+    website: "https://supercell.com/",
+    industries: ["game"],
+    channels: [site("Supercell 官网", "https://supercell.com/")],
+  },
+  // 影视（WCH-35/36 首批）
+  "china-film": {
+    website: "https://chinafilm.com/",
+    industries: ["film"],
+    channels: [site("中国电影 官网", "https://chinafilm.com/")],
+  },
+  "enlight-media": {
+    industries: ["film"],
+    channels: [],
+  },
+  "bona-film-group": {
+    website: "https://bonafilm.cn/",
+    industries: ["film"],
+    channels: [site("博纳影业 官网", "https://bonafilm.cn/")],
+  },
+  "huayi-brothers": {
+    website: "https://huayimedia.com/",
+    industries: ["film"],
+    channels: [site("华谊兄弟 官网", "https://huayimedia.com/")],
+  },
+  "huace-media": {
+    website: "https://huacemedia.com/",
+    industries: ["film"],
+    channels: [site("华策影视 官网", "https://huacemedia.com/")],
+  },
+  "linmon-media": {
+    website: "https://linmon.cn/",
+    industries: ["film"],
+    channels: [site("柠萌影视 官网", "https://linmon.cn/")],
+  },
+  "new-classics-media": {
+    website: "https://ncmchina.com/",
+    industries: ["film"],
+    channels: [site("新丽传媒 官网", "https://ncmchina.com/")],
+  },
+  "daylight-entertainment": {
+    industries: ["film"],
+    channels: [],
+  },
+  "damai-entertainment": {
+    website: "https://damaiholdings.com/",
+    industries: ["film"],
+    channels: [site("大麦娱乐 官网", "https://damaiholdings.com/")],
+  },
+  "china-literature": {
+    website: "https://yuewen.com/",
+    industries: ["film"],
+    channels: [site("阅文集团 官网", "https://yuewen.com/")],
+  },
+  "iqiyi": {
+    website: "https://iqiyi.com/",
+    industries: ["film"],
+    channels: [site("爱奇艺 官网", "https://iqiyi.com/")],
+  },
+  "tencent-video": {
+    website: "https://v.qq.com/",
+    industries: ["film"],
+    channels: [site("腾讯视频 官网", "https://v.qq.com/")],
+  },
+  "youku": {
+    website: "https://youku.com/",
+    industries: ["film"],
+    channels: [site("优酷 官网", "https://youku.com/")],
+  },
+  "mango-tv": {
+    website: "https://mgtv.com/",
+    industries: ["film"],
+    channels: [site("芒果TV 官网", "https://mgtv.com/")],
+  },
+  "bilibili": {
+    website: "https://bilibili.com/",
+    industries: ["film"],
+    channels: [site("哔哩哔哩 官网", "https://bilibili.com/")],
+  },
+  "universal-pictures": {
+    website: "https://universalpictures.com/",
+    industries: ["film"],
+    channels: [site("环球影业 官网", "https://universalpictures.com/")],
+  },
+  "skydance-corporation": {
+    website: "https://skydance.com/",
+    industries: ["film"],
+    channels: [site("Skydance 官网", "https://skydance.com/")],
+  },
+  "sony-pictures": {
+    website: "https://sonypictures.com/",
+    industries: ["film"],
+    channels: [site("索尼影业 官网", "https://sonypictures.com/")],
+  },
+  "amazon-mgm-studios": {
+    website: "https://amazonmgmstudios.com/",
+    industries: ["film"],
+    channels: [site("亚马逊米高梅影业 官网", "https://amazonmgmstudios.com/")],
+  },
+  "apple-tv": {
+    website: "https://tv.apple.com/",
+    industries: ["film"],
+    channels: [site("Apple TV 官网", "https://tv.apple.com/")],
+  },
+  "lionsgate": {
+    website: "https://lionsgate.com/",
+    industries: ["film"],
+    channels: [site("狮门影业 官网", "https://lionsgate.com/")],
+  },
+  "toho": {
+    website: "https://toho.co.jp/",
+    industries: ["film"],
+    channels: [site("东宝 官网", "https://toho.co.jp/")],
+  },
+  "studio-ghibli": {
+    website: "https://ghibli.jp/",
+    industries: ["film"],
+    channels: [site("吉卜力工作室 官网", "https://ghibli.jp/")],
+  },
+  "cj-enm": {
+    website: "https://cjenm.com/",
+    industries: ["film"],
+    channels: [site("CJ ENM 官网", "https://cjenm.com/")],
+  },
+  "bbc-studios": {
+    website: "https://bbcstudios.com/",
+    industries: ["film"],
+    channels: [site("BBC Studios 官网", "https://bbcstudios.com/")],
   },
 };
 

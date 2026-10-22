@@ -23,7 +23,7 @@ const DAYS = [1, 3, 7, 30];
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const days = Number(url.searchParams.get("days") ?? 7);
+  const days = Number(url.searchParams.get("days") ?? 30);
   const query = new URLSearchParams(url.searchParams);
   // The page speaks in days; only the api's own filters are forwarded.
   query.delete("days");
