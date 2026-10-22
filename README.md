@@ -1,191 +1,131 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.png">
-    <img src="docs/assets/banner-light.png" alt="AIHOT：每个行业，都可以有自己的 AIHOT。很多条信源流进中间的精选，再分给法律、人力资源、金融等各个行业" width="100%">
-  </picture>
-</p>
+# WeChatHot
 
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-176b75?style=flat-square" alt="MIT License"></a>
-  <img src="https://img.shields.io/badge/Node.js-24-176b75?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js 24">
-  <img src="https://img.shields.io/badge/PostgreSQL-17-176b75?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL 17">
-  <img src="https://img.shields.io/badge/Docker-Compose-176b75?style=flat-square&logo=docker&logoColor=white" alt="Docker Compose">
-  <a href="https://aihot.news"><img src="https://img.shields.io/badge/%E7%BA%BF%E4%B8%8A%E5%8E%9F%E7%AB%99-aihot.news-202a30?style=flat-square" alt="线上原站 aihot.news"></a>
-</p>
+**面向微信公众号科技内容创作者的单用户 AI 内容工作台。**
 
-<p align="center">
-  <b>一个自己找热点、自己写日报的网站框架。</b><br>
-  把信源换成你的，把精选标准换成你的 KnowHow，它就是你的行业热点站。
-</p>
+从一个热点链接开始，到一篇可以粘进公众号的稿子结束：找热点、判断值不值得写、生成角度和大纲、写正文和标题、逐项核对事实、排版、导出公众号兼容的富文本。不做注册、团队和协作——管理员会话就是唯一使用者。
 
-<p align="center">
-  <b>简体中文</b> · <a href="README.en.md">English</a>
-</p>
+覆盖 7 个行业：AI 大模型、汽车、数码硬件、软件与互联网、具身智能、电影与剧集、游戏。
 
-<p align="center">
-  <a href="#跑起来">跑起来</a> ·
-  <a href="docs/customize.md">改成你的行业</a> ·
-  <a href="#它是怎么工作的">它是怎么工作的</a> ·
-  <a href="#文档">文档</a> ·
-  <a href="https://github.com/KKKKhazix/AIHOT/discussions">社区交流</a>
-</p>
+> 状态：开发中。公开阅读站已下线，`/` 只跳转到 `/studio`；对外只有工作台、后台和健康检查。
 
-<br>
+---
 
-> **本仓库的产品是 WeChatHot**：面向微信公众号科技内容创作者的单用户 AI 内容工作台，入口是 `/studio`。
-> 公开阅读站（网页、RSS、API v1、MCP、llms.txt、站点地图、分享图）已经下线，`/` 只跳转到 `/studio`。
-> 下面关于公开站的描述是这个框架的历史能力，保留下来作为引擎说明；当前对外只有工作台、后台和健康检查。
+## 它解决什么问题
 
-## 这是什么
+公众号科技编辑的日常是断开的：在十几个信源里翻热点，用聊天窗口判断值不值得写，在文档里写稿，再手工排版粘进公众号。每一步都换一个工具，判断依据留不下来，写完也复盘不了。
 
-[AIHOT](https://aihot.news) 是我做的一个 AI 热点网站。它每天从一批信源里收资料，用大模型先筛一遍、再独立打两次分，挑出真正值得看的，写成中文标题和摘要；把不同来源说的同一件事聚成一个事件，按有多少人在说排出热点；每天早上出一份日报。
+WeChatHot 把这条链路收进一个工作台：
 
-这个仓库是它的引擎和框架：网站、后台、精选流程、聚簇和热度算法，**所有提示词的原文和入选门槛**，都在这里。
+```
+信源采集 → 预筛与评分 → 事件归组 → 热点列表 → 选题 → 角度 / 大纲 → 正文 / 标题
+        → 审核清单 → 排版预设 → 公众号 HTML / Markdown → 复制
+```
 
-## 为什么开源
+每一段都留下可回看的记录：为什么推荐、引用了哪篇报道、哪一段是官方说法、哪一句还没核实、这一篇花了多少模型成本。
 
-这半年，很多做法律、做 HR、做金融、做贵金属的朋友问我，能不能也给他们的行业做一个。
+## 能做什么
 
-我做不了。我不懂你们的行业，不知道哪些信源有用，也不知道什么样的消息，对你们来说才叫热点。
+- **热点发现**：按行业、品牌、渠道、来源等级、已读状态筛选；五种排序，热度、新闻价值、选题推荐三套分数并列。
+- **事件详情**：时间线、事实、报道与评分理由，编辑自己的已读 / 收藏 / 忽略 / 跟进状态。
+- **选题看板**：选题冻结事件证据；角度、栏目、备注、状态沿流水线流转；可排计划日期。
+- **写作**：角度候选、大纲、正文、标题候选；写作风格预设按栏目或单篇覆盖。
+- **审核**：生成事实 / 数字 / 日期 / 来源 / 夸大表述清单，逐项确认、修改或忽略，结果单独存储，不改正文。
+- **排版与交付**：内容 / 排版 / 公众号 / Markdown 四视图；字号、行高、段距、对齐、图片圆角；白名单标签 + inline style 生成公众号兼容 HTML，支持富文本、纯文本、Markdown 复制与下载。
+- **信源与品牌**：RSS、网页列表、JSON、X、公众号、外部推送、GitHub API 七类信源；品牌库、别名、渠道、关注规则与站内通知。
+- **指标**：选题采纳率、草稿完成率、人工改写率、单篇模型成本、每百条采集成本。
+- **发布日历**：选题和稿件按计划日排布，只做计划，不自动发布。
 
-但你们懂。
+## 技术栈
 
-既然我没办法满足所有人，那就把火种交到大家自己手上。
+- **Web**：React Router 8（SSR）、TipTap 3、Tailwind 4
+- **API**：Fastify
+- **数据库**：PostgreSQL 17
+- **任务**：pg-boss（采集、模型调用、事件投影、告警）
+- **模型**：按步骤配置（预筛、评分、理解、写作、审核、翻译……），统一走回执与预算熔断
+- **测试**：Node test runner，600+ 自动化测试
 
-## 说在前面
+### 架构
 
-- **我不是专业的开发者。** 我是设计师出身，半年前还看不太懂代码。这套代码是我和 AI 一起重写的，比以前干净了很多，但一定还有写得不好的地方。发现问题欢迎提 Issue，我不一定能很快回复，先说声抱歉。
-- **这是 AIHOT 的引擎。** 它和 AIHOT 线上跑的是同一份引擎代码，同步时直接从线上导出，不是精心打磨的通用框架。以后 AIHOT 的更新，我会尽量同步过来，但没法保证每一次都同步。模型榜、Codex 重置监控、主题页的大事记这些只对 AI 行业有意义的功能，以及 AIHOT 自己的运营工具，只留在 AIHOT 上。
-- **里面没有 AIHOT 的信源名单和运营数据。** 仓库带了 18 个公开的海外 AI 资讯源做示范，够你跑起来看效果；真正的信源，要换成你自己行业的。
-- **请不要用 AIHOT 的名字和 Logo。** 换上你自己的名字，它就是你的站。
+```
+apps/web      React Router 页面（工作台 / 后台），只通过 HTTP 读 API
+apps/api      Fastify：/api/studio、/api/admin、/api/ingest、/api/health
+apps/worker   pg-boss 定时任务：采集、模型流水线、事件投影、通知
+packages/     backend（业务）、contracts（共享类型）、web（组件）
+modules/      wechathot：工作台私有表、API、页面、测试
+industry/     7 类行业的知识：分类、主题、示范信源、提示词、门槛
+site/         站名、模型选择、品牌、启用哪些模块
+```
 
-## 它是怎么工作的
+关键设计：
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-dark.png">
-  <img src="docs/assets/how-light.png" alt="六步：采集、预筛、两次评分、写作、聚簇、热点与成刊" width="100%">
-</picture>
+- **事件读模型**：采集与分析写入公开事件表，工作台读 `wc_event_meta`，不直接对事件表做多表筛选。
+- **私有数据隔离**：所有 `wc_` 表只通过管理员会话读取，不进入任何公开出口。
+- **付费请求可回放**：每个模型调用先记回执，失败重试复用已付过的结果；每个服务有预算上限。
+- **公众号兼容**：序列化只输出基础标签，样式写 inline，`sanitize-html` 兜底去脚本、事件属性和未知样式，图片限制在正文宽度内。
 
-一条资料从信源进来，先判重，再预筛；可能重要的独立打两次分，写好中文标题和摘要，和别的报道聚成事件，算进热度。X 帖子没有正文或只有链接时，保留原帖的链接和图片，不调用写作或翻译模型。分数过了门槛、又不是精选里已有新闻的重复，才进精选；日报按规则编出当天要闻，周报、月报再从日报里汇编。每一步的提示词都在 [`industry/prompts/`](industry/prompts/)，改标准不用改代码。详见 [精选与校准](docs/selection.md)。
+## 本地运行
 
-### 聚簇与热点
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/cluster-dark.png">
-  <img src="docs/assets/cluster-light.png" alt="五个来源的报道聚成一个事件，事件进入当前热点榜" width="100%">
-</picture>
-
-同一件事，官网发一篇、媒体转十篇、X 上吵一天，读者只需要看到一次。AIHOT 把它们聚成一个**事件**：先用标题摘要的向量（没配向量服务时比文字重合度）在最近两周里找候选，再让模型判断是同一件事、后续进展，还是两件事；拿不准的合并，写入前再让模型复核一遍（复核可以单独换一家模型，设 `GROUP_REVIEW_MODEL`）。
-
-**热度**按事件算，不按文章算：48 小时内，每个独立来源只算一次，24 小时减半。重复抓取不会多算，一家媒体发十篇也只算一次，所以排在前面的，是真正有很多人在说的事。
-
-### 速度
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/perf-dark.png">
-  <img src="docs/assets/perf-light.png" alt="AIHOT 线上实测：页面中位数 10 毫秒，95% 在 50 毫秒内；接口中位数 6 毫秒，95% 在 12 毫秒内；文章页 95% 在 14 毫秒内" width="100%">
-</picture>
-
-## 你会得到什么
-
-| | |
-|---|---|
-| **六种信源** | RSS、网页列表、JSON 接口、X 账号、微信公众号，以及你自己脚本推送进来的内容。信源分三级（官方一手、官方账号与准官方、媒体与个人），各级入选门槛不同；抓取频率按产出自动调整 |
-| **精选** | 预筛，同一份评分标准独立打两次分，再按信源分级的门槛决定入选；同一条新闻只占一条，换个说法的重复不进。提示词和门槛全部公开，全部可以改；用你自己标注的样本在 SelectBench 里校准 |
-| **写作** | 中文标题、答案先行的摘要、推荐理由，外文全文翻译；分类、标签和新闻事实单独抽取；防止模型把原文没提到的公司写进标题 |
-| **聚簇** | 不同来源报道的同一件事聚成一个事件，后续进展挂在同一个事件下，事件页有综述；进展和报道时间线可一起切换“最新在前”或“最早在前”；人工改过的归属不会被覆盖 |
-| **热点** | 按事件算热度：独立来源越多越靠前，X 上的讨论也算进来；和 6 小时前比，涨得快的标上升，新出现的标“新” |
-| **日报、周报、月报** | 每天出日报（默认 08:00），按规则编出当天要闻：一件事一条，报过的事只在有新进展时跟进，不调模型。每周一出周报、每月 1 日出月报（默认 10:00、10:30），从日报里汇编，模型只写总述和栏目导读。几点出刊在 `site/site.ts` 的 `EDITION_TIMES` 里改 |
-| **主题与搜索** | 公司、方向、内容形态三类主题页；标题摘要搜索和全文相关搜索 |
-| **阅读设置** | 深浅色外观、网站默认字体或浏览器默认字体；收藏和阅读设置只保存在本机，可以导出、导入备份 |
-| **给 Agent 用** | RSS（精选、全部、全文、日报、周报、月报）、公开 API、MCP、Agent Markdown、`llms.txt`，同一份内容给人看也给 Agent 用 |
-| **后台** | 信源管理与试抓、内容诊断与人工评分更正、精选评测、每一步单独换模型、付费服务的预算熔断、运行记录与告警 |
-
-## 看一眼
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/shots-dark.png">
-  <img src="docs/assets/shots-light.png" alt="首页的每日精选，关于页的信源河" width="100%">
-</picture>
-
-<p align="center"><sub>截图来自用示范信源跑起来的本地站，站名是默认的 MyHOT。</sub></p>
-
-## 跑起来
-
-想创建自己的独立站点，可以先点 [Use this template](https://github.com/KKKKhazix/AIHOT/generate)，再克隆你生成的仓库。想持续合并上游更新或贡献代码，建议先 Fork。下面的命令适合直接试用。
-
-需要 [Docker](https://docs.docker.com/get-started/get-docker/)、[Node.js 24](https://nodejs.org/en/download)（运行 `init-env` 生成配置要用），和一个 OpenAI 兼容的模型 API Key（DeepSeek、千问、智谱都可以）。
-
-`init-env` 默认按 DeepSeek 配置。用千问、智谱等别家，照 `.env.example` 里的例子改 `.env` 的 `LLM_BASE_URL`、`LLM_MODEL` 和 `LLM_EXTRA_JSON`；用推理模型（先想再答）时，还要设 `LLM_REASONING_TOKENS` 给推理留出输出额度。
+需要 Node.js 24、PostgreSQL 17。
 
 ```bash
-git clone https://github.com/KKKKhazix/AIHOT.git myhot
-cd myhot
-node scripts/init-env.ts --llm-key <你的模型 API Key>
-docker compose up -d --build
+git clone https://github.com/Suxinljh/WeChatHot.git
+cd WeChatHot
+npm install
+
+cp .env.example .env        # 或 node scripts/init-env.ts --llm-key <key>
+# 至少填：DATABASE_URL、SESSION_SECRET、ADMIN_PASSWORD、LLM_API_KEY
+
+npm run db:migrate
+npm run seed:wechathot      # 7 类品牌、写作与排版预设
+
+npm run dev:api             # http://127.0.0.1:3001
+npm run dev:web             # http://127.0.0.1:3000
+npm run dev:worker          # 需要采集/投影/通知时再开
 ```
 
-打开 <http://localhost:3000>。后台在 `/admin`，管理员密码在 `.env` 的 `ADMIN_PASSWORD` 里。一两分钟后开始有内容，第一次导入的资料大约半小时处理完。
+打开 http://127.0.0.1:3000 ，用 `ADMIN_PASSWORD` 登录，进入 `/studio`。
 
-机器上没有 Node、服务器在中国大陆、要配域名和 HTTPS，或者不用 Docker、直接在 Linux、macOS 上跑（Windows 用 WSL2），见 [部署](docs/deploy.md)。
+安全阀默认关闭：`COLLECT_ENABLED=false`、`MODEL_CALLS_ENABLED=false`。只想看界面时保持关闭；要真正采集和调用模型再打开。后台在 `/admin`。
 
-站点跑起来后，打开 `/agent` 可以复制 MCP、RSS 或 API 的接入方式；只能读网页的 Agent 从 `/api/v1/agent` 开始；接口说明在 `/openapi-v1.json`。
+## 测试
 
-## 把它改成你的行业
-
-最省事的办法：打开你的 Agent（Claude Code、Codex 都可以），把这个仓库交给它，然后说：
-
-```text
-请读 AGENTS.md 和 docs/customize.md，把这个站改成「XX 行业」的热点站。
-我关心的是：……（写你想盯的信源、你觉得什么消息重要、什么不重要，越具体越好）。
-改完帮我跑 npm run typecheck、npm test 和 node scripts/smoke.ts，并告诉我还需要我自己决定哪些事。
+```bash
+npm run typecheck
+npm test                                                     # 需要 *_test 或 *_ci 结尾的数据库
+npm run build -w @aihot/web && node --test apps/web/tests/*.test.ts
+node scripts/smoke.ts --base http://localhost:3000           # 站点跑起来后
 ```
 
-要改的东西几乎都在 [`site/`](site/) 和 [`industry/`](industry/) 这两个文件夹里，代码基本不用动：
+`npm test` 会给每个测试文件复制一份数据库并并行运行，账号需要有建库权限。测试不访问外部服务，模型和付费接口由本地假服务回答。
 
-| 文件 | 改什么 |
+## 目录
+
+| 路径 | 内容 |
 |---|---|
-| `site/site.ts` | 站名、行业词、出刊时间、首页文案、关于页、条目与日报周报月报上的说法、公开接口的分类 |
-| `industry/taxonomy.ts`、`industry/topics.json` | 分类、标签、主题 |
-| `industry/sources.json` | 首次启动时导入的信源 |
-| `industry/prompts/` | 精选标准和写作要求。**你的行业 KnowHow，就写在这里** |
-| `industry/selection.ts` | 入选门槛 |
-| `site/models.ts` | 每一步默认用哪个模型（不改也行：都用 `.env` 里配的那一个） |
-| `site/brand/`、`site/pages/`、`site/public/`、`site/changelog.json` | 图标与 Logo，使用规则和隐私说明，`robots.txt` 这类发布在网站根目录的文件，更新日志 |
-| `modules/` | 框架里没有、只有你的站要的功能，做成模块放在这里，见 [架构](docs/architecture.md#模块) 的“模块” |
-
-最值得花时间的是评分标准（`industry/prompts/selection-score.md`）和门槛：拿一两百条你自己标注过的资料，用 `scripts/eval-selection.ts` 跑一遍，看它选得准不准，再回去改。怎么做写在 [精选与校准](docs/selection.md) 里。
+| `modules/wechathot/` | 工作台产品代码：事件、品牌、选题、写作、审核、导出、通知、指标 |
+| `modules/wechathot/web/` | 工作台页面：热点、事件、选题、文章、信源、品牌、日历、指标、设置 |
+| `industry/` | 分类、主题、示范信源、提示词、入选门槛 |
+| `site/` | 站名、每一步用哪个模型、品牌与启用模块 |
+| `database/migrations/` | 引擎迁移；模块自己的迁移在 `modules/*/migrations/` |
+| `docs/` | 架构、部署、信源、选择标准、WeChatHot 产品文档 |
 
 ## 文档
 
-| 文档 | 内容 |
-|---|---|
-| [把它改成你的行业](docs/customize.md) | 站名、分类、主题、信源、提示词、门槛、模型、品牌，一步一步来 |
-| [信源](docs/sources.md) | 六种信源怎么配，分级和全文，抓取频率，旧文和存档，固定起点 `publishedAfter`，外部推送接口 |
-| [精选与校准](docs/selection.md) | 一条资料怎么变成精选、怎么编进日报周报月报，怎么用自己的样本校准 |
-| [事件归组与关系评测](docs/grouping.md) | 事件关系怎么判断，怎么用自己标注的成对样本评测 |
-| [综述评测](docs/story-digest-evaluation.md) | 改事件综述提示词前，怎么在同一批事件上并排比较 |
-| [部署](docs/deploy.md) | Docker、域名和 HTTPS、中国大陆、更新、备份、花多少钱，不用 Docker 时在 Linux、macOS（Windows 用 WSL2）上怎么跑 |
-| [架构](docs/architecture.md) | 三个进程、几条不变的规则、目录、模块、数据库迁移、对外出口、测试 |
+- [产品需求](docs/WeChatHot/PRD.md)
+- [架构](docs/architecture.md)
+- [部署](docs/deploy.md)
+- [信源](docs/sources.md)
+- [选择标准](docs/selection.md)
+- [行业名录模板](docs/WeChatHot/industry-seed-template.md) · [已收录品牌库](docs/WeChatHot/industry-seed.md)
+- [公众号粘贴验收清单](docs/WeChatHot/wechat-paste-checklist.md)
 
-技术栈：Node.js 24 · TypeScript · React Router（服务端渲染）· Fastify · PostgreSQL · pg-boss · Tailwind CSS · Docker Compose。
+## 边界
 
-## 交流与贡献
+- 单用户：不设计注册、团队、权限和协作。
+- 不自动发布到公众号：只生成可粘贴的富文本，发布仍在公众号后台手动完成。
+- 图片默认存在部署机本地磁盘（`.data/uploads`），公众号访问不到时需要手动上传。
+- 公开阅读站、RSS、API v1、MCP 和站点地图已下线。
 
-部署和使用问题到 [问答区](https://github.com/KKKKhazix/AIHOT/discussions/categories/q-a)，新想法到 [想法交流区](https://github.com/KKKKhazix/AIHOT/discussions/categories/ideas)，欢迎在 [作品展示区](https://github.com/KKKKhazix/AIHOT/discussions/categories/show-and-tell) 分享你做出的行业热点站。
+## 许可与来源
 
-发现 Bug 或有明确的功能建议，可以 [提交 Issue](https://github.com/KKKKhazix/AIHOT/issues/new/choose)。准备改代码前，先看 [贡献说明](CONTRIBUTING.md)；安全漏洞请走 [私密报告入口](SECURITY.md)。
-
-## 最后
-
-AIHOT 曾经只是我无数个深夜里，一个很小、很小的念头。
-
-我不知道它会被改成什么样子，会走到多远的地方。但这可能就是开源最浪漫的地方。
-
-剩下的路，就交给你们了。
-
-<p align="right">—— 数字生命卡兹克</p>
-
-## 许可
-
-代码使用 [MIT 许可证](LICENSE)。AIHOT 的名字和 Logo 不在许可范围内。字体有自己的许可，见 [NOTICE](NOTICE)。
+MIT。引擎框架改造自 [AIHOT](https://github.com/KKKKhazix/AIHOT)（MIT），产品和界面已按 WeChatHot 重做。
