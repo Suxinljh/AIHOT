@@ -61,6 +61,29 @@ const api = createServer((req, res) => {
       }],
     }));
   }
+  if (url.pathname === "/api/studio/events") {
+    if (!req.headers.cookie?.includes(SESSION)) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ detail: "Sign in to the studio first." }));
+    }
+    return res.end(JSON.stringify({
+      items: [],
+      page: 1,
+      pageSize: 20,
+      total: 0,
+      totalPages: 1,
+      scope: "curated",
+      sort: "discovered",
+      facets: { industries: [], brands: [], channels: [], eventTypes: [], sourceTiers: [] },
+    }));
+  }
+  if (url.pathname === "/api/studio/topics") {
+    if (!req.headers.cookie?.includes(SESSION)) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ detail: "Sign in to the studio first." }));
+    }
+    return res.end(JSON.stringify({ items: [] }));
+  }
   res.statusCode = 404;
   res.end(JSON.stringify({ code: "not_found" }));
 });
