@@ -32,6 +32,7 @@ import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset
 import { renderWechatHtml } from "./wechat-html.ts";
 import { readUpload, saveUpload } from "./uploads.ts";
 import { currentMonth, loadCalendar } from "./calendar.ts";
+import { loadMetrics } from "./metrics.ts";
 import type {
   ColumnType,
   PresetKind,
@@ -157,6 +158,14 @@ export const wechatHotServer = defineServerModule({
 
 
 
+    }));
+
+    // The workbench's own numbers: adoption, completion, rewrites and model cost for a time range.
+    app.get("/api/studio/metrics", studioHandler(async (req) => {
+      const days = Math.min(Math.max(Number(queryValue(req, "days") ?? 30) || 30, 1), 365);
+      const to = new Date();
+      const from = new Date(to.getTime() - days * 86400_000);
+      return await loadMetrics(from, to);
     }));
 
     // The publishing calendar: what is scheduled this month, topics and drafts together.
