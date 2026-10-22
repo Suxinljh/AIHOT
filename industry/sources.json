@@ -5,12 +5,19 @@
       "id": "rss-openai-news",
       "name": "OpenAI News",
       "kind": "rss",
-      "config": { "feedUrl": "https://openai.com/news/rss.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://openai.com/news/rss.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "openai",
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["官方"],
+      "tags": [
+        "官方"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -18,12 +25,20 @@
       "id": "rss-google-deepmind",
       "name": "Google DeepMind",
       "kind": "rss",
-      "config": { "feedUrl": "https://deepmind.google/blog/rss.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://deepmind.google/blog/rss.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "google",
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["官方", "研究"],
+      "tags": [
+        "官方",
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -31,12 +46,20 @@
       "id": "rss-google-research",
       "name": "Google Research",
       "kind": "rss",
-      "config": { "feedUrl": "https://research.google/blog/rss/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://research.google/blog/rss/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "google",
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["官方", "研究"],
+      "tags": [
+        "官方",
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -44,12 +67,20 @@
       "id": "rss-google-android",
       "name": "Android Developers Blog",
       "kind": "rss",
-      "config": { "feedUrl": "https://android-developers.googleblog.com/feeds/posts/default", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://android-developers.googleblog.com/feeds/posts/default",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "google",
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "开发工具"],
+      "tags": [
+        "官方",
+        "开发工具"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -57,12 +88,20 @@
       "id": "rss-microsoft-research",
       "name": "Microsoft Research",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.microsoft.com/en-us/research/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.microsoft.com/en-us/research/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "microsoft",
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "研究"],
+      "tags": [
+        "官方",
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -70,12 +109,19 @@
       "id": "rss-nvidia-blog",
       "name": "NVIDIA Blog",
       "kind": "rss",
-      "config": { "feedUrl": "https://blogs.nvidia.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://blogs.nvidia.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "nvidia",
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["官方"],
+      "tags": [
+        "官方"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -83,12 +129,20 @@
       "id": "rss-meta-engineering",
       "name": "Meta Engineering",
       "kind": "rss",
-      "config": { "feedUrl": "https://engineering.fb.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://engineering.fb.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "meta",
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "开源"],
+      "tags": [
+        "官方",
+        "开源"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -96,12 +150,21 @@
       "id": "rss-github-blog",
       "name": "GitHub Blog",
       "kind": "rss",
-      "config": { "feedUrl": "https://github.blog/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://github.blog/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "github",
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "开源", "开发工具"],
+      "tags": [
+        "官方",
+        "开源",
+        "开发工具"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -109,12 +172,20 @@
       "id": "rss-aws-ml",
       "name": "AWS Machine Learning Blog",
       "kind": "rss",
-      "config": { "feedUrl": "https://aws.amazon.com/blogs/machine-learning/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://aws.amazon.com/blogs/machine-learning/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "教程"],
+      "tags": [
+        "官方",
+        "教程"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -122,12 +193,20 @@
       "id": "rss-apple-newsroom",
       "name": "Apple Newsroom",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.apple.com/newsroom/rss-feed.rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.apple.com/newsroom/rss-feed.rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "apple",
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["官方", "硬件"],
+      "tags": [
+        "官方",
+        "硬件"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -135,12 +214,20 @@
       "id": "rss-samsung-newsroom",
       "name": "Samsung Newsroom",
       "kind": "rss",
-      "config": { "feedUrl": "https://news.samsung.com/global/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://news.samsung.com/global/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "samsung",
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "硬件"],
+      "tags": [
+        "官方",
+        "硬件"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -148,12 +235,20 @@
       "id": "rss-amd-newsroom",
       "name": "AMD Newsroom",
       "kind": "rss",
-      "config": { "feedUrl": "https://newsroom.amd.com/rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://newsroom.amd.com/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T1",
       "owner_entity_id": "amd",
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["官方", "芯片"],
+      "tags": [
+        "官方",
+        "芯片"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -161,12 +256,20 @@
       "id": "rss-qbitai",
       "name": "量子位",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.qbitai.com/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.qbitai.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["中文", "媒体"],
+      "tags": [
+        "中文",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -174,12 +277,20 @@
       "id": "rss-zhidx",
       "name": "智东西",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.zhidx.com/rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.zhidx.com/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["中文", "媒体"],
+      "tags": [
+        "中文",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -187,12 +298,20 @@
       "id": "rss-leiphone",
       "name": "雷峰网",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.leiphone.com/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.leiphone.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["中文", "媒体"],
+      "tags": [
+        "中文",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -200,12 +319,20 @@
       "id": "rss-ifanr",
       "name": "爱范儿",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.ifanr.com/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.ifanr.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["中文", "媒体"],
+      "tags": [
+        "中文",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -213,12 +340,20 @@
       "id": "rss-ithome",
       "name": "IT之家",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.ithome.com/rss/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.ithome.com/rss/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["中文", "媒体"],
+      "tags": [
+        "中文",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -226,12 +361,20 @@
       "id": "rss-sspai",
       "name": "少数派",
       "kind": "rss",
-      "config": { "feedUrl": "https://sspai.com/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://sspai.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["中文", "教程"],
+      "tags": [
+        "中文",
+        "教程"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -239,12 +382,20 @@
       "id": "rss-yystv",
       "name": "游研社",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.yystv.cn/rss/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.yystv.cn/rss/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["中文", "游戏"],
+      "tags": [
+        "中文",
+        "游戏"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -252,12 +403,20 @@
       "id": "rss-gcores",
       "name": "机核 GCORES",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.gcores.com/rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.gcores.com/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["中文", "游戏"],
+      "tags": [
+        "中文",
+        "游戏"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -265,12 +424,19 @@
       "id": "rss-the-verge",
       "name": "The Verge",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.theverge.com/rss/index.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.theverge.com/rss/index.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["媒体"],
+      "tags": [
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -278,12 +444,19 @@
       "id": "rss-ars-technica",
       "name": "Ars Technica",
       "kind": "rss",
-      "config": { "feedUrl": "https://feeds.arstechnica.com/arstechnica/index", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://feeds.arstechnica.com/arstechnica/index",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["媒体"],
+      "tags": [
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -291,12 +464,19 @@
       "id": "rss-techcrunch",
       "name": "TechCrunch",
       "kind": "rss",
-      "config": { "feedUrl": "https://techcrunch.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://techcrunch.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["媒体"],
+      "tags": [
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -304,12 +484,19 @@
       "id": "rss-engadget",
       "name": "Engadget",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.engadget.com/rss.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.engadget.com/rss.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["媒体"],
+      "tags": [
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -317,12 +504,19 @@
       "id": "rss-wired",
       "name": "WIRED",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.wired.com/feed/rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.wired.com/feed/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["媒体"],
+      "tags": [
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -330,12 +524,20 @@
       "id": "rss-techmeme",
       "name": "Techmeme",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.techmeme.com/feed.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.techmeme.com/feed.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["媒体", "聚合"],
+      "tags": [
+        "媒体",
+        "聚合"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -343,12 +545,19 @@
       "id": "rss-the-decoder",
       "name": "The Decoder",
       "kind": "rss",
-      "config": { "feedUrl": "https://the-decoder.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://the-decoder.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["媒体"],
+      "tags": [
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -356,12 +565,20 @@
       "id": "rss-mit-tech-review",
       "name": "MIT Technology Review · AI",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.technologyreview.com/topic/artificial-intelligence/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["媒体", "研究"],
+      "tags": [
+        "媒体",
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -369,12 +586,20 @@
       "id": "rss-tomshardware",
       "name": "Tom's Hardware",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.tomshardware.com/feeds/all", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.tomshardware.com/feeds/all",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["硬件", "媒体"],
+      "tags": [
+        "硬件",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -382,12 +607,20 @@
       "id": "rss-servethehome",
       "name": "ServeTheHome",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.servethehome.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.servethehome.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["硬件", "算力"],
+      "tags": [
+        "硬件",
+        "算力"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -395,12 +628,20 @@
       "id": "rss-chipsandcheese",
       "name": "Chips and Cheese",
       "kind": "rss",
-      "config": { "feedUrl": "https://chipsandcheese.com/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://chipsandcheese.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["芯片", "个人"],
+      "tags": [
+        "芯片",
+        "个人"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -408,12 +649,20 @@
       "id": "rss-semi-analysis",
       "name": "SemiAnalysis",
       "kind": "rss",
-      "config": { "feedUrl": "https://semianalysis.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://semianalysis.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["芯片", "算力"],
+      "tags": [
+        "芯片",
+        "算力"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -421,12 +670,20 @@
       "id": "rss-digitimes",
       "name": "DigiTimes",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.digitimes.com/rss/daily.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.digitimes.com/rss/daily.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["芯片", "供应链"],
+      "tags": [
+        "芯片",
+        "供应链"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -434,12 +691,20 @@
       "id": "rss-9to5mac",
       "name": "9to5Mac",
       "kind": "rss",
-      "config": { "feedUrl": "https://9to5mac.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://9to5mac.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["硬件", "媒体"],
+      "tags": [
+        "硬件",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -447,12 +712,20 @@
       "id": "rss-9to5google",
       "name": "9to5Google",
       "kind": "rss",
-      "config": { "feedUrl": "https://9to5google.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://9to5google.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["硬件", "媒体"],
+      "tags": [
+        "硬件",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -460,12 +733,20 @@
       "id": "rss-dpreview",
       "name": "DPReview",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.dpreview.com/feeds/news.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.dpreview.com/feeds/news.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["摄影", "硬件"],
+      "tags": [
+        "摄影",
+        "硬件"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -473,12 +754,20 @@
       "id": "rss-ieee-robotics",
       "name": "IEEE Spectrum · Robotics",
       "kind": "rss",
-      "config": { "feedUrl": "https://spectrum.ieee.org/feeds/topic/robotics.rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://spectrum.ieee.org/feeds/topic/robotics.rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["具身智能", "研究"],
+      "tags": [
+        "具身智能",
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -486,12 +775,20 @@
       "id": "rss-robotics-automation",
       "name": "Robotics & Automation News",
       "kind": "rss",
-      "config": { "feedUrl": "https://roboticsandautomationnews.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://roboticsandautomationnews.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["具身智能", "媒体"],
+      "tags": [
+        "具身智能",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -499,12 +796,20 @@
       "id": "rss-electrek",
       "name": "Electrek",
       "kind": "rss",
-      "config": { "feedUrl": "https://electrek.co/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://electrek.co/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["自动驾驶", "媒体"],
+      "tags": [
+        "自动驾驶",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -512,12 +817,20 @@
       "id": "rss-insideevs",
       "name": "InsideEVs",
       "kind": "rss",
-      "config": { "feedUrl": "https://insideevs.com/rss/articles/all/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://insideevs.com/rss/articles/all/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["自动驾驶", "媒体"],
+      "tags": [
+        "自动驾驶",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -525,12 +838,19 @@
       "id": "rss-not-a-tesla-app",
       "name": "Not a Tesla App",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.notateslaapp.com/rss", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.notateslaapp.com/rss",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": "tesla",
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["自动驾驶"],
+      "tags": [
+        "自动驾驶"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -538,12 +858,20 @@
       "id": "rss-dronexl",
       "name": "DroneXL",
       "kind": "rss",
-      "config": { "feedUrl": "https://dronexl.co/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://dronexl.co/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["无人机", "媒体"],
+      "tags": [
+        "无人机",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -551,12 +879,20 @@
       "id": "rss-dronelife",
       "name": "Dronelife",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.dronelife.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.dronelife.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["无人机", "媒体"],
+      "tags": [
+        "无人机",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -564,12 +900,20 @@
       "id": "rss-variety",
       "name": "Variety",
       "kind": "rss",
-      "config": { "feedUrl": "https://variety.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://variety.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 60,
-      "tags": ["影视", "媒体"],
+      "tags": [
+        "影视",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -577,12 +921,20 @@
       "id": "rss-hollywood-reporter",
       "name": "The Hollywood Reporter",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.hollywoodreporter.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.hollywoodreporter.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["影视", "媒体"],
+      "tags": [
+        "影视",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -590,12 +942,20 @@
       "id": "rss-indiewire",
       "name": "IndieWire",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.indiewire.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.indiewire.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["影视", "媒体"],
+      "tags": [
+        "影视",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -603,12 +963,20 @@
       "id": "rss-slashfilm",
       "name": "/Film",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.slashfilm.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.slashfilm.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["影视", "媒体"],
+      "tags": [
+        "影视",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -616,12 +984,20 @@
       "id": "rss-firstshowing",
       "name": "FirstShowing",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.firstshowing.net/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.firstshowing.net/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["影视", "媒体"],
+      "tags": [
+        "影视",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -629,12 +1005,20 @@
       "id": "rss-cartoonbrew",
       "name": "Cartoon Brew",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.cartoonbrew.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.cartoonbrew.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["动画", "媒体"],
+      "tags": [
+        "动画",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -642,12 +1026,20 @@
       "id": "rss-artnews",
       "name": "ARTnews",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.artnews.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.artnews.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["艺术", "媒体"],
+      "tags": [
+        "艺术",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -655,12 +1047,20 @@
       "id": "rss-hyperallergic",
       "name": "Hyperallergic",
       "kind": "rss",
-      "config": { "feedUrl": "https://hyperallergic.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://hyperallergic.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["艺术", "媒体"],
+      "tags": [
+        "艺术",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -668,12 +1068,20 @@
       "id": "rss-designboom",
       "name": "designboom",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.designboom.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.designboom.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["设计", "艺术"],
+      "tags": [
+        "设计",
+        "艺术"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -681,12 +1089,20 @@
       "id": "rss-dezeen",
       "name": "Dezeen",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.dezeen.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.dezeen.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["设计", "艺术"],
+      "tags": [
+        "设计",
+        "艺术"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -694,12 +1110,20 @@
       "id": "rss-musicbusiness",
       "name": "Music Business Worldwide",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.musicbusinessworldwide.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.musicbusinessworldwide.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["音乐", "媒体"],
+      "tags": [
+        "音乐",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -707,12 +1131,20 @@
       "id": "rss-gamesindustry",
       "name": "GamesIndustry.biz",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.gamesindustry.biz/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.gamesindustry.biz/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["游戏", "媒体"],
+      "tags": [
+        "游戏",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -720,12 +1152,20 @@
       "id": "rss-polygon",
       "name": "Polygon",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.polygon.com/rss/index.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.polygon.com/rss/index.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["游戏", "媒体"],
+      "tags": [
+        "游戏",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -733,12 +1173,20 @@
       "id": "rss-eurogamer",
       "name": "Eurogamer",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.eurogamer.net/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.eurogamer.net/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["游戏", "媒体"],
+      "tags": [
+        "游戏",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -746,12 +1194,20 @@
       "id": "rss-rockpapershotgun",
       "name": "Rock Paper Shotgun",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.rockpapershotgun.com/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.rockpapershotgun.com/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["游戏", "媒体"],
+      "tags": [
+        "游戏",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -759,12 +1215,20 @@
       "id": "rss-vgc",
       "name": "Video Games Chronicle",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.videogameschronicle.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.videogameschronicle.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["游戏", "媒体"],
+      "tags": [
+        "游戏",
+        "媒体"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -772,12 +1236,19 @@
       "id": "rss-simon-willison",
       "name": "Simon Willison",
       "kind": "rss",
-      "config": { "feedUrl": "https://simonwillison.net/atom/everything/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://simonwillison.net/atom/everything/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 120,
-      "tags": ["个人"],
+      "tags": [
+        "个人"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -785,12 +1256,20 @@
       "id": "rss-latent-space",
       "name": "Latent Space",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.latent.space/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.latent.space/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 180,
-      "tags": ["个人", "周刊"],
+      "tags": [
+        "个人",
+        "周刊"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -798,12 +1277,20 @@
       "id": "rss-interconnects",
       "name": "Interconnects",
       "kind": "rss",
-      "config": { "feedUrl": "https://www.interconnects.ai/feed", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://www.interconnects.ai/feed",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["个人", "研究"],
+      "tags": [
+        "个人",
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -811,12 +1298,19 @@
       "id": "rss-bair",
       "name": "Berkeley AI Research",
       "kind": "rss",
-      "config": { "feedUrl": "https://bair.berkeley.edu/blog/feed.xml", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://bair.berkeley.edu/blog/feed.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["研究"],
+      "tags": [
+        "研究"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
     },
@@ -824,14 +1318,111 @@
       "id": "rss-roboflow",
       "name": "Roboflow Blog",
       "kind": "rss",
-      "config": { "feedUrl": "https://blog.roboflow.com/feed/", "_aihot": { "initialBackfillLimit": 8 } },
+      "config": {
+        "feedUrl": "https://blog.roboflow.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
       "tier": "T2",
       "owner_entity_id": null,
       "participation_mode": "editorial",
       "interval_minutes": 240,
-      "tags": ["研究", "教程"],
+      "tags": [
+        "研究",
+        "教程"
+      ],
       "site_fulltext": false,
       "syndicate_fulltext": false
+    },
+    {
+      "id": "rss-playstation-blog",
+      "name": "PlayStation Blog",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://blog.playstation.com/feed/",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": "playstation",
+      "participation_mode": "editorial",
+      "interval_minutes": 180,
+      "tags": [
+        "官方",
+        "游戏"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false
+    },
+    {
+      "id": "rss-steam-news",
+      "name": "Steam 新闻",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "https://store.steampowered.com/feeds/news.xml",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T1",
+      "owner_entity_id": "valve",
+      "participation_mode": "editorial",
+      "interval_minutes": 240,
+      "tags": [
+        "官方",
+        "平台",
+        "游戏"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false
+    },
+    {
+      "id": "web-byd-news",
+      "name": "比亚迪新闻（候选）",
+      "kind": "web_list",
+      "config": {
+        "url": "https://www.byd.com/cn/news",
+        "baseUrl": "https://www.byd.com",
+        "allowUrlPrefixes": [
+          "https://www.byd.com/"
+        ]
+      },
+      "tier": "T1",
+      "owner_entity_id": "byd",
+      "participation_mode": "editorial",
+      "interval_minutes": 240,
+      "tags": [
+        "候选",
+        "官方"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "web-chinafilm-news",
+      "name": "中国电影网（候选）",
+      "kind": "web_list",
+      "config": {
+        "url": "https://www.chinafilm.com/",
+        "baseUrl": "https://www.chinafilm.com",
+        "allowUrlPrefixes": [
+          "https://www.chinafilm.com/"
+        ]
+      },
+      "tier": "T1",
+      "owner_entity_id": "china-film",
+      "participation_mode": "editorial",
+      "interval_minutes": 240,
+      "tags": [
+        "候选",
+        "官方"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
     }
   ]
 }

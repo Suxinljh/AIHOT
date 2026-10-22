@@ -723,6 +723,779 @@
         "行业动态"
       ],
       "definition": "商业脉搏：合作与竞争、诉讼与监管、市场格局与经营表现。"
+    },
+    {
+      "slug": "byd",
+      "name": "比亚迪 / BYD",
+      "group": "company",
+      "entityId": "byd",
+      "definition": "比亚迪的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "li-auto",
+      "name": "理想汽车 / Li Auto",
+      "group": "company",
+      "entityId": "li-auto",
+      "definition": "理想汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "xpeng",
+      "name": "小鹏汽车 / XPENG",
+      "group": "company",
+      "entityId": "xpeng",
+      "definition": "小鹏汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "nio",
+      "name": "蔚来 / NIO",
+      "group": "company",
+      "entityId": "nio",
+      "definition": "蔚来的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "leapmotor",
+      "name": "零跑汽车 / Leapmotor",
+      "group": "company",
+      "entityId": "leapmotor",
+      "definition": "零跑汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "geely-auto",
+      "name": "吉利汽车 / Geely Auto",
+      "group": "company",
+      "entityId": "geely-auto",
+      "definition": "吉利汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "zeekr",
+      "name": "极氪 / ZEEKR",
+      "group": "company",
+      "entityId": "zeekr",
+      "definition": "极氪的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "lynk-and-co",
+      "name": "领克 / Lynk & Co",
+      "group": "company",
+      "entityId": "lynk-and-co",
+      "definition": "领克的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "changan",
+      "name": "长安汽车 / CHANGAN",
+      "group": "company",
+      "entityId": "changan",
+      "definition": "长安汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "deepal",
+      "name": "深蓝汽车 / DEEPAL",
+      "group": "company",
+      "entityId": "deepal",
+      "definition": "深蓝汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "avatr",
+      "name": "阿维塔 / AVATR",
+      "group": "company",
+      "entityId": "avatr",
+      "definition": "阿维塔的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "chery",
+      "name": "奇瑞汽车 / Chery",
+      "group": "company",
+      "entityId": "chery",
+      "definition": "奇瑞汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "jetour",
+      "name": "捷途汽车 / JETOUR",
+      "group": "company",
+      "entityId": "jetour",
+      "definition": "捷途汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "great-wall-motor",
+      "name": "长城汽车 / Great Wall Motor",
+      "group": "company",
+      "entityId": "great-wall-motor",
+      "definition": "长城汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "gac-group",
+      "name": "广汽集团 / GAC Group",
+      "group": "company",
+      "entityId": "gac-group",
+      "definition": "广汽集团的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "gac-aion",
+      "name": "广汽埃安 / GAC AION",
+      "group": "company",
+      "entityId": "gac-aion",
+      "definition": "广汽埃安的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "seres",
+      "name": "赛力斯 / SERES",
+      "group": "company",
+      "entityId": "seres",
+      "definition": "赛力斯的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "hima",
+      "name": "鸿蒙智行 / HIMA",
+      "group": "company",
+      "entityId": "hima",
+      "definition": "鸿蒙智行的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "saic-motor",
+      "name": "上汽集团 / SAIC Motor",
+      "group": "company",
+      "entityId": "saic-motor",
+      "definition": "上汽集团的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "im-motors",
+      "name": "智己汽车 / IM Motors",
+      "group": "company",
+      "entityId": "im-motors",
+      "definition": "智己汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "wuling",
+      "name": "五菱汽车 / Wuling",
+      "group": "company",
+      "entityId": "wuling",
+      "definition": "五菱汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "hongqi",
+      "name": "红旗 / Hongqi",
+      "group": "company",
+      "entityId": "hongqi",
+      "definition": "红旗的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "volkswagen",
+      "name": "大众汽车 / Volkswagen",
+      "group": "company",
+      "entityId": "volkswagen",
+      "definition": "大众汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "toyota",
+      "name": "丰田汽车 / Toyota",
+      "group": "company",
+      "entityId": "toyota",
+      "definition": "丰田汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "honda",
+      "name": "本田汽车 / Honda",
+      "group": "company",
+      "entityId": "honda",
+      "definition": "本田汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "nissan",
+      "name": "日产汽车 / Nissan",
+      "group": "company",
+      "entityId": "nissan",
+      "definition": "日产汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "mercedes-benz",
+      "name": "梅赛德斯-奔驰 / Mercedes-Benz",
+      "group": "company",
+      "entityId": "mercedes-benz",
+      "definition": "梅赛德斯-奔驰的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "bmw",
+      "name": "宝马 / BMW",
+      "group": "company",
+      "entityId": "bmw",
+      "definition": "宝马的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "audi",
+      "name": "奥迪 / Audi",
+      "group": "company",
+      "entityId": "audi",
+      "definition": "奥迪的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "porsche",
+      "name": "保时捷 / Porsche",
+      "group": "company",
+      "entityId": "porsche",
+      "definition": "保时捷的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "ford",
+      "name": "福特汽车 / Ford",
+      "group": "company",
+      "entityId": "ford",
+      "definition": "福特汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "hyundai",
+      "name": "现代汽车 / Hyundai",
+      "group": "company",
+      "entityId": "hyundai",
+      "definition": "现代汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "kia",
+      "name": "起亚 / Kia",
+      "group": "company",
+      "entityId": "kia",
+      "definition": "起亚的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "volvo-cars",
+      "name": "沃尔沃汽车 / Volvo Cars",
+      "group": "company",
+      "entityId": "volvo-cars",
+      "definition": "沃尔沃汽车的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "lexus",
+      "name": "雷克萨斯 / Lexus",
+      "group": "company",
+      "entityId": "lexus",
+      "definition": "雷克萨斯的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "rivian",
+      "name": "Rivian",
+      "group": "company",
+      "entityId": "rivian",
+      "definition": "Rivian的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "lucid-motors",
+      "name": "Lucid / Lucid Motors",
+      "group": "company",
+      "entityId": "lucid-motors",
+      "definition": "Lucid的车型、交付与公司动态的持续追踪。"
+    },
+    {
+      "slug": "riot-games",
+      "name": "拳头游戏 / Riot Games",
+      "group": "company",
+      "entityId": "riot-games",
+      "definition": "拳头游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "netease-games",
+      "name": "网易游戏 / NetEase Games",
+      "group": "company",
+      "entityId": "netease-games",
+      "definition": "网易游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "mihoyo",
+      "name": "米哈游 / miHoYo",
+      "group": "company",
+      "entityId": "mihoyo",
+      "definition": "米哈游的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "papergames",
+      "name": "叠纸游戏 / Papergames",
+      "group": "company",
+      "entityId": "papergames",
+      "definition": "叠纸游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "hypergryph",
+      "name": "鹰角网络 / Hypergryph",
+      "group": "company",
+      "entityId": "hypergryph",
+      "definition": "鹰角网络的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "kuro-games",
+      "name": "库洛游戏 / KURO GAMES",
+      "group": "company",
+      "entityId": "kuro-games",
+      "definition": "库洛游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "game-science",
+      "name": "游戏科学 / Game Science",
+      "group": "company",
+      "entityId": "game-science",
+      "definition": "游戏科学的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "xd-games",
+      "name": "心动网络 / XD Games",
+      "group": "company",
+      "entityId": "xd-games",
+      "definition": "心动网络的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "37-interactive-entertainment",
+      "name": "三七互娱 / 37 Interactive Entertainment",
+      "group": "company",
+      "entityId": "37-interactive-entertainment",
+      "definition": "三七互娱的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "lilith-games",
+      "name": "莉莉丝游戏 / Lilith Games",
+      "group": "company",
+      "entityId": "lilith-games",
+      "definition": "莉莉丝游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "perfect-world-games",
+      "name": "完美世界游戏 / Perfect World Games",
+      "group": "company",
+      "entityId": "perfect-world-games",
+      "definition": "完美世界游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "shengqu-games",
+      "name": "盛趣游戏 / Shengqu Games",
+      "group": "company",
+      "entityId": "shengqu-games",
+      "definition": "盛趣游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "yoozoo-games",
+      "name": "游族网络 / YOOZOO Games",
+      "group": "company",
+      "entityId": "yoozoo-games",
+      "definition": "游族网络的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "moonton-games",
+      "name": "沐瞳科技 / MOONTON Games",
+      "group": "company",
+      "entityId": "moonton-games",
+      "definition": "沐瞳科技的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "bilibili-games",
+      "name": "哔哩哔哩游戏 / Bilibili Games",
+      "group": "company",
+      "entityId": "bilibili-games",
+      "definition": "哔哩哔哩游戏的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "valve",
+      "name": "Valve",
+      "group": "company",
+      "entityId": "valve",
+      "definition": "Valve的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "epic-games",
+      "name": "Epic Games",
+      "group": "company",
+      "entityId": "epic-games",
+      "definition": "Epic Games的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "blizzard-entertainment",
+      "name": "暴雪娱乐 / Blizzard Entertainment",
+      "group": "company",
+      "entityId": "blizzard-entertainment",
+      "definition": "暴雪娱乐的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "nintendo",
+      "name": "任天堂 / Nintendo",
+      "group": "company",
+      "entityId": "nintendo",
+      "definition": "任天堂的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "playstation",
+      "name": "PlayStation",
+      "group": "company",
+      "entityId": "playstation",
+      "definition": "PlayStation的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "xbox",
+      "name": "Xbox",
+      "group": "company",
+      "entityId": "xbox",
+      "definition": "Xbox的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "ubisoft",
+      "name": "育碧 / Ubisoft",
+      "group": "company",
+      "entityId": "ubisoft",
+      "definition": "育碧的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "electronic-arts",
+      "name": "艺电 / Electronic Arts",
+      "group": "company",
+      "entityId": "electronic-arts",
+      "definition": "艺电的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "take-two-interactive",
+      "name": "Take-Two / Take-Two Interactive",
+      "group": "company",
+      "entityId": "take-two-interactive",
+      "definition": "Take-Two的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "rockstar-games",
+      "name": "Rockstar Games",
+      "group": "company",
+      "entityId": "rockstar-games",
+      "definition": "Rockstar Games的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "capcom",
+      "name": "卡普空 / Capcom",
+      "group": "company",
+      "entityId": "capcom",
+      "definition": "卡普空的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "sega",
+      "name": "世嘉 / SEGA",
+      "group": "company",
+      "entityId": "sega",
+      "definition": "世嘉的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "bandai-namco-entertainment",
+      "name": "万代南梦宫娱乐 / Bandai Namco Entertainment",
+      "group": "company",
+      "entityId": "bandai-namco-entertainment",
+      "definition": "万代南梦宫娱乐的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "square-enix",
+      "name": "史克威尔艾尼克斯 / Square Enix",
+      "group": "company",
+      "entityId": "square-enix",
+      "definition": "史克威尔艾尼克斯的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "konami",
+      "name": "科乐美 / KONAMI",
+      "group": "company",
+      "entityId": "konami",
+      "definition": "科乐美的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "krafton",
+      "name": "KRAFTON",
+      "group": "company",
+      "entityId": "krafton",
+      "definition": "KRAFTON的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "fromsoftware",
+      "name": "FromSoftware",
+      "group": "company",
+      "entityId": "fromsoftware",
+      "definition": "FromSoftware的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "cd-projekt",
+      "name": "CD PROJEKT",
+      "group": "company",
+      "entityId": "cd-projekt",
+      "definition": "CD PROJEKT的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "supercell",
+      "name": "Supercell",
+      "group": "company",
+      "entityId": "supercell",
+      "definition": "Supercell的作品、版本、赛事与公司动态的持续追踪。"
+    },
+    {
+      "slug": "china-film",
+      "name": "中国电影 / China Film",
+      "group": "company",
+      "entityId": "china-film",
+      "definition": "中国电影的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "enlight-media",
+      "name": "光线传媒 / Enlight Media",
+      "group": "company",
+      "entityId": "enlight-media",
+      "definition": "光线传媒的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "bona-film-group",
+      "name": "博纳影业 / Bona Film Group",
+      "group": "company",
+      "entityId": "bona-film-group",
+      "definition": "博纳影业的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "huayi-brothers",
+      "name": "华谊兄弟 / Huayi Brothers",
+      "group": "company",
+      "entityId": "huayi-brothers",
+      "definition": "华谊兄弟的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "huace-media",
+      "name": "华策影视 / Huace Media",
+      "group": "company",
+      "entityId": "huace-media",
+      "definition": "华策影视的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "linmon-media",
+      "name": "柠萌影视 / Linmon Media",
+      "group": "company",
+      "entityId": "linmon-media",
+      "definition": "柠萌影视的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "new-classics-media",
+      "name": "新丽传媒 / New Classics Media",
+      "group": "company",
+      "entityId": "new-classics-media",
+      "definition": "新丽传媒的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "daylight-entertainment",
+      "name": "正午阳光 / Daylight Entertainment",
+      "group": "company",
+      "entityId": "daylight-entertainment",
+      "definition": "正午阳光的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "damai-entertainment",
+      "name": "大麦娱乐 / Damai Entertainment",
+      "group": "company",
+      "entityId": "damai-entertainment",
+      "definition": "大麦娱乐的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "china-literature",
+      "name": "阅文集团 / China Literature",
+      "group": "company",
+      "entityId": "china-literature",
+      "definition": "阅文集团的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "iqiyi",
+      "name": "爱奇艺 / iQIYI",
+      "group": "company",
+      "entityId": "iqiyi",
+      "definition": "爱奇艺的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "tencent-video",
+      "name": "腾讯视频 / Tencent Video",
+      "group": "company",
+      "entityId": "tencent-video",
+      "definition": "腾讯视频的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "youku",
+      "name": "优酷 / Youku",
+      "group": "company",
+      "entityId": "youku",
+      "definition": "优酷的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "mango-tv",
+      "name": "芒果TV / Mango TV",
+      "group": "company",
+      "entityId": "mango-tv",
+      "definition": "芒果TV的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "bilibili",
+      "name": "哔哩哔哩 / Bilibili",
+      "group": "company",
+      "entityId": "bilibili",
+      "definition": "哔哩哔哩的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "universal-pictures",
+      "name": "环球影业 / Universal Pictures",
+      "group": "company",
+      "entityId": "universal-pictures",
+      "definition": "环球影业的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "skydance-corporation",
+      "name": "Skydance / Skydance Corporation",
+      "group": "company",
+      "entityId": "skydance-corporation",
+      "definition": "Skydance的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "sony-pictures",
+      "name": "索尼影业 / Sony Pictures",
+      "group": "company",
+      "entityId": "sony-pictures",
+      "definition": "索尼影业的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "amazon-mgm-studios",
+      "name": "亚马逊米高梅影业 / Amazon MGM Studios",
+      "group": "company",
+      "entityId": "amazon-mgm-studios",
+      "definition": "亚马逊米高梅影业的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "apple-tv",
+      "name": "Apple TV",
+      "group": "company",
+      "entityId": "apple-tv",
+      "definition": "Apple TV的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "lionsgate",
+      "name": "狮门影业 / Lionsgate",
+      "group": "company",
+      "entityId": "lionsgate",
+      "definition": "狮门影业的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "toho",
+      "name": "东宝 / TOHO",
+      "group": "company",
+      "entityId": "toho",
+      "definition": "东宝的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "studio-ghibli",
+      "name": "吉卜力工作室 / Studio Ghibli",
+      "group": "company",
+      "entityId": "studio-ghibli",
+      "definition": "吉卜力工作室的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "cj-enm",
+      "name": "CJ ENM",
+      "group": "company",
+      "entityId": "cj-enm",
+      "definition": "CJ ENM的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "bbc-studios",
+      "name": "BBC Studios",
+      "group": "company",
+      "entityId": "bbc-studios",
+      "definition": "BBC Studios的作品、档期与公司动态的持续追踪。"
+    },
+    {
+      "slug": "smart-driving",
+      "name": "智能驾驶",
+      "group": "field",
+      "definition": "城市 NOA、端到端方案、Robotaxi 与车企智驾能力的进展。",
+      "tags": [
+        "自动驾驶"
+      ]
+    },
+    {
+      "slug": "solid-state-battery",
+      "name": "固态电池",
+      "group": "field",
+      "definition": "固态电池的量产时间、装车进度与供应链变化。"
+    },
+    {
+      "slug": "auto-export",
+      "name": "中国车企出海",
+      "group": "field",
+      "definition": "自主品牌在海外建厂、销量、关税与本地化进展。"
+    },
+    {
+      "slug": "esports",
+      "name": "电竞",
+      "group": "field",
+      "definition": "赛事体系、俱乐部、选手与电竞入亚等产业变化。",
+      "tags": [
+        "游戏"
+      ]
+    },
+    {
+      "slug": "indie-games",
+      "name": "独立游戏",
+      "group": "field",
+      "definition": "独立团队的立项、发行、口碑与出海表现。",
+      "tags": [
+        "游戏"
+      ]
+    },
+    {
+      "slug": "game-engines",
+      "name": "游戏引擎与渲染",
+      "group": "field",
+      "definition": "引擎版本、渲染技术、工具链与性能优化。",
+      "tags": [
+        "游戏"
+      ]
+    },
+    {
+      "slug": "box-office",
+      "name": "票房与档期",
+      "group": "field",
+      "definition": "档期选择、票房走势、排片与市场大盘。",
+      "tags": [
+        "电影"
+      ]
+    },
+    {
+      "slug": "streaming",
+      "name": "流媒体",
+      "group": "field",
+      "definition": "平台内容投入、订阅、独播与剧集排播。",
+      "tags": [
+        "剧集",
+        "电影"
+      ]
+    },
+    {
+      "slug": "short-drama",
+      "name": "短剧",
+      "group": "field",
+      "definition": "短剧的备案、平台分账、出海与监管变化。",
+      "tags": [
+        "剧集"
+      ]
+    },
+    {
+      "slug": "new-car-launch",
+      "name": "新车发布",
+      "group": "genre",
+      "definition": "新车亮相、上市、改款与交付。"
+    },
+    {
+      "slug": "game-update",
+      "name": "版本更新",
+      "group": "genre",
+      "definition": "版本、赛季、资料片与停服。",
+      "tags": [
+        "游戏"
+      ]
+    },
+    {
+      "slug": "film-release",
+      "name": "定档与上映",
+      "group": "genre",
+      "definition": "电影与剧集的定档、撤档、上映与上线。",
+      "tags": [
+        "电影",
+        "剧集"
+      ]
     }
   ]
 }
