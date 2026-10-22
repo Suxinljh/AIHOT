@@ -14,7 +14,11 @@ import { useStudioAction } from "./studio-action";
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const id = params.id;
   if (!id) throw new Response("Not Found", { status: 404 });
-  return { article: await adminGet<StudioArticle>(request, `/api/studio/articles/${encodeURIComponent(id)}`) };
+  const [article, presets] = await Promise.all([
+    adminGet<StudioArticle>(request, `/api/studio/articles/${encodeURIComponent(id)}`),
+    adminGet<{ writing: unknown[]; format: Array<{ id: string; name: string; builtin: boolean; format: Record<string, unknown> }> }>(request, "/api/studio/presets"),
+  ]);
+  return { article, presets: presets.format };
 }
 
 export const meta: MetaFunction = () => studioMeta("稿件");
@@ -34,17 +38,20 @@ const KIND_TONE: Record<ClaimKind, "ok" | "info" | "warn" | "muted"> = {
 const STYLE_LABEL: Record<string, string> = { direct: "直述型", question: "问题型", opinion: "观点型" };
 
 export default function StudioArticlePage() {
-  const { article } = useLoaderData<typeof loader>();
+  const { article, presets } = useLoaderData<typeof loader>();
   const { run, pending } = useStudioAction();
   const navigate = useNavigate();
   const revalidator = useRevalidator();
   const [title, setTitle] = useState(article.title);
   const [sectionIndex, setSectionIndex] = useState(0);
+  const [view, setView] = useState<"content" | "layout">("content");
+  const [format, setFormat] = useState<Record<string, unknown>>(article.format ?? {});
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>(article.review?.items ?? []);
   const [saving, setSaving] = useState(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [draft, setDraft] = useState<ArticleDoc>(article.content);
   useEffect(() => { setDraft(article.content); }, [article.content]);
+  useEffect(() => { setFormat(article.format ?? {}); }, [article.format]);
   useEffect(() => { setReviewItems(article.review?.items ?? []); }, [article.review]);
 
   // The body and the titles are written in the queue: the page refreshes itself while one runs.
@@ -120,26 +127,105 @@ export default function StudioArticlePage() {
         {!article.outline.length && (
           <p className="mt-2 text-[12px] text-ink-4">还没有确认大纲，先在选题页生成并确认大纲，再回来写正文。</p>
         )}
+
+        <div className="mt-4 flex gap-2 border-t border-line-soft pt-4">
+          <button type="button" onClick={() => setView("content")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "content" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>内容</button>
+          <button type="button" onClick={() => setView("layout")} className={`rounded-control px-3 py-1.5 text-[12.5px] ${view === "layout" ? "bg-ink text-bg" : "bg-surface text-ink-2 ring-1 ring-line"}`}>排版</button>
+        </div>
       </header>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-5">
-          <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
-            <h2 className="text-[14px] font-semibold text-ink">正文</h2>
-            <StudioArticleEditor value={draft} onChange={(doc: ArticleDoc) => {
-              setDraft(doc);
-              if (saveTimer.current) clearTimeout(saveTimer.current);
-              saveTimer.current = setTimeout(async () => {
-                setSaving(true);
-                await run("PATCH", `/api/studio/articles/${article.id}`, { content: doc }, { label: `article-autosave-${article.id}`, success: "已保存" });
-                setSaving(false);
-              }, 1500);
-            }} />
-            {saving && <p className="mt-2 text-[11.5px] text-ink-4">正在保存…</p>}
-            {!article.content?.content?.length && (
-              <p className="mt-3 text-[13px] text-ink-4">还没有正文。确认大纲后点「生成正文」。</p>
-            )}
-          </section>
+          {view === "content" ? (
+            <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
+              <h2 className="text-[14px] font-semibold text-ink">正文</h2>
+              <StudioArticleEditor value={draft} onChange={(doc: ArticleDoc) => {
+                setDraft(doc);
+                if (saveTimer.current) clearTimeout(saveTimer.current);
+                saveTimer.current = setTimeout(async () => {
+                  setSaving(true);
+                  await run("PATCH", `/api/studio/articles/${article.id}`, { content: doc }, { label: `article-autosave-${article.id}`, success: "已保存" });
+                  setSaving(false);
+                }, 1500);
+              }} />
+              {saving && <p className="mt-2 text-[11.5px] text-ink-4">正在保存…</p>}
+              {!article.content?.content?.length && (
+                <p className="mt-3 text-[13px] text-ink-4">还没有正文。确认大纲后点「生成正文」。</p>
+              )}
+            </section>
+          ) : (
+            <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
+              <h2 className="text-[14px] font-semibold text-ink">排版</h2>
+              <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">字体、字号、行高、段距、对齐和图片圆角；应用预设后仍可逐项覆盖。</p>
+              <div className="mt-3">
+                <label className="text-[12px] text-ink-3">排版预设</label>
+                <select
+                  aria-label="排版预设"
+                  className="mt-1 h-9 w-full rounded-control bg-surface px-3 text-[13.5px] text-ink ring-1 ring-line-strong outline-none"
+                  value=""
+                  onChange={(event) => {
+                    const preset = presets.find((p) => p.id === event.target.value);
+                    if (preset) {
+                      const next = { ...format, ...(preset.format ?? {}) };
+                      setFormat(next);
+                      run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已应用排版预设" });
+                    }
+                  }}
+                >
+                  <option value="">选择一个预设…</option>
+                  {presets.map((p) => <option key={p.id} value={p.id}>{p.name}{p.builtin ? "（内置）" : ""}</option>)}
+                </select>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <Field label="正文字号">
+                  <Input type="number" value={Number((format as any)?.body?.fontSize ?? 16)} onChange={(e) => {
+                    const next = { ...format, body: { ...((format as any)?.body ?? {}), fontSize: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+                <Field label="正文行高">
+                  <Input type="number" step="0.05" value={Number((format as any)?.body?.lineHeight ?? 1.85)} onChange={(e) => {
+                    const next = { ...format, body: { ...((format as any)?.body ?? {}), lineHeight: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+                <Field label="段落间距">
+                  <Input type="number" value={Number((format as any)?.body?.paragraphSpacing ?? 16)} onChange={(e) => {
+                    const next = { ...format, body: { ...((format as any)?.body ?? {}), paragraphSpacing: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+                <Field label="对齐">
+                  <select aria-label="对齐" className="h-9 w-full rounded-control bg-surface px-3 text-[13.5px] text-ink ring-1 ring-line-strong outline-none" value={String((format as any)?.body?.align ?? "justify")} onChange={(e) => {
+                    const next = { ...format, body: { ...((format as any)?.body ?? {}), align: e.target.value } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }}>
+                    <option value="left">左对齐</option>
+                    <option value="justify">两端对齐</option>
+                    <option value="center">居中</option>
+                  </select>
+                </Field>
+                <Field label="标题字号">
+                  <Input type="number" value={Number((format as any)?.title?.fontSize ?? 22)} onChange={(e) => {
+                    const next = { ...format, title: { ...((format as any)?.title ?? {}), fontSize: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+                <Field label="标题字重">
+                  <Input type="number" value={Number((format as any)?.title?.fontWeight ?? 700)} onChange={(e) => {
+                    const next = { ...format, title: { ...((format as any)?.title ?? {}), fontWeight: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+                <Field label="图片圆角">
+                  <Input type="number" value={Number((format as any)?.image?.borderRadius ?? 4)} onChange={(e) => {
+                    const next = { ...format, image: { ...((format as any)?.image ?? {}), borderRadius: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+              </div>
+            </section>
+          )}
         </div>
 
         <aside className="space-y-5">
