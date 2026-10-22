@@ -1,281 +1,326 @@
-// Event projection invariants: the workbench row follows the public event's reports, repeated
-// projection is idempotent, merged stories leave no orphan workbench references, and one broken event
-// does not stop the others.
-import { tag } from "../../../tests/setup.ts";
+// Hot-list API invariants: the default scope only shows editorially useful events, every filter
+// and ordering follows the projection, pages neither repeat nor skip rows, facets keep the other
+// options countable, and the endpoint stays behind the admin session with no-store responses.
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { after, before, test } from "node:test";
+import { tag } from "../../../tests/setup.ts";
+import { config } from "@aihot/backend/config";
 import { closeDb, sql } from "@aihot/backend/db";
-import { migrateMergedEventReferences, projectEvents } from "../events.ts";
+import { stopBoss } from "@aihot/backend/jobs/queue";
+import { installModules } from "@aihot/backend/modules";
+import { buildApp } from "../../../apps/api/src/app.ts";
+import { wechatHotServer } from "../server.ts";
+import type { StudioEventList, StudioEventListItem } from "../studio-types.ts";
 
 const T = tag();
-const NOW = new Date("2026-05-01T12:00:00Z");
+const originalDevAdmin = config.devAdmin;
+const NOW = Date.now();
 const HOUR = 3600_000;
-const official = `${T}-official`;
-const media = `${T}-media`;
-const xSource = `${T}-x`;
-const mpSource = `${T}-mp`;
-let articleNumber = 0;
+const openai = `openai-${T}`;
+const apple = `apple-${T}`;
+let app: Awaited<ReturnType<typeof buildApp>>;
 
-interface StoryFixture {
-  id: number;
-  factId: number;
+before(async () => {
+  installModules([wechatHotServer]);
+  config.devAdmin = { displayName: "WCH-6 event list test" };
+  app = await buildApp();
+  await sql`INSERT INTO wc_brands (id, name) VALUES
+    (${openai}, ${`OpenAI ${T}`}),
+    (${apple}, ${`Apple ${T}`})`;
+});
+
+after(async () => {
+  await app.close();
+  await stopBoss();
+  config.devAdmin = originalDevAdmin;
+  await closeDb();
+});
+
+interface Fixture {
+  title: string;
+  categories: string[];
+  brands?: string[];
+  channels?: string[];
+  eventType?: string;
+  tiers?: string[];
+  firstAt: Date;
+  latestAt: Date;
+  selectedCount?: number;
+  evidenceSourceCount?: number;
+  heat?: number | null;
+  newsValue?: number | null;
+  recommendationScore?: number | null;
+  summary?: string;
+  primarySource?: string;
 }
 
-interface ReportOptions {
-  storyId: number;
-  factId: number;
-  sourceId: string;
-  at: Date;
-  category: string;
-  tags: string[];
-  subjects: string[];
-  role?: "primary" | "report" | "mention";
-  selected?: boolean;
-  score?: number;
-  title?: string;
-}
-
-async function addReport(options: ReportOptions) {
-  articleNumber += 1;
-  const id = `${T}-article-${articleNumber}`;
-  const title = options.title ?? `${T} ${articleNumber}`;
-  await sql`INSERT INTO articles (id, source_id, identity_key, url, title, discovered_at, timeline_at)
-    VALUES (${id}, ${options.sourceId}, ${id}, ${`https://example.org/${id}`}, ${title}, ${options.at}, ${options.at})`;
-  const [analysis] = await sql<{ id: number }[]>`
-    INSERT INTO analyses (article_id, input_revision, origin, relevance, category, tags, subjects, title_zh, summary_zh, score, selected)
-    VALUES (${id}, 1, 'rule', 'pass', ${options.category}, ${options.tags}, ${options.subjects}, ${title}, ${`${title} 摘要`}, ${options.score ?? 70}, ${options.selected ?? false})
+async function event(input: Fixture): Promise<number> {
+  const [story] = await sql<{ id: number }[]>`
+    INSERT INTO stories (public_id, title, first_report_at, latest_at, created_at, updated_at)
+    VALUES (${randomUUID()}, ${input.title}, ${input.firstAt}, ${input.latestAt}, ${input.firstAt}, ${input.latestAt})
     RETURNING id`;
-  const firstParty = options.sourceId === official;
-  await sql`INSERT INTO publications (
-      article_id, analysis_id, revision, visibility, eligible, selected, title, summary, source_id, channel,
-      first_party, url, discovered_at, timeline_at, published_at, sort_at, visible_after, tags, body_mode, score, category
+  const id = Number(story!.id);
+  await sql`
+    INSERT INTO wc_event_meta (
+      story_id, summary, primary_source, categories, brand_ids, channel_types, source_tiers, event_type,
+      verification_status, updated, first_report_at, latest_at, report_count, source_count, heat,
+      news_value, selected_count, evidence_source_count, editorial_score, score_reason
     ) VALUES (
-      ${id}, ${analysis!.id}, 1, 'public', true, ${options.selected ?? false}, ${title}, ${`${title} 摘要`}, ${options.sourceId},
-      'news', ${firstParty}, ${`https://example.org/${id}`}, ${options.at}, ${options.at}, ${options.at}, ${options.at},
-      ${options.selected ? options.at : null}, ${options.tags}, 'full', ${options.score ?? 70}, ${options.category}
+      ${id}, ${input.summary ?? `${input.title} 摘要`}, ${input.primarySource ?? "测试来源"}, ${input.categories},
+      ${input.brands ?? []}::text[], ${input.channels ?? []}::text[], ${input.tiers ?? ["T2"]}::text[],
+      ${input.eventType ?? null}, 'confirmed', false, ${input.firstAt}, ${input.latestAt},
+      ${(input.selectedCount ?? 0) + (input.evidenceSourceCount ?? 0)}, ${(input.evidenceSourceCount ?? 0) + 1},
+      ${input.heat ?? null}, ${input.newsValue ?? null}, ${input.selectedCount ?? 0},
+      ${input.evidenceSourceCount ?? 0}, ${input.recommendationScore ?? null},
+      ${input.recommendationScore === undefined ? null : "推荐理由"}
     )`;
-  await sql`INSERT INTO fact_articles (fact_id, article_id, role) VALUES (${options.factId}, ${id}, ${options.role ?? "report"})`;
   return id;
 }
 
-async function addSignal(storyId: number, articleId: string, sourceId: string, at: Date) {
-  await sql`INSERT INTO story_signals (story_id, article_id, participant_key, source_id, kind, observed_at)
-    VALUES (${storyId}, ${articleId}, ${`source:${sourceId}`}, ${sourceId}, 'editorial', ${at})`;
+let selected: number;
+let hardware: number;
+let lowSignal: number;
+let old: number;
+let noBrand: number;
+
+async function list(query = ""): Promise<StudioEventList> {
+  const response = await app.inject({ method: "GET", url: `/api/studio/events${query}` });
+  assert.equal(response.statusCode, 200, response.body);
+  assert.equal(response.headers["cache-control"], "no-store");
+  return response.json() as StudioEventList;
 }
 
-async function newStory(title: string): Promise<StoryFixture> {
-  const [story] = await sql<{ id: number }[]>`
-    INSERT INTO stories (public_id, title, first_report_at, latest_at, created_at, updated_at)
-    VALUES (${randomUUID()}, ${title}, ${new Date(NOW.getTime() - 3 * HOUR)}, ${NOW}, ${NOW}, ${NOW})
-    RETURNING id`;
-  const [fact] = await sql<{ id: number }[]>`
-    INSERT INTO facts (public_id, story_id, title, subject, version)
-    VALUES (${`${T}-fact-${story!.id}`}, ${story!.id}, ${title}, 'OpenAI', 1)
-    RETURNING id`;
-  return { id: story!.id, factId: fact!.id };
-}
-
-async function row(storyId: number) {
-  const [meta] = await sql<{
-    story_id: number;
-    categories: string[];
-    brand_ids: string[];
-    channel_types: string[];
-    source_tiers: string[];
-    event_type: string | null;
-    verification_status: string;
-    updated: boolean;
-    first_report_at: Date | null;
-    latest_at: Date | null;
-    report_count: number;
-    source_count: number;
-    heat: number | null;
-    projected_at: Date;
-  }[]>`SELECT * FROM wc_event_meta WHERE story_id = ${storyId}`;
-  return meta;
-}
-
-let mainStory: StoryFixture;
-let mainReports: string[];
+const ids = (body: StudioEventList) => body.items.map((item) => item.storyId);
 
 before(async () => {
-  await sql`INSERT INTO sources (id, name, kind, config, tier, participation_mode, first_party, next_fetch_at) VALUES
-    (${official}, 'Official', 'rss', ${sql.json({ feedUrl: "https://openai.com/news/rss.xml" })}, 'T1', 'editorial', true, '2100-01-01'),
-    (${media}, 'Media', 'rss', ${sql.json({ feedUrl: "https://example.com/feed.xml" })}, 'T2', 'editorial', false, '2100-01-01'),
-    (${xSource}, 'X account', 'x_search', ${sql.json({ query: "OpenAI" })}, 'T2', 'editorial', false, '2100-01-01'),
-    (${mpSource}, 'WeChat account', 'mp_account', ${sql.json({ account: "OpenAI" })}, 'T2', 'editorial', false, '2100-01-01')`;
-  await sql`INSERT INTO wc_brands (id, entity_id, name) VALUES
-    ('openai', 'openai', 'OpenAI'),
-    ('google', 'google', 'Google')`;
-  // A linked channel's type wins over the source-kind fallback.
-  await sql`INSERT INTO wc_channels (id, type, display_name, url, source_id)
-    VALUES (${`${T}-media-channel`}, 'custom', 'Media channel', ${`https://example.org/${T}/channel`}, ${media})`;
-
-  mainStory = await newStory("OpenAI 发布新模型");
-  const [secondFact] = await sql<{ id: number }[]>`
-    INSERT INTO facts (public_id, story_id, title, subject, version)
-    VALUES (${`${T}-fact-second`}, ${mainStory.id}, '后续更新', 'Google', 2)
-    RETURNING id`;
-  mainReports = [
-    await addReport({
-      storyId: mainStory.id, factId: mainStory.factId, sourceId: official, at: new Date(NOW.getTime() - 2 * HOUR),
-      category: "ai-models", tags: ["模型发布", "OpenAI"], subjects: ["OpenAI"], selected: true, score: 90,
-    }),
-    await addReport({
-      storyId: mainStory.id, factId: secondFact!.id, sourceId: media, at: new Date(NOW.getTime() - HOUR),
-      category: "industry", tags: ["融资/并购", "Google"], subjects: ["Google"], score: 80,
-    }),
-    await addReport({
-      storyId: mainStory.id, factId: mainStory.factId, sourceId: xSource, at: new Date(NOW.getTime() - 30 * 60_000),
-      category: "software", tags: ["产品更新"], subjects: [], role: "mention",
-    }),
-    await addReport({
-      storyId: mainStory.id, factId: secondFact!.id, sourceId: mpSource, at: new Date(NOW.getTime() - 10 * 60_000),
-      category: "software", tags: ["产品更新"], subjects: [], role: "mention",
-    }),
-  ];
-  await addSignal(mainStory.id, mainReports[0]!, official, new Date(NOW.getTime() - 2 * HOUR));
-  await addSignal(mainStory.id, mainReports[1]!, media, new Date(NOW.getTime() - HOUR));
-});
-
-after(closeDb);
-
-test("projection aggregates the event's reports and maps existing brands", async () => {
-  const result = await projectEvents({ scope: "all", now: NOW });
-  assert.equal(result.failed, 0);
-  assert.ok(result.projected >= 1);
-  const meta = await row(mainStory.id);
-  assert.ok(meta);
-  assert.deepEqual(meta!.categories, ["ai-models", "industry"]);
-  assert.deepEqual(meta!.brand_ids, ["google", "openai"]);
-  assert.deepEqual(meta!.channel_types, ["custom", "official_site", "wechat", "x"]);
-  assert.deepEqual(meta!.source_tiers, ["T1", "T2"]);
-  assert.equal(meta!.event_type, "模型发布");
-  assert.equal(meta!.verification_status, "confirmed");
-  assert.equal(meta!.updated, true);
-  assert.equal(meta!.first_report_at?.toISOString(), new Date(NOW.getTime() - 2 * HOUR).toISOString());
-  assert.equal(meta!.latest_at?.toISOString(), new Date(NOW.getTime() - HOUR).toISOString());
-  assert.equal(meta!.report_count, 4);
-  assert.equal(meta!.source_count, 4);
-  assert.ok(meta!.heat !== null && meta!.heat > 0);
-  assert.deepEqual(
-    (await sql<{ brand_id: string }[]>`SELECT brand_id FROM wc_event_brands WHERE story_id = ${mainStory.id} ORDER BY brand_id`).map((r) => r.brand_id),
-    ["google", "openai"],
-  );
-});
-
-test("projecting the same event again updates one row and keeps the scoring fields", async () => {
-  const before = await row(mainStory.id);
-  await sql`UPDATE wc_event_meta SET editorial_score = 88.5, score_reason = 'kept', verification_status = 'disputed'
-    WHERE story_id = ${mainStory.id}`;
-  const later = new Date(NOW.getTime() + 60_000);
-  await projectEvents({ scope: "all", now: later });
-  const rows = await sql<{ projected_at: Date; editorial_score: number; score_reason: string; verification_status: string }[]>`
-    SELECT projected_at, editorial_score, score_reason, verification_status FROM wc_event_meta WHERE story_id = ${mainStory.id}`;
-  assert.equal(rows.length, 1);
-  assert.equal((await row(mainStory.id))!.report_count, before!.report_count);
-  assert.ok(rows[0]!.projected_at.getTime() > before!.projected_at.getTime());
-  assert.equal(rows[0]!.editorial_score, 88.5);
-  assert.equal(rows[0]!.score_reason, "kept");
-  assert.equal(rows[0]!.verification_status, "disputed");
-  assert.equal((await sql`SELECT 1 FROM wc_event_brands WHERE story_id = ${mainStory.id}`).length, 2);
-});
-
-test("merging a story moves topics, state, alerts and brand rows to the survivor", async () => {
-  const from = await newStory("待合并事件");
-  const into = await newStory("存活事件");
-  await addReport({
-    storyId: from.id, factId: from.factId, sourceId: official, at: new Date(NOW.getTime() - HOUR),
-    category: "ai-models", tags: ["模型发布"], subjects: ["OpenAI"],
+  selected = await event({
+    title: `${T} 精选模型发布`,
+    categories: ["ai-models"],
+    brands: [openai],
+    channels: ["official_site"],
+    eventType: "模型发布",
+    tiers: ["T1"],
+    firstAt: new Date(NOW - 2 * HOUR),
+    latestAt: new Date(NOW - HOUR),
+    selectedCount: 1,
+    evidenceSourceCount: 1,
+    heat: 90,
+    newsValue: 88,
+    recommendationScore: 75,
+    summary: "OpenAI 发布了新模型。",
+    primarySource: "OpenAI 官网",
   });
-  await addReport({
-    storyId: into.id, factId: into.factId, sourceId: official, at: new Date(NOW.getTime() - HOUR),
-    category: "ai-models", tags: ["模型发布"], subjects: ["OpenAI"],
+  hardware = await event({
+    title: `${T} 硬件发布`,
+    categories: ["hardware"],
+    brands: [apple],
+    channels: ["media"],
+    eventType: "产品发布",
+    tiers: ["T2"],
+    firstAt: new Date(NOW - 4 * HOUR),
+    latestAt: new Date(NOW - 3 * HOUR),
+    selectedCount: 1,
+    evidenceSourceCount: 1,
+    heat: 60,
+    newsValue: 70,
+    recommendationScore: 85,
   });
-  await projectEvents({ scope: "all", now: NOW });
+  lowSignal = await event({
+    title: `${T} 低价值更新`,
+    categories: ["ai-models"],
+    brands: [openai],
+    channels: ["x"],
+    eventType: "产品更新",
+    tiers: ["T2"],
+    firstAt: new Date(NOW - 6 * HOUR),
+    latestAt: new Date(NOW - 5 * HOUR),
+    selectedCount: 0,
+    evidenceSourceCount: 1,
+    heat: 30,
+    newsValue: 50,
+    recommendationScore: 95,
+  });
+  old = await event({
+    title: `${T} 两家来源的旧事件`,
+    categories: ["software"],
+    brands: [apple],
+    channels: ["media"],
+    eventType: "融资/并购",
+    tiers: ["T2"],
+    firstAt: new Date(NOW - 50 * 24 * HOUR),
+    latestAt: new Date(NOW - 40 * 24 * HOUR),
+    selectedCount: 0,
+    evidenceSourceCount: 2,
+  });
+  noBrand = await event({
+    title: `${T} 无品牌影视事件`,
+    categories: ["film"],
+    channels: ["wechat"],
+    eventType: "预告/定档",
+    tiers: ["T2", "T3"],
+    firstAt: new Date(NOW - 8 * HOUR),
+    latestAt: new Date(NOW - 7 * HOUR),
+    selectedCount: 0,
+    evidenceSourceCount: 2,
+  });
 
-  const [topic] = await sql<{ id: number }[]>`INSERT INTO wc_topics (story_id, angle) VALUES (${from.id}, '角度') RETURNING id`;
-  await sql`INSERT INTO wc_event_states (story_id, read_at, follow_up, manual_decision, decided_at)
-    VALUES (${from.id}, ${new Date(NOW.getTime() - 2 * HOUR)}, true, 'recommend', ${new Date(NOW.getTime() - 2 * HOUR)})`;
-  await sql`INSERT INTO wc_event_states (story_id, read_at, starred_at, manual_decision, decided_at)
-    VALUES (${into.id}, ${new Date(NOW.getTime() - 3 * HOUR)}, ${new Date(NOW.getTime() - 3 * HOUR)}, 'ignore', ${new Date(NOW.getTime() - 3 * HOUR)})`;
-  await sql`INSERT INTO wc_alerts (story_id, kind, dedupe_key) VALUES (${from.id}, 'new_event', ${`${T}-alert`})`;
-  await sql`INSERT INTO wc_event_brands (story_id, brand_id) VALUES (${from.id}, 'google')`;
-
-  await sql`UPDATE stories SET merged_into = ${into.id} WHERE id = ${from.id}`;
-  const moved = await migrateMergedEventReferences();
-  assert.equal(moved.failures.length, 0);
-  assert.equal(moved.topics, 1);
-  assert.equal(moved.states, 1);
-  assert.equal(moved.alerts, 1);
-  assert.equal(moved.eventBrands, 1);
-  assert.equal(moved.metas, 1);
-
-  assert.equal((await sql<{ story_id: number }[]>`SELECT story_id FROM wc_topics WHERE id = ${topic!.id}`)[0]!.story_id, into.id);
-  const [state] = await sql<{ read_at: Date; starred_at: Date | null; follow_up: boolean; manual_decision: string | null }[]>`
-    SELECT read_at, starred_at, follow_up, manual_decision FROM wc_event_states WHERE story_id = ${into.id}`;
-  assert.equal(state!.read_at.toISOString(), new Date(NOW.getTime() - 3 * HOUR).toISOString());
-  assert.equal(state!.starred_at?.toISOString(), new Date(NOW.getTime() - 3 * HOUR).toISOString());
-  assert.equal(state!.follow_up, true);
-  assert.equal(state!.manual_decision, "ignore");
-  assert.equal((await sql<{ story_id: number }[]>`SELECT story_id FROM wc_alerts WHERE dedupe_key = ${`${T}-alert`}`)[0]!.story_id, into.id);
-  assert.equal((await sql`SELECT 1 FROM wc_event_brands WHERE story_id = ${into.id} AND brand_id = 'google'`).length, 1);
-  assert.equal((await sql`SELECT 1 FROM wc_event_meta WHERE story_id = ${from.id}`).length, 0);
-
-  await projectEvents({ scope: "all", now: NOW });
-  assert.equal((await sql`SELECT 1 FROM wc_event_meta WHERE story_id = ${from.id}`).length, 0);
-  assert.equal((await sql`SELECT 1 FROM wc_event_meta WHERE story_id = ${into.id}`).length, 1);
+  await sql`INSERT INTO wc_event_states (story_id, read_at) VALUES (${selected}, now())`;
+  await sql`INSERT INTO wc_event_states (story_id, starred_at, follow_up) VALUES (${hardware}, now(), true)`;
+  await sql`INSERT INTO wc_event_states (story_id, ignored_at) VALUES (${lowSignal}, now())`;
+  await sql`INSERT INTO wc_topics (story_id, status) VALUES (${old}, 'writing')`;
+  await sql`INSERT INTO wc_follows (target_type, target_id) VALUES ('brand', ${openai})`;
 });
 
-test("a merge chain resolves to the final survivor even through a story with no workbench rows", async () => {
-  const first = await newStory("链式合并 A");
-  const middle = await newStory("链式合并 B");
-  const last = await newStory("链式合并 C");
-  const [topic] = await sql<{ id: number }[]>`INSERT INTO wc_topics (story_id, angle) VALUES (${first.id}, '链式角度') RETURNING id`;
-  await sql`UPDATE stories SET merged_into = ${middle.id} WHERE id = ${first.id}`;
-  await sql`UPDATE stories SET merged_into = ${last.id} WHERE id = ${middle.id}`;
-
-  const moved = await migrateMergedEventReferences();
-  assert.equal(moved.failures.length, 0);
-  assert.equal((await sql<{ story_id: number }[]>`SELECT story_id FROM wc_topics WHERE id = ${topic!.id}`)[0]!.story_id, last.id);
-});
-
-test("one event's projection failure leaves the other events projected", async () => {
-  const good = await newStory("正常事件");
-  const bad = await newStory("故障事件");
-  await addReport({
-    storyId: good.id, factId: good.factId, sourceId: official, at: new Date(NOW.getTime() - HOUR),
-    category: "ai-models", tags: ["模型发布"], subjects: ["OpenAI"],
-  });
-  await addReport({
-    storyId: bad.id, factId: bad.factId, sourceId: official, at: new Date(NOW.getTime() - HOUR),
-    category: "ai-models", tags: ["模型发布"], subjects: ["OpenAI"],
-  });
-  await sql.unsafe(`CREATE OR REPLACE FUNCTION wch_fail_meta() RETURNS trigger LANGUAGE plpgsql AS $$
-    BEGIN
-      IF NEW.story_id = ${Number(bad.id)} THEN RAISE EXCEPTION 'projection failure fixture'; END IF;
-      RETURN NEW;
-    END;
-  $$`);
-  await sql`CREATE TRIGGER wch_fail_meta BEFORE INSERT OR UPDATE ON wc_event_meta
-    FOR EACH ROW EXECUTE FUNCTION wch_fail_meta()`;
-  const originalError = console.error;
-  const logged: unknown[][] = [];
-  console.error = (...args: unknown[]) => logged.push(args);
+test("the hot list needs an admin session and never caches", async () => {
+  const devAdmin = config.devAdmin;
+  config.devAdmin = null;
   try {
-    const result = await projectEvents({ scope: "all", now: NOW });
-    assert.ok(result.failed >= 1);
-    assert.ok(result.projected >= 1);
-    assert.equal(result.failures[0]?.storyId, bad.id);
-    assert.ok(logged.length >= 1);
-    assert.equal((await sql`SELECT 1 FROM wc_event_meta WHERE story_id = ${bad.id}`).length, 0);
-    assert.equal((await sql`SELECT 1 FROM wc_event_meta WHERE story_id = ${good.id}`).length, 1);
+    const guest = await app.inject({ method: "GET", url: "/api/studio/events" });
+    assert.equal(guest.statusCode, 401);
+    assert.equal(guest.headers["cache-control"], "no-store");
+    assert.equal(guest.headers["x-robots-tag"], "noindex, nofollow");
   } finally {
-    console.error = originalError;
-    await sql`DROP TRIGGER IF EXISTS wch_fail_meta ON wc_event_meta`;
-    await sql`DROP FUNCTION IF EXISTS wch_fail_meta()`;
+    config.devAdmin = devAdmin;
   }
-  await projectEvents({ scope: "all", now: NOW });
-  assert.equal((await sql`SELECT 1 FROM wc_event_meta WHERE story_id = ${bad.id}`).length, 1);
+});
+
+test("curated is the default and all switches to every collected event", async () => {
+  const curated = await list();
+  assert.equal(curated.scope, "curated");
+  assert.deepEqual(new Set(ids(curated)), new Set([selected, hardware, old, noBrand]));
+  assert.equal(curated.total, 4);
+  assert.ok(!ids(curated).includes(lowSignal));
+
+  const all = await list("?scope=all&sort=latest");
+  assert.equal(all.scope, "all");
+  assert.equal(all.total, 5);
+  assert.ok(ids(all).includes(lowSignal));
+});
+
+test("pages are stable and never repeat a row", async () => {
+  const first = await list("?scope=all&sort=latest&pageSize=2&page=1");
+  const second = await list("?scope=all&sort=latest&pageSize=2&page=2");
+  const third = await list("?scope=all&sort=latest&pageSize=2&page=3");
+  assert.equal(first.totalPages, 3);
+  const pages = [...ids(first), ...ids(second), ...ids(third)];
+  assert.equal(pages.length, 5);
+  assert.equal(new Set(pages).size, 5);
+  assert.deepEqual(new Set(pages), new Set([selected, hardware, lowSignal, old, noBrand]));
+  assert.deepEqual(ids(await list("?scope=all&sort=latest&pageSize=2&page=4")), []);
+});
+
+test("every filter narrows the projected events", async () => {
+  assert.deepEqual(new Set(ids(await list("?industry=ai-models"))), new Set([selected]));
+  assert.deepEqual(new Set(ids(await list("?industry=hardware"))), new Set([hardware]));
+  assert.deepEqual(new Set(ids(await list("?industry=ai-models,hardware"))), new Set([selected, hardware]));
+  assert.deepEqual(new Set(ids(await list("?brand=" + openai))), new Set([selected]));
+  assert.deepEqual(new Set(ids(await list("?channel=wechat"))), new Set([noBrand]));
+  assert.deepEqual(new Set(ids(await list("?eventType=" + encodeURIComponent("模型发布")))), new Set([selected]));
+  assert.deepEqual(new Set(ids(await list("?sourceTier=T1"))), new Set([selected]));
+  assert.deepEqual(new Set(ids(await list("?sourceTier=T2,T3"))), new Set([hardware, old, noBrand]));
+
+  const recent = await list(`?from=${encodeURIComponent(new Date(NOW - 3.5 * HOUR).toISOString())}`);
+  assert.deepEqual(new Set(ids(recent)), new Set([selected, hardware]));
+  const before = await list(`?to=${encodeURIComponent(new Date(NOW - 5.5 * HOUR).toISOString())}`);
+  assert.deepEqual(new Set(ids(before)), new Set([old, noBrand]));
+
+  assert.deepEqual(ids(await list("?read=true")), [selected]);
+  assert.deepEqual(new Set(ids(await list("?read=false"))), new Set([hardware, old, noBrand]));
+  assert.deepEqual(ids(await list("?topic=true")), [old]);
+  assert.deepEqual(new Set(ids(await list("?topic=false"))), new Set([selected, hardware, noBrand]));
+
+  // Filters combine instead of replacing each other.
+  assert.deepEqual(ids(await list(`?brand=${openai}&channel=official_site&read=true&topic=false`)), [selected]);
+  assert.deepEqual(ids(await list(`?brand=${apple}&read=true`)), []);
+  assert.deepEqual(new Set(ids(await list(`?brand=${apple}&read=false`))), new Set([hardware, old]));
+});
+
+test("the five orderings use their own keys and the story id as a tie-break", async () => {
+  assert.deepEqual(ids(await list("?sort=discovered")), [selected, hardware, noBrand, old]);
+  assert.deepEqual(ids(await list("?sort=latest")), [selected, hardware, noBrand, old]);
+  assert.deepEqual(ids(await list("?sort=heat")), [selected, hardware, noBrand, old]);
+  assert.deepEqual(ids(await list("?sort=recommend")), [hardware, selected, noBrand, old]);
+  assert.deepEqual(ids(await list("?sort=followed")), [selected, hardware, noBrand, old]);
+
+  const allByHeat = await list("?scope=all&sort=heat");
+  assert.deepEqual(ids(allByHeat), [selected, hardware, lowSignal, noBrand, old]);
+  const allByRecommend = await list("?scope=all&sort=recommend");
+  assert.deepEqual(ids(allByRecommend), [lowSignal, hardware, selected, noBrand, old]);
+});
+
+test("items carry the card fields and the private state", async () => {
+  const body = await list("?scope=all");
+  const item = body.items.find((row): row is StudioEventListItem => row.storyId === selected)!;
+  assert.equal(item.publicId.length, 36);
+  assert.equal(item.title, `${T} 精选模型发布`);
+  assert.equal(item.summary, "OpenAI 发布了新模型。");
+  assert.equal(item.primarySource, "OpenAI 官网");
+  assert.deepEqual(item.categories, ["ai-models"]);
+  assert.deepEqual(item.brands.map((brand) => brand.id), [openai]);
+  assert.equal(item.brands[0]?.followed, true);
+  assert.equal(item.followed, true);
+  assert.deepEqual(item.channelTypes, ["official_site"]);
+  assert.equal(item.eventType, "模型发布");
+  assert.equal(item.verificationStatus, "confirmed");
+  assert.equal(item.reportCount, 2);
+  assert.equal(item.heat, 90);
+  assert.equal(item.newsValue, 88);
+  assert.equal(item.recommendationScore, 75);
+  assert.equal(item.recommendationReason, "推荐理由");
+  assert.equal(item.topicCount, 0);
+  assert.equal(item.state.read, true);
+  assert.equal(item.state.starred, false);
+  assert.ok(item.firstReportAt && item.latestAt);
+
+  const ignored = body.items.find((row) => row.storyId === lowSignal)!;
+  assert.equal(ignored.state.ignored, true);
+  assert.equal(ignored.followed, true);
+  const withTopic = body.items.find((row) => row.storyId === old)!;
+  assert.equal(withTopic.topicCount, 1);
+  const starred = body.items.find((row) => row.storyId === hardware)!;
+  assert.equal(starred.state.starred, true);
+  assert.equal(starred.state.followUp, true);
+});
+
+test("facets count the current result and keep other options visible", async () => {
+  const all = await list();
+  assert.deepEqual(
+    Object.fromEntries(all.facets.industries.map((row) => [row.value, row.count])),
+    { "ai-models": 1, hardware: 1, software: 1, film: 1 },
+  );
+  assert.deepEqual(all.facets.brands.map((row) => [row.id, row.count]), [[apple, 2], [openai, 1]]);
+  assert.equal(all.facets.channels.find((row) => row.value === "wechat")?.label, "微信公众号");
+  assert.equal(all.facets.channels.find((row) => row.value === "wechat")?.count, 1);
+  assert.deepEqual(Object.fromEntries(all.facets.eventTypes.map((row) => [row.value, row.count])), {
+    产品发布: 1, 模型发布: 1, "融资/并购": 1, "预告/定档": 1,
+  });
+  assert.deepEqual(Object.fromEntries(all.facets.sourceTiers.map((row) => [row.value, row.count])), { T1: 1, T2: 3, T3: 1 });
+
+  const ai = await list("?industry=ai-models");
+  // The selected industry excludes itself from its own facet, so the other tabs stay countable.
+  assert.deepEqual(
+    Object.fromEntries(ai.facets.industries.map((row) => [row.value, row.count])),
+    { "ai-models": 1, hardware: 1, software: 1, film: 1 },
+  );
+  assert.deepEqual(ai.facets.brands.map((row) => [row.id, row.count]), [[openai, 1]]);
+});
+
+test("invalid list parameters are readable errors", async () => {
+  for (const query of [
+    "?industry=not-an-industry",
+    "?sort=popular",
+    "?read=maybe",
+    "?channel=forum",
+    "?sourceTier=T1%20OR",
+    "?from=yesterday",
+    `?from=${encodeURIComponent(new Date(NOW).toISOString())}&to=${encodeURIComponent(new Date(NOW - HOUR).toISOString())}`,
+    "?page=0",
+    "?pageSize=101",
+    "?brand=Bad%20Id",
+  ]) {
+    const response = await app.inject({ method: "GET", url: `/api/studio/events${query}` });
+    assert.equal(response.statusCode, 400, query);
+    assert.equal(response.headers["cache-control"], "no-store");
+  }
 });

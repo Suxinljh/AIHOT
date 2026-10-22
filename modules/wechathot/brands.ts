@@ -56,6 +56,8 @@ interface ChannelRow {
   verification: ChannelVerification;
   availability: ChannelAvailability;
   note: string | null;
+  followed: boolean;
+  muted_until: Date | null;
 }
 
 interface EventRow {
@@ -211,6 +213,8 @@ function brandChannel(row: ChannelRow): BrandChannel {
     verification: row.verification,
     availability: row.availability,
     note: row.note,
+    followed: row.followed,
+    mutedUntil: row.muted_until?.toISOString() ?? null,
   };
 }
 
@@ -329,7 +333,7 @@ export async function brandDetail(id: string): Promise<BrandDetail | null> {
   const [channels, events, [follow], [counts]] = await Promise.all([
     sql<ChannelRow[]>`
       SELECT c.id, c.type, c.platform, c.display_name, c.url, c.provider, c.source_id,
-             c.verification, c.availability, c.note
+             c.verification, c.availability, c.note, cb.followed, cb.muted_until
       FROM wc_channel_brands cb
       JOIN wc_channels c ON c.id = cb.channel_id
       WHERE cb.brand_id = ${id}

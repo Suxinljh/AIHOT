@@ -6,9 +6,27 @@ import type { AdminMe } from "@aihot/contracts/admin";
 import { actorOf, sessionPrincipal, type AdminPrincipal } from "@aihot/backend/admin/auth";
 import { Conflict } from "@aihot/backend/audit";
 import { sql } from "@aihot/backend/db";
+import { listStudioEvents } from "./event-list.ts";
 import { defineServerModule } from "@aihot/backend/modules";
 import { BrandRejected, brandDetail, createBrand, deleteBrand, listBrands, mergeBrands, updateBrand } from "./brands.ts";
 import { projectRecentEvents } from "./events.ts";
+import { studioEventDetail, updateStudioEventState } from "./event-detail.ts";
+import {
+  TOPIC_STATUSES,
+  TopicExists,
+  TopicRejected,
+  createTopic,
+  listTopics,
+  refreshTopicSnapshot,
+  topicDetail,
+  updateTopic,
+} from "./topics.ts";
+import { articleDetail, createArticleFromTopic, updateArticle } from "./articles.ts";
+import { queueArticleStep, queueWriteStep } from "./writing.ts";
+import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
+import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
+import { checkGithubRepo, subscribeGithubReleases } from "./github.ts";
+import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
 import type {
   ColumnType,
   PresetKind,
@@ -75,6 +93,14 @@ function studioHandler(fn: StudioHandler) {
       if (error instanceof BrandRejected || (error as { statusCode?: number }).statusCode === 400 || error instanceof SyntaxError) {
         return problem(req, reply, 400, "invalid_request", String((error as Error).message).slice(0, 300));
       }
+      if (error instanceof TopicExists) {
+        return reply
+          .code(409)
+          .header("Content-Type", "application/problem+json")
+          .header("X-Request-Id", req.id)
+          .header("Cache-Control", "no-store")
+          .send({ status: 409, code: "conflict", detail: error.message, existing: error.existing, requestId: req.id });
+      }
       if (error instanceof Conflict || (error as { code?: string }).code === "conflict") {
         return problem(req, reply, 409, "conflict", (error as Error).message);
       }
@@ -122,6 +148,165 @@ export const wechatHotServer = defineServerModule({
     app.get("/api/studio/me", studioHandler(async (_req, _reply, admin) => {
       const me: AdminMe = { name: admin.name, csrf: admin.csrf, dev: admin.dev };
       return me;
+
+
+
+
+    }));
+
+    // The hot list: filters, five orderings and the facet counts all come from one read model.
+    app.get("/api/studio/events", studioHandler(async (req) => listStudioEvents(req.query)));
+
+    // One event: the public evidence plus the editor's own read/star/follow-up state.
+    app.get("/api/studio/events/:publicId", studioHandler(async (req, reply) => {
+      const event = await studioEventDetail(param(req, "publicId"));
+      if (!event) return problem(req, reply, 404, "not_found", "事件不存在。");
+      return event;
+    }));
+
+    app.patch("/api/studio/events/:publicId/state", studioHandler(async (req, reply, admin) => {
+      const event = await updateStudioEventState(param(req, "publicId"), req.body ?? {}, actorOf(admin));
+      if (!event) return problem(req, reply, 404, "not_found", "事件不存在。");
+      return event;
+    }));
+
+    // The pitch board: a topic freezes the event's evidence when it is created.
+    app.get("/api/studio/topics", studioHandler(async (req) => {
+      const status = queryValue(req, "status");
+      if (status !== undefined && status !== "all" && !TOPIC_STATUSES.includes(status as never)) {
+        throw new TopicRejected("未知的选题状态");
+      }
+      const columnType = queryValue(req, "columnType");
+      if (columnType !== undefined && columnType !== "news" && columnType !== "insight") {
+        throw new TopicRejected("栏目只能是 news 或 insight");
+      }
+      const storyId = queryValue(req, "storyId");
+      return {
+        items: await listTopics({
+          status: status as never,
+          columnType: columnType as never,
+          storyId: storyId === undefined ? undefined : Number(storyId),
+          q: queryValue(req, "q"),
+        }),
+      };
+    }));
+
+    app.post("/api/studio/topics", studioHandler(async (req, reply, admin) => {
+      const topic = await createTopic(req.body ?? {}, actorOf(admin));
+      return reply.code(201).send(topic);
+    }));
+
+    app.get("/api/studio/topics/:id", studioHandler(async (req, reply) => {
+      const topic = await topicDetail(Number(param(req, "id")));
+      if (!topic) return problem(req, reply, 404, "not_found", "选题不存在。");
+      return topic;
+    }));
+
+    app.patch("/api/studio/topics/:id", studioHandler(async (req, reply, admin) => {
+      const topic = await updateTopic(Number(param(req, "id")), req.body ?? {}, actorOf(admin));
+      if (!topic) return problem(req, reply, 404, "not_found", "选题不存在。");
+      return topic;
+    }));
+
+    app.post("/api/studio/topics/:id/refresh-snapshot", studioHandler(async (req, reply, admin) => {
+      const topic = await refreshTopicSnapshot(Number(param(req, "id")), actorOf(admin));
+      if (!topic) return problem(req, reply, 404, "not_found", "选题不存在。");
+      return topic;
+    }));
+
+    // Writing steps are paid model calls, so the click only puts the step in the queue.
+    app.post("/api/studio/topics/:id/angles", studioHandler(async (req, reply) => {
+      const id = Number(param(req, "id"));
+      if (!(await topicDetail(id))) return problem(req, reply, 404, "not_found", "选题不存在。");
+      const jobId = await queueWriteStep(id, "angles");
+      return reply.code(202).send({ jobId, step: "angles" });
+    }));
+
+    app.post("/api/studio/topics/:id/outline", studioHandler(async (req, reply) => {
+      const id = Number(param(req, "id"));
+      const topic = await topicDetail(id);
+      if (!topic) return problem(req, reply, 404, "not_found", "选题不存在。");
+      if (!topic.angle?.trim()) throw new TopicRejected("先选定一个角度，再生成大纲");
+      const jobId = await queueWriteStep(id, "outline");
+      return reply.code(202).send({ jobId, step: "outline" });
+    }));
+
+    app.patch("/api/studio/topics/:id/preset", studioHandler(async (req, reply, admin) => {
+      const id = Number(param(req, "id"));
+      const body = (req.body ?? {}) as { presetId?: string | null };
+      const presetId = typeof body.presetId === "string" ? body.presetId : null;
+      if (!(await setTopicPreset(id, presetId, actorOf(admin)))) {
+        return problem(req, reply, 404, "not_found", "选题不存在。");
+      }
+      return await topicDetail(id);
+    }));
+
+    app.post("/api/studio/topics/:id/article", studioHandler(async (req, reply) => {
+      const mode = (req.body as { mode?: string } | undefined)?.mode === "quick" ? "quick" : "step";
+      const article = await createArticleFromTopic(Number(param(req, "id")), mode);
+      if (!article) return problem(req, reply, 404, "not_found", "选题不存在。");
+      return reply.code(201).send(article);
+    }));
+
+    // A draft: its content and versions, and the two paid writing steps.
+    app.get("/api/studio/articles/:id", studioHandler(async (req, reply) => {
+      const article = await articleDetail(Number(param(req, "id")));
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return article;
+    }));
+
+    app.patch("/api/studio/articles/:id", studioHandler(async (req, reply) => {
+      const body = (req.body ?? {}) as Record<string, unknown>;
+      const status = body.status;
+      const patch: { title?: string; content?: never; status?: "draft" | "review" | "done" | "archived" } = {};
+      if (typeof body.title === "string") patch.title = body.title;
+      if (body.content && typeof body.content === "object") patch.content = body.content as never;
+      if (typeof status === "string" && ["draft", "review", "done", "archived"].includes(status)) {
+        patch.status = status as "draft" | "review" | "done" | "archived";
+      }
+      const article = await updateArticle(Number(param(req, "id")), patch);
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return article;
+    }));
+
+    app.post("/api/studio/articles/:id/body", studioHandler(async (req, reply) => {
+      const id = Number(param(req, "id"));
+      const article = await articleDetail(id);
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      const body = (req.body ?? {}) as { sectionIndex?: number; instruction?: string };
+      const sectionIndex = typeof body.sectionIndex === "number" ? body.sectionIndex : undefined;
+      const jobId = await queueArticleStep({
+        articleId: id,
+        topicId: article.topicId ?? undefined,
+        step: sectionIndex === undefined ? "body" : "bodySection",
+        sectionIndex,
+        instruction: typeof body.instruction === "string" ? body.instruction : undefined,
+      });
+      return reply.code(202).send({ jobId, step: sectionIndex === undefined ? "body" : "bodySection" });
+    }));
+
+    app.post("/api/studio/articles/:id/titles", studioHandler(async (req, reply) => {
+      const id = Number(param(req, "id"));
+      const article = await articleDetail(id);
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      const jobId = await queueArticleStep({ articleId: id, topicId: article.topicId ?? undefined, step: "titles" });
+      return reply.code(202).send({ jobId, step: "titles" });
+    }));
+
+    // Notifications: one list, one state command per alert, and a bulk mark-as-read.
+    app.get("/api/studio/alerts", studioHandler(async (req) => {
+      const status = queryValue(req, "status");
+      return await listAlerts({ status: status as never });
+    }));
+
+    app.patch("/api/studio/alerts/:id", studioHandler(async (req, reply) => {
+      const alert = await setAlertStatus(Number(param(req, "id")), req.body ?? {});
+      if (!alert) return problem(req, reply, 404, "not_found", "通知不存在。");
+      return alert;
+    }));
+
+    app.post("/api/studio/alerts/read-all", studioHandler(async () => {
+      return { updated: await markAllAlertsRead() };
     }));
 
     // Brand library: list/search with industry and follow filters, then the editable CRUD surface.
@@ -177,6 +362,61 @@ export const wechatHotServer = defineServerModule({
       return reply.code(204).send();
     }));
 
+    // Following a brand and the channels that feed it. A single channel can be paused or removed
+    // without cancelling the brand's follow.
+    app.put("/api/studio/brands/:id/follow", studioHandler(async (req, reply, admin) => {
+      const follow = await saveBrandFollow(param(req, "id"), req.body ?? {}, actorOf(admin));
+      if (!follow) return problem(req, reply, 404, "not_found", "品牌不存在。");
+      return follow;
+    }));
+
+    app.delete("/api/studio/brands/:id/follow", studioHandler(async (req, reply, admin) => {
+      const removed = await removeBrandFollow(param(req, "id"), actorOf(admin));
+      if (!removed) return problem(req, reply, 404, "not_found", "这个品牌还没有关注。");
+      return reply.code(204).send();
+    }));
+
+    app.patch("/api/studio/brands/:brandId/channels/:channelId", studioHandler(async (req, reply, admin) => {
+      const relation = await setBrandChannel(
+        param(req, "brandId"),
+        param(req, "channelId"),
+        req.body ?? {},
+        actorOf(admin),
+      );
+      if (!relation) return problem(req, reply, 404, "not_found", "品牌没有这个渠道。");
+      return relation;
+    }));
+
+    app.patch("/api/studio/channels/:id", studioHandler(async (req, reply, admin) => {
+      const channel = await updateChannel(param(req, "id"), req.body ?? {}, actorOf(admin));
+      if (!channel) return problem(req, reply, 404, "not_found", "渠道不存在。");
+      return channel;
+    }));
+
+    app.delete("/api/studio/channels/:id", studioHandler(async (req, reply, admin) => {
+      const removed = await deleteChannel(param(req, "id"), actorOf(admin));
+      if (!removed) return problem(req, reply, 404, "not_found", "渠道不存在。");
+      return reply.code(204).send();
+    }));
+
+    // GitHub repositories: check one, then subscribe to its releases as an RSS source.
+    app.post("/api/studio/sources/github/check", studioHandler(async (req) => {
+      const url = (req.body as { url?: unknown } | undefined)?.url;
+      return await checkGithubRepo(typeof url === "string" ? url : "");
+    }));
+
+    app.post("/api/studio/sources/github", studioHandler(async (req, reply, admin) => {
+      const body = (req.body ?? {}) as { url?: unknown; brandId?: unknown };
+      const subscribed = await subscribeGithubReleases(
+        {
+          url: typeof body.url === "string" ? body.url : "",
+          brandId: typeof body.brandId === "string" && body.brandId ? body.brandId : null,
+        },
+        actorOf(admin),
+      );
+      return reply.code(201).send(subscribed);
+    }));
+
     // The settings page reads the built-in writing and formatting presets from here. Custom presets
     // are returned too, so the page does not need a second endpoint when WCH-23 adds them.
     app.get("/api/studio/presets", async (req, reply) => {
@@ -196,5 +436,22 @@ export const wechatHotServer = defineServerModule({
       };
       return reply.send(body);
     });
+
+    app.post("/api/studio/presets", studioHandler(async (req, reply, admin) => {
+      const preset = await createStylePreset(req.body ?? {}, actorOf(admin));
+      return reply.code(201).send(preset);
+    }));
+
+    app.patch("/api/studio/presets/:id", studioHandler(async (req, reply, admin) => {
+      const preset = await updateStylePreset(param(req, "id"), req.body ?? {}, actorOf(admin));
+      if (!preset) return problem(req, reply, 404, "not_found", "预设不存在。");
+      return preset;
+    }));
+
+    app.delete("/api/studio/presets/:id", studioHandler(async (req, reply, admin) => {
+      const removed = await deleteStylePreset(param(req, "id"), actorOf(admin));
+      if (!removed) return problem(req, reply, 404, "not_found", "预设不存在。");
+      return removed;
+    }));
   },
 });

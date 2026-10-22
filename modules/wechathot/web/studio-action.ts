@@ -29,7 +29,10 @@ export function useStudioAction() {
         const res = await fetch(path, {
           method,
           credentials: "same-origin",
-          headers: { "content-type": "application/json", "x-csrf-token": me.csrf },
+          // A command without a body must not claim one: Fastify answers 400 to an empty JSON body.
+          headers: body === undefined
+            ? { "x-csrf-token": me.csrf }
+            : { "content-type": "application/json", "x-csrf-token": me.csrf },
           body: body === undefined ? undefined : JSON.stringify(body),
         });
         if (res.status === 401) {

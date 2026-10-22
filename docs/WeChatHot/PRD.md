@@ -510,11 +510,14 @@ GitHub 条目的统一展示字段：`owner/repo`、仓库地址、版本或提�
 - `verification`：`verified` / `user` / `pending` / `unavailable`
 - `availability`、`note`
 
+- `summary`、`primary_source`：代表报道的摘要与主要来源，列表卡片直接读取
 #### `wc_event_meta`
 
 - `story_id`：主键，指向存活事件
 - `categories`、`brand_ids`、`channel_types`、`source_tiers`
 - `event_type`
+- `news_value`：沿用 AIHOT 精选分的新闻价值，与选题推荐分并列
+- `selected_count`、`evidence_source_count`：有编辑价值事件的判定依据（至少一篇精选报道，或至少两个独立证据来源）
 - `verification_status`：`unverified` / `confirmed` / `disputed`
 - `updated`：是否出现新事实
 - `first_report_at`、`latest_at`、`report_count`、`source_count`
@@ -642,7 +645,7 @@ AIHOT 引擎（采集、分析、归组、热度、publication）
 工作台不直接对 `stories` 做复杂多表筛选，而是维护 `wc_event_meta` 读模型：
 
 - 每 5 分钟扫描最近 30 天有更新的存活事件。
-- 聚合分类、品牌、渠道、来源等级、报道数、首发/最近时间、热度。
+- 聚合分类、品牌、渠道、来源等级、报道数、首发/最近时间、热度、代表报道的摘要与主要来源、新闻价值。
 - 从 `analyses.subjects` 和 `facts.subject` 用 `entityIdentity()` 映射品牌。
 - 按代表报道标签映射事件类型，不额外调模型。
 - 按一手来源判断核实状态；新事实标记“已更新”。

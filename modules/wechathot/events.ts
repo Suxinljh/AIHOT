@@ -14,6 +14,8 @@ const SUBJECT_SEPARATOR = /[,，、;；+＋&＆/]/u;
 
 interface StoryRow {
   id: number;
+  summary: string | null;
+  digest: string | null;
   first_report_at: Date | null;
   latest_at: Date | null;
 }
@@ -27,6 +29,8 @@ interface FactRow {
 interface ReportRow extends RepresentativeIdentity {
   id: string;
   source_id: string;
+  source_name: string;
+  summary: string | null;
   source_kind: string;
   source_first_party: boolean;
   source_config: Record<string, unknown>;
@@ -44,6 +48,8 @@ interface ReportRow extends RepresentativeIdentity {
 
 interface EventProjection {
   storyId: number;
+  summary: string | null;
+  primarySource: string | null;
   categories: string[];
   brandIds: string[];
   channelTypes: string[];
@@ -52,6 +58,9 @@ interface EventProjection {
   verificationStatus: "unverified" | "confirmed";
   updated: boolean;
   firstReportAt: Date | null;
+  newsValue: number | null;
+  selectedCount: number;
+  evidenceSourceCount: number;
   latestAt: Date | null;
   reportCount: number;
   sourceCount: number;
@@ -146,11 +155,12 @@ function inferredChannelType(report: ReportRow): string {
 
 async function readEvent(db: Db, storyId: number, now: Date): Promise<EventProjection | null> {
   const [story] = await db<StoryRow[]>`
-    SELECT id, first_report_at, latest_at FROM stories WHERE id = ${storyId} AND merged_into IS NULL`;
+    SELECT id, summary, digest, first_report_at, latest_at FROM stories WHERE id = ${storyId} AND merged_into IS NULL`;
   if (!story) return null;
 
   const reports = await db<ReportRow[]>`
-    SELECT DISTINCT ON (p.article_id) p.article_id AS id, p.source_id, s.kind AS source_kind,
+    SELECT DISTINCT ON (p.article_id) p.article_id AS id, p.summary,
+      p.source_id, s.name AS source_name, s.kind AS source_kind,
       s.first_party AS source_first_party, s.config AS source_config, s.tags AS source_tags,
       p.selected, p.tags, p.category, p.body_mode, p.score, p.timeline_at,
       coalesce(p.published_at, p.discovered_at) AS at,
@@ -197,11 +207,18 @@ async function readEvent(db: Db, storyId: number, now: Date): Promise<EventProje
   }
 
   const evidenceTimes = evidence.map((report) => report.at.getTime());
+  const scored = (evidence.length ? evidence : reports)
+    .map((report) => report.score)
+    .filter((score): score is number => score !== null);
+
   const firstReportAt = evidenceTimes.length ? new Date(Math.min(...evidenceTimes)) : story.first_report_at;
   const latestAt = evidenceTimes.length ? new Date(Math.max(...evidenceTimes)) : story.latest_at;
 
   return {
     storyId,
+    // The story-level summary follows the public card; the representative report is the fallback.
+    summary: story.summary ?? representative?.summary ?? story.digest,
+    primarySource: representative?.source_name ?? null,
     categories: [...new Set(evidence.map((report) => report.category).filter((value): value is string => !!value))].sort(),
     brandIds: [...new Set(brandIds)].sort(),
     channelTypes: [...channelTypes].sort(),
@@ -210,6 +227,9 @@ async function readEvent(db: Db, storyId: number, now: Date): Promise<EventProje
     verificationStatus: evidence.some((report) => report.source_tier === "T1" || report.source_first_party) ? "confirmed" : "unverified",
     updated: facts.length > 1 || facts.some((fact) => fact.version > 1),
     firstReportAt,
+    newsValue: scored.length ? Math.max(...scored) : null,
+    selectedCount: evidence.filter((report) => report.selected).length,
+    evidenceSourceCount: new Set(evidence.map((report) => report.source_id)).size,
     latestAt,
     reportCount: reports.length,
     sourceCount: sourceIds.length,
@@ -220,14 +240,18 @@ async function readEvent(db: Db, storyId: number, now: Date): Promise<EventProje
 async function writeEvent(db: Db, event: EventProjection, now: Date): Promise<void> {
   await db`
     INSERT INTO wc_event_meta (
-      story_id, categories, brand_ids, channel_types, source_tiers, event_type, verification_status,
-      updated, first_report_at, latest_at, report_count, source_count, heat, projected_at
+      story_id, summary, primary_source, categories, brand_ids, channel_types, source_tiers, event_type,
+      verification_status, updated, first_report_at, latest_at, report_count, source_count, news_value,
+      selected_count, evidence_source_count, heat, projected_at
     ) VALUES (
-      ${event.storyId}, ${event.categories}, ${event.brandIds}, ${event.channelTypes}, ${event.sourceTiers},
-      ${event.eventType}, ${event.verificationStatus}, ${event.updated}, ${event.firstReportAt}, ${event.latestAt},
-      ${event.reportCount}, ${event.sourceCount}, ${event.heat}, ${now}
+      ${event.storyId}, ${event.summary}, ${event.primarySource}, ${event.categories}, ${event.brandIds},
+      ${event.channelTypes}, ${event.sourceTiers}, ${event.eventType}, ${event.verificationStatus},
+      ${event.updated}, ${event.firstReportAt}, ${event.latestAt}, ${event.reportCount}, ${event.sourceCount},
+      ${event.newsValue}, ${event.selectedCount}, ${event.evidenceSourceCount}, ${event.heat}, ${now}
     )
     ON CONFLICT (story_id) DO UPDATE SET
+      summary = EXCLUDED.summary,
+      primary_source = EXCLUDED.primary_source,
       categories = EXCLUDED.categories,
       brand_ids = EXCLUDED.brand_ids,
       channel_types = EXCLUDED.channel_types,
@@ -236,6 +260,9 @@ async function writeEvent(db: Db, event: EventProjection, now: Date): Promise<vo
       verification_status = CASE WHEN wc_event_meta.verification_status = 'disputed' THEN 'disputed' ELSE EXCLUDED.verification_status END,
       updated = EXCLUDED.updated,
       first_report_at = EXCLUDED.first_report_at,
+      news_value = EXCLUDED.news_value,
+      selected_count = EXCLUDED.selected_count,
+      evidence_source_count = EXCLUDED.evidence_source_count,
       latest_at = EXCLUDED.latest_at,
       report_count = EXCLUDED.report_count,
       source_count = EXCLUDED.source_count,
