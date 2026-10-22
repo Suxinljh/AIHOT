@@ -6,7 +6,7 @@ import { IconArrowLeft, IconExternal, IconHistory } from "@aihot/web/components/
 import { adminGet } from "@aihot/web/lib/admin.server";
 import { Badge, Button, ButtonLink, Field, Input } from "@aihot/web/features/admin/ui";
 import { relativeTime } from "@aihot/web/lib/format";
-import type { ArticleDoc, ClaimKind, StudioArticle } from "../articles.ts";
+import type { ArticleDoc, ClaimKind, ReviewItem, StudioArticle } from "../articles.ts";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 import { useStudioAction } from "./studio-action";
 
@@ -39,6 +39,8 @@ export default function StudioArticlePage() {
   const revalidator = useRevalidator();
   const [title, setTitle] = useState(article.title);
   const [sectionIndex, setSectionIndex] = useState(0);
+  const [reviewItems, setReviewItems] = useState<ReviewItem[]>(article.review?.items ?? []);
+  useEffect(() => { setReviewItems(article.review?.items ?? []); }, [article.review]);
 
   // The body and the titles are written in the queue: the page refreshes itself while one runs.
   const state = article.writingState;
@@ -96,6 +98,14 @@ export default function StudioArticlePage() {
           >
             生成标题候选
           </Button>
+          <Button
+            tone="secondary"
+            busy={pending === `article-review-${article.id}`}
+            disabled={!article.content?.content?.length}
+            onClick={() => run("POST", `/api/studio/articles/${article.id}/review`, undefined, { label: `article-review-${article.id}`, success: "审核清单已生成" })}
+          >
+            生成审核清单
+          </Button>
           {article.topic && (
             <ButtonLink to={`/studio/topics/${article.topic.id}`} tone="ghost">
               <IconHistory size={13} />回到选题
@@ -141,6 +151,43 @@ export default function StudioArticlePage() {
         </div>
 
         <aside className="space-y-5">
+          <section className="rounded-panel bg-surface p-4 ring-1 ring-line">
+            <h2 className="text-[14px] font-semibold text-ink">审核清单</h2>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">关键事实、数字、日期、来源与潜在夸大表述；逐项确认、修改或忽略，不改写正文。</p>
+            {reviewItems.length ? (
+              <ul className="mt-3 space-y-2">
+                {reviewItems.map((item, index) => (
+                  <li key={item.id} className="rounded-control bg-bg-sunk px-3 py-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="min-w-0 flex-1 text-[12.5px] leading-relaxed text-ink">{item.text}</span>
+                      <Badge tone={item.status === "confirmed" ? "ok" : item.status === "ignored" ? "muted" : item.status === "modified" ? "info" : "warn"}>{item.status === "confirmed" ? "已确认" : item.status === "ignored" ? "已忽略" : item.status === "modified" ? "已修改" : "待确认"}</Badge>
+                    </div>
+                    {item.detail && <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">{item.detail}</p>}
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {(["confirmed", "modified", "ignored", "pending"] as const).map((status) => (
+                        <Button
+                          key={status}
+                          size="sm"
+                          tone="ghost"
+                          busy={pending === `article-review-item-${article.id}-${index}`}
+                          onClick={() => {
+                            const next = reviewItems.map((row, i) => (i === index ? { ...row, status } : row));
+                            setReviewItems(next);
+                            run("PATCH", `/api/studio/articles/${article.id}/review`, { items: next }, { label: `article-review-item-${article.id}-${index}`, success: "审核状态已保存" });
+                          }}
+                        >
+                          {status === "confirmed" ? "确认" : status === "modified" ? "修改" : status === "ignored" ? "忽略" : "重置"}
+                        </Button>
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-[13px] text-ink-4">还没有审核清单，先生成正文再点「生成审核清单」。</p>
+            )}
+          </section>
+
           <section className="rounded-panel bg-surface p-4 ring-1 ring-line">
             <h2 className="text-[14px] font-semibold text-ink">标题候选</h2>
             {article.titleOptions.length ? (

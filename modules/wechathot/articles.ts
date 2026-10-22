@@ -41,6 +41,21 @@ export interface ArticleTitle {
   title: string;
 }
 
+/** One line of the review checklist. The status is the editor's own decision; the body is never changed by it. */
+export interface ReviewItem {
+  id: string;
+  kind: "fact" | "number" | "date" | "source" | "exaggeration";
+  text: string;
+  detail?: string | null;
+  status: "pending" | "confirmed" | "modified" | "ignored";
+  note?: string | null;
+}
+
+export interface ArticleReview {
+  items: ReviewItem[];
+  generatedAt: string | null;
+}
+
 export interface ArticleDoc {
   type: "doc";
   content: ArticleNode[];
@@ -62,6 +77,8 @@ export interface StudioArticle {
   stylePresetId: string | null;
   /** The formatting preset copied onto the draft: the layout choices belong to the article. */
   format: Record<string, unknown>;
+  /** The review checklist and per-item decisions; never mixed into the body. */
+  review: ArticleReview;
   /** The state of the last writing step: generating, done or failed with the reason. */
   writingState: { step: string; status: "pending" | "done" | "failed"; error: string | null; at: string } | null;
   version: number;
@@ -103,6 +120,7 @@ interface ArticleRow {
   title_options: ArticleTitle[];
   style_preset_id: string | null;
   format: Record<string, unknown>;
+  review: Record<string, unknown>;
   writing_state: { step: string; status: "pending" | "done" | "failed"; error: string | null; at: string } | null;
   version: number;
   created_at: Date;
@@ -126,6 +144,7 @@ function articleView(row: ArticleRow, dropped: string[]): StudioArticle {
     droppedSources: dropped,
     stylePresetId: row.style_preset_id,
     format: row.format ?? {},
+    review: (row.review ?? { items: [], generatedAt: null }) as unknown as ArticleReview,
     writingState: row.writing_state ?? null,
     version: row.version,
     createdAt: row.created_at.toISOString(),
@@ -147,7 +166,7 @@ async function droppedSources(articleId: number): Promise<string[]> {
 export async function articleDetail(id: number): Promise<StudioArticle | null> {
   const [row] = await sql<ArticleRow[]>`
     SELECT a.id, a.topic_id, a.type, a.title, a.status, a.mode, a.angle, a.outline, a.content, a.title_options,
-           a.style_preset_id, a.format, a.writing_state, a.version, a.created_at, a.updated_at, t.angle AS topic_angle,
+           a.style_preset_id, a.format, a.review, a.writing_state, a.version, a.created_at, a.updated_at, t.angle AS topic_angle,
            s.public_id::text AS topic_public_id
     FROM wc_articles a
     LEFT JOIN wc_topics t ON t.id = a.topic_id
@@ -381,6 +400,75 @@ export async function writeTitles(articleId: number, deps: TitleDeps = {}): Prom
 }
 
 /** The editor's own change to the draft; it leaves a version behind like the model's work does. */
+const ReviewSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().trim().min(1).max(64),
+    kind: z.enum(["fact", "number", "date", "source", "exaggeration"]),
+    text: z.string().trim().min(1).max(500),
+    detail: z.string().trim().max(500).nullable().optional(),
+  })).max(50),
+});
+
+/** The evidence pack a review is written from: the body's claim kinds and sources. */
+function bodyText(content: ArticleDoc): string {
+  return content.content
+    .map((node) => (node.type === "heading" ? `# ${node.content.map((p) => p.text).join("")}` : node.content.map((p) => p.text).join("")))
+    .join("\n");
+}
+
+/** Generates the review checklist from the draft's body; the body itself is never changed. */
+export async function generateReview(articleId: number, deps: { review?: (input: { title: string; type: string; body: string }) => Promise<{ items: Array<{ id: string; kind: ReviewItem["kind"]; text: string; detail?: string | null }> }> } = {}): Promise<StudioArticle | null> {
+  const article = await articleDetail(articleId);
+  if (!article) return null;
+  const body = bodyText(article.content);
+  if (!body.trim()) return article;
+  let result: { items: Array<{ id: string; kind: ReviewItem["kind"]; text: string; detail?: string | null }> };
+  try {
+    result = await (deps.review ?? (async (input: { title: string; type: string; body: string }) => {
+    const model = await modelFor("structure");
+    const response = await chatJson<typeof ReviewSchema>({
+      model,
+      purpose: "article_review",
+      subject: `article:${articleId}:review`,
+      promptVersion: "review-v1",
+      system: "你是一名事实核对编辑。列出稿件中所有需要核对的关键事实、数字、日期、来源和潜在夸大表述，每项简短，不改写正文。返回 JSON：{ items: [{ id, kind, text, detail }] }，kind 取 fact/number/date/source/exaggeration。",
+      user: `标题：${input.title}\n类型：${input.type}\n\n${input.body}`,
+      schema: ReviewSchema as any,
+      temperature: 0.2,
+      maxTokens: 2000,
+    });
+    return response.data;
+  }))({ title: article.title, type: article.type, body });
+  } catch {
+    // A failed review leaves the draft and its earlier checklist untouched (AC3).
+    return article;
+  }
+  const items: ReviewItem[] = (result as { items: Array<{ id: string; kind: ReviewItem["kind"]; text: string; detail?: string | null }> }).items.map((item, index) => ({
+    id: item.id || `r${index + 1}`,
+    kind: item.kind,
+    text: item.text,
+    detail: item.detail ?? null,
+    status: "pending",
+    note: null,
+  }));
+  const review: ArticleReview = { items, generatedAt: new Date().toISOString() };
+  await sql`
+    UPDATE wc_articles SET review = ${sql.json(review as never)}, updated_at = now()
+    WHERE id = ${articleId}`;
+  return await articleDetail(articleId);
+}
+
+/** Updates the per-item decisions; the body stays untouched. */
+export async function updateReview(articleId: number, items: ReviewItem[]): Promise<StudioArticle | null> {
+  const article = await articleDetail(articleId);
+  if (!article) return null;
+  const review: ArticleReview = { items, generatedAt: article.review.generatedAt ?? new Date().toISOString() };
+  await sql`
+    UPDATE wc_articles SET review = ${sql.json(review as never)}, updated_at = now()
+    WHERE id = ${articleId}`;
+  return await articleDetail(articleId);
+}
+
 export async function updateArticle(
   id: number,
   patch: { title?: string; content?: ArticleDoc; status?: "draft" | "review" | "done" | "archived" },

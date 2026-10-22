@@ -11,7 +11,7 @@ import { stopBoss } from "@aihot/backend/jobs/queue";
 import { installModules } from "@aihot/backend/modules";
 import { buildApp } from "../../../apps/api/src/app.ts";
 import { wechatHotServer } from "../server.ts";
-import { createArticleFromTopic, writeBody, writeTitles } from "../articles.ts";
+import { createArticleFromTopic, generateReview, updateReview, writeBody, writeTitles } from "../articles.ts";
 import type { StudioArticle } from "../articles.ts";
 
 const T = tag();
@@ -184,4 +184,42 @@ test("the article endpoints read, queue and edit a draft", async () => {
   assert.equal(missing.statusCode, 404);
   const noTopic = await api("POST", "/api/studio/topics/999999/article", {});
   assert.equal(noTopic.statusCode, 404);
+});
+
+
+test("a draft gets a review checklist that can be decided without touching the body", async () => {
+  const article = await createArticleFromTopic(topicId);
+  assert.ok(article);
+
+  await writeBody(article!.id, {}, {
+    body: async () => ({
+      sections: [{ title: "价格怎么变的", paragraphs: [{ text: "官方把新价格定为 10 美元。", kind: "official" as const, sources: ["a-1"] }] }],
+    }),
+  });
+  const before = await api("GET", `/api/studio/articles/${article!.id}`);
+  const beforeBody = (before.json() as StudioArticle).content;
+  const beforeVersion = (before.json() as StudioArticle).version;
+
+  const reviewed = await generateReview(article!.id, {
+    review: async () => ({ items: [{ id: "r1", kind: "number", text: "10 美元", detail: "确认官方报价" }] }),
+  });
+  assert.ok(reviewed);
+  assert.equal(reviewed!.review.items.length, 1);
+  assert.deepEqual(reviewed!.content, beforeBody, "generating the review never rewrites the body");
+  assert.equal(reviewed!.version, beforeVersion, "the version stays put");
+
+  // A failing model call leaves the draft and its earlier checklist intact.
+  const failed = await generateReview(article!.id, { review: async () => { throw new Error("model refused"); } });
+  assert.ok(failed, "a failed review still returns the article");
+  assert.equal(failed!.review.items.length, 1, "the earlier checklist is kept");
+
+  // Each item can be confirmed, modified or ignored; the decision is persisted separately.
+  const decided = reviewed!.review.items.map((item) => ({ ...item, status: "confirmed" as const }));
+  const patched = await updateReview(article!.id, decided);
+  assert.ok(patched);
+  assert.equal(patched!.review.items[0]?.status, "confirmed");
+
+  const after = await api("GET", `/api/studio/articles/${article!.id}`);
+  assert.equal((after.json() as StudioArticle).review.items[0]?.status, "confirmed");
+  assert.deepEqual((after.json() as StudioArticle).content, beforeBody, "deciding never touches the body");
 });

@@ -21,7 +21,7 @@ import {
   topicDetail,
   updateTopic,
 } from "./topics.ts";
-import { articleDetail, createArticleFromTopic, updateArticle } from "./articles.ts";
+import { articleDetail, createArticleFromTopic, generateReview, updateArticle, updateReview } from "./articles.ts";
 import { queueArticleStep, queueWriteStep } from "./writing.ts";
 import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
@@ -291,6 +291,23 @@ export const wechatHotServer = defineServerModule({
       if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
       const jobId = await queueArticleStep({ articleId: id, topicId: article.topicId ?? undefined, step: "titles" });
       return reply.code(202).send({ jobId, step: "titles" });
+    }));
+
+    // The review checklist is stored separately from the body: it lists risks for the editor to confirm,
+    // modify or ignore, and never rewrites the draft.
+    app.post("/api/studio/articles/:id/review", studioHandler(async (req, reply) => {
+      const article = await generateReview(Number(param(req, "id")));
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return article;
+    }));
+
+    app.patch("/api/studio/articles/:id/review", studioHandler(async (req, reply) => {
+      const body = (req.body ?? {}) as { items?: unknown };
+      const items = Array.isArray(body.items) ? body.items : null;
+      if (!items) return problem(req, reply, 400, "invalid_request", "items 必须是数组");
+      const article = await updateReview(Number(param(req, "id")), items as never);
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return article;
     }));
 
     // Notifications: one list, one state command per alert, and a bulk mark-as-read.
