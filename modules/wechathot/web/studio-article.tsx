@@ -1,11 +1,12 @@
 // One draft: the body with its claim kinds and sources, the title candidates, and the commands to
 // write the whole article or one section again. The editor itself arrives with WCH-21.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLoaderData, useNavigate, useRevalidator, type LoaderFunctionArgs, type MetaFunction } from "react-router";
 import { IconArrowLeft, IconExternal, IconHistory } from "@aihot/web/components/icons";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import { Badge, Button, ButtonLink, Field, Input } from "@aihot/web/features/admin/ui";
 import { relativeTime } from "@aihot/web/lib/format";
+import { StudioArticleEditor } from "../../../apps/web/app/components/studio/StudioArticleEditor";
 import type { ArticleDoc, ClaimKind, ReviewItem, StudioArticle } from "../articles.ts";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 import { useStudioAction } from "./studio-action";
@@ -40,6 +41,10 @@ export default function StudioArticlePage() {
   const [title, setTitle] = useState(article.title);
   const [sectionIndex, setSectionIndex] = useState(0);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>(article.review?.items ?? []);
+  const [saving, setSaving] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [draft, setDraft] = useState<ArticleDoc>(article.content);
+  useEffect(() => { setDraft(article.content); }, [article.content]);
   useEffect(() => { setReviewItems(article.review?.items ?? []); }, [article.review]);
 
   // The body and the titles are written in the queue: the page refreshes itself while one runs.
@@ -121,30 +126,17 @@ export default function StudioArticlePage() {
         <div className="min-w-0 space-y-5">
           <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
             <h2 className="text-[14px] font-semibold text-ink">正文</h2>
-            {nodes.length ? (
-              <div className="mt-3 space-y-3">
-                {nodes.map((node, index) => {
-                  if (node.type === "heading") {
-                    return (
-                      <h3 key={index} className="pt-2 text-[15px] font-semibold text-ink">
-                        {node.content.map((part) => part.text).join("")}
-                      </h3>
-                    );
-                  }
-                  return (
-                    <p key={index} className="text-[13.5px] leading-[1.9] text-ink-2">
-                      {node.content.map((part) => part.text).join("")}
-                      <span className="ml-2 inline-flex flex-wrap items-center gap-1 align-middle">
-                        <Badge tone={KIND_TONE[node.attrs.kind]}>{KIND_LABEL[node.attrs.kind]}</Badge>
-                        {node.attrs.sources.map((source) => (
-                          <span key={source} className="mono text-[10.5px] text-ink-4">{source}</span>
-                        ))}
-                      </span>
-                    </p>
-                  );
-                })}
-              </div>
-            ) : (
+            <StudioArticleEditor value={draft} onChange={(doc: ArticleDoc) => {
+              setDraft(doc);
+              if (saveTimer.current) clearTimeout(saveTimer.current);
+              saveTimer.current = setTimeout(async () => {
+                setSaving(true);
+                await run("PATCH", `/api/studio/articles/${article.id}`, { content: doc }, { label: `article-autosave-${article.id}`, success: "已保存" });
+                setSaving(false);
+              }, 1500);
+            }} />
+            {saving && <p className="mt-2 text-[11.5px] text-ink-4">正在保存…</p>}
+            {!article.content?.content?.length && (
               <p className="mt-3 text-[13px] text-ink-4">还没有正文。确认大纲后点「生成正文」。</p>
             )}
           </section>
