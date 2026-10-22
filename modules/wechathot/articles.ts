@@ -16,6 +16,7 @@ import {
 } from "./prompts-body.ts";
 import { resolvePreset } from "./presets.ts";
 import type { TopicSnapshot } from "./studio-types.ts";
+import type { ExportSource } from "./export.ts";
 
 export type ClaimKind = "official" | "media" | "unconfirmed" | "author";
 
@@ -31,10 +32,17 @@ export interface ArticleSection {
   paragraphs: ArticleParagraph[];
 }
 
+/** Inline text inside a heading or paragraph; marks are the editor's bold/italic/link/code. */
+export interface ArticleText {
+  type: "text";
+  text: string;
+  marks?: Array<{ type: string; attrs?: Record<string, unknown> }>;
+}
+
 /** One node of the draft: a section heading or a paragraph with its claim kind and sources. */
 export type ArticleNode =
-  | { type: "heading"; attrs: { level: number }; content: Array<{ type: "text"; text: string }> }
-  | { type: "paragraph"; content: Array<{ type: "text"; text: string }>; attrs: { kind: ClaimKind; sources: string[] } };
+  | { type: "heading"; attrs: { level: number }; content: ArticleText[] }
+  | { type: "paragraph"; content: ArticleText[]; attrs: { kind: ClaimKind; sources: string[] } };
 
 export interface ArticleTitle {
   style: "direct" | "question" | "opinion";
@@ -300,6 +308,21 @@ async function modelBody(input: ArticlePromptInput, instruction?: string): Promi
     maxTokens: 4000,
   });
   return { sections: result.data.sections };
+}
+
+/** The evidence links the export appends: only reports the body actually cites, in snapshot order. */
+export async function articleSources(articleId: number): Promise<ExportSource[]> {
+  const article = await articleDetail(articleId);
+  if (!article || article.topicId === null) return [];
+  const [row] = await sql<{ snapshot: TopicSnapshot | null }[]>`
+    SELECT source_snapshot AS snapshot FROM wc_topics WHERE id = ${article.topicId}`;
+  const reports = row?.snapshot?.reports ?? [];
+  const cited = new Set<string>();
+  for (const node of article.content.content) {
+    if (node.type === "paragraph") for (const id of node.attrs.sources) cited.add(id);
+  }
+  const wanted = cited.size ? reports.filter((report) => cited.has(report.id)) : reports;
+  return wanted.map((report) => ({ id: report.id, title: report.title, source: report.source, url: report.url }));
 }
 
 /**

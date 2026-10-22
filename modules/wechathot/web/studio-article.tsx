@@ -7,6 +7,7 @@ import { adminGet } from "@aihot/web/lib/admin.server";
 import { Badge, Button, ButtonLink, Field, Input } from "@aihot/web/features/admin/ui";
 import { relativeTime } from "@aihot/web/lib/format";
 import { StudioArticleEditor } from "../../../apps/web/app/components/studio/StudioArticleEditor";
+import { copyRich, copyText } from "./rich-copy";
 import type { ArticleDoc, ClaimKind, ReviewItem, StudioArticle } from "../articles.ts";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 import { useStudioAction } from "./studio-action";
@@ -46,6 +47,8 @@ export default function StudioArticlePage() {
   const [sectionIndex, setSectionIndex] = useState(0);
   const [view, setView] = useState<"content" | "layout" | "wechat">("content");
   const [wechatHtml, setWechatHtml] = useState<string | null>(null);
+  const [includeSources, setIncludeSources] = useState(true);
+  const [copied, setCopied] = useState<string | null>(null);
   const [format, setFormat] = useState<Record<string, unknown>>(article.format ?? {});
   useEffect(() => {
     if (view !== "wechat") return;
@@ -71,6 +74,30 @@ export default function StudioArticlePage() {
     const timer = setTimeout(() => revalidator.revalidate(), 2500);
     return () => clearTimeout(timer);
   }, [state?.status, state?.at, revalidator]);
+
+  async function exportText(format: "text" | "markdown") {
+    const res = await fetch(`/api/studio/articles/${article.id}/export?format=${format}&sources=${includeSources ? "1" : "0"}`, { credentials: "same-origin" });
+    if (!res.ok) return "";
+    const data = (await res.json()) as { text?: string };
+    return data.text ?? "";
+  }
+
+  async function copyPlain() {
+    const text = await exportText("text");
+    if (text) { await copyText(text); setCopied("text"); }
+  }
+
+  async function copyMarkdown() {
+    const text = await exportText("markdown");
+    if (text) { await copyText(text); setCopied("markdown"); }
+  }
+
+  async function copyWechat() {
+    if (!wechatHtml) return;
+    const text = await exportText("text");
+    await copyRich(wechatHtml, text);
+    setCopied("rich");
+  }
 
   const nodes = article.content?.content ?? [];
   const headings = nodes.map((node, index) => (node.type === "heading" ? index : -1)).filter((index) => index >= 0);
@@ -168,14 +195,32 @@ export default function StudioArticlePage() {
             <section className="rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-[14px] font-semibold text-ink">公众号 HTML</h2>
+                <span className="text-[11.5px] text-ink-4">{copied ? "已复制" : ""}</span>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <Button size="sm" tone="primary" disabled={!wechatHtml} onClick={copyWechat}>复制富文本</Button>
+                <Button size="sm" tone="secondary" onClick={copyPlain}>复制纯文本</Button>
+                <Button size="sm" tone="secondary" onClick={copyMarkdown}>复制 Markdown</Button>
                 <Button
                   size="sm"
-                  tone="primary"
-                  disabled={!wechatHtml}
-                  onClick={() => { if (wechatHtml) navigator.clipboard?.writeText(wechatHtml); }}
+                  tone="ghost"
+                  onClick={async () => {
+                    const text = await exportText("markdown");
+                    if (!text) return;
+                    const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `${article.title || `article-${article.id}`}.md`;
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                  }}
                 >
-                  复制 HTML
+                  下载 .md
                 </Button>
+                <label className="ml-auto flex items-center gap-1.5 text-[11.5px] text-ink-3">
+                  <input type="checkbox" checked={includeSources} onChange={(event) => setIncludeSources(event.target.checked)} />
+                  包含来源列表
+                </label>
               </div>
               <p className="mt-1 text-[11.5px] leading-relaxed text-ink-4">
                 只输出公众号接受的基础标签，样式写成 inline style；正文宽度按 375px 预览。

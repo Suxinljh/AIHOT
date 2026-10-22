@@ -21,7 +21,8 @@ import {
   topicDetail,
   updateTopic,
 } from "./topics.ts";
-import { articleDetail, createArticleFromTopic, generateReview, listArticles, updateArticle, updateReview } from "./articles.ts";
+import { articleDetail, articleSources, createArticleFromTopic, generateReview, listArticles, updateArticle, updateReview } from "./articles.ts";
+import { markdown, plainText } from "./export.ts";
 import { queueArticleStep, queueWriteStep } from "./writing.ts";
 import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
@@ -304,6 +305,17 @@ export const wechatHotServer = defineServerModule({
       const article = await generateReview(Number(param(req, "id")));
       if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
       return article;
+    }));
+
+    // Plain text and Markdown exports: the same body, with an optional list of the cited sources.
+    app.get("/api/studio/articles/:id/export", studioHandler(async (req, reply) => {
+      const article = await articleDetail(Number(param(req, "id")));
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      const withSources = queryValue(req, "sources") !== "0";
+      const sources = withSources ? await articleSources(article.id) : [];
+      const kind = queryValue(req, "format") === "text" ? "text" : "markdown";
+      const text = kind === "markdown" ? markdown(article.content, sources) : plainText(article.content, sources);
+      return { format: kind, text };
     }));
 
     // The 公众号 body: whitelisted tags, inline styles and a sanitize pass before anything is copied.
