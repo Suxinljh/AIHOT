@@ -1,10 +1,10 @@
 ---
 id: WCH-23
 title: 排版视图、基础样式与预设
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-21T03:11:00Z'
-updated_date: '2026-10-22T02:20:00Z'
+updated_date: '2026-10-22T02:24:00Z'
 labels:
   - frontend
   - editor
@@ -24,8 +24,8 @@ ordinal: 23000
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 排版视图能修改字体、字号、行高、段距、加粗和对齐
-- [ ] #2 预设可应用、保存和逐项覆盖，切换视图不丢内容
+- [x] #1 排版视图能修改字体、字号、行高、段距、加粗和对齐
+- [x] #2 预设可应用、保存和逐项覆盖，切换视图不丢内容
 - [ ] #3 375px 下排版控件和预览可用
 <!-- AC:END -->
 
@@ -39,3 +39,15 @@ ordinal: 23000
 
 风险：自动保存与布局保存共用 PATCH，避免并发覆盖。
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+第一切片：双视图切换、字号/行高/段距/对齐/标题/图片圆角控件、预设应用与逐项覆盖。字体家族与预览对照留后续。
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+第一切片完成：排版视图、基础样式控件、预设应用与逐项覆盖；字体家族与预览对照待后续。
+<!-- SECTION:FINAL_SUMMARY:END -->
