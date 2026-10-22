@@ -10,15 +10,15 @@
 
 `itemType` 必须七选一：
 
-- `model_release`：新模型或大版本更新
-- `product_launch`：新产品、工具、硬件、影视游戏作品或重大功能更新
+- `model_release`：新模型、算法模型或平台的大版本更新（大模型、智驾模型、游戏 AI 等）
+- `product_launch`：新产品、工具、硬件、车型、影视游戏作品或重大功能更新
 - `tool_or_prompt`：可直接复用的方法、Prompt、Skill 或技巧
 - `research_paper`：论文、研究或技术报告
 - `industry_event`：融资、收购、监管、诉讼、商业动作或人事
 - `opinion_analysis`：观点、行业判断、复盘或长访谈
 - `tutorial_explainer`：教程、科普、解读或评测
 
-优先级：发了模型选 model_release；发了工具、硬件或影视游戏作品选 product_launch；发了 Prompt 或方法选 tool_or_prompt；论文优先 research_paper；评测选 tutorial_explainer。
+优先级：发了模型选 model_release；发了工具、硬件、车型或影视游戏作品选 product_launch；发了 Prompt 或方法选 tool_or_prompt；论文优先 research_paper；评测选 tutorial_explainer。
 
 输出前检查 `itemType` 与第一个分类标签是否自洽：`model_release` 对应“模型发布”，`product_launch` 对应“产品更新”“硬件发布”或“作品发布”，`research_paper` 对应“论文/研究”，`industry_event` 对应“政策/监管”“融资/并购”“人事变动”或“其他”，`opinion_analysis` 对应“观点/评论”或“现象/趋势”，`tutorial_explainer` 对应“教程/实践”或“评测/基准”。如果二者冲突，按当前材料的核心事件修正后再输出。
 
@@ -32,12 +32,12 @@
 
 ## 标签
 
-`tags` 输出 1–6 个字符串。第一个必须从以下分类标签中选一个：模型发布、产品更新、硬件发布、作品发布、论文/研究、开源/仓库、评测/基准、教程/实践、观点/评论、现象/趋势、政策/监管、安全/事故、融资/并购、人事变动、供应链/产能、非关注/通用、其他。
+`tags` 输出 1–6 个字符串。第一个必须从以下分类标签中选一个：{{categoryTags}}。
 
 其后可选 0–5 个适用标签，并且只能来自以下两个白名单：
 
-- 主题：Agent、编码、推理、多模态、语音、视频生成、图像生成、RAG、端侧、数据/训练、部署/工程、开源生态、MCP/工具调用、操作系统、开发工具、云服务、安全/隐私、芯片、算力、消费电子、可穿戴、机器人、自动驾驶、无人机、仿真、电影、剧集、动画、游戏、特效、AI 影像、音乐、摄影
-- 实体：OpenAI、Anthropic、Google、Meta、Microsoft、Apple、NVIDIA、Intel、Tesla、阿里巴巴、字节跳动、腾讯、迪士尼、Netflix、索尼
+- 主题：{{topicTags}}
+- 实体：{{entityTags}}
 
 正文中即使明确出现了 AMD、三星、小米等其他实体，也不要把它们放进 `tags`。不要创造白名单之外的标签。没有适用的主题或实体时，只返回第一个分类标签；例如一条讲教育部门限制校园使用生成式工具的监管新闻，不需要强行归到“编码”或“推理”。
 
