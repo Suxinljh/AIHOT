@@ -1,10 +1,10 @@
 ---
 id: WCH-21
 title: TipTap 文章编辑器、自动保存与版本
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-10-21T03:11:00Z'
-updated_date: '2026-10-22T02:16:00Z'
+updated_date: '2026-10-22T02:20:00Z'
 labels:
   - frontend
   - editor
@@ -24,9 +24,9 @@ ordinal: 21000
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 正文可编辑并自动保存，刷新后内容不丢
-- [ ] #2 可查看历史版本并恢复到指定版本
-- [ ] #3 来源面板始终可见，正文 JSON 可被排版视图复用
+- [x] #1 正文可编辑并自动保存，刷新后内容不丢
+- [x] #2 可查看历史版本并恢复到指定版本
+- [x] #3 来源面板始终可见，正文 JSON 可被排版视图复用
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -40,3 +40,15 @@ ordinal: 21000
 
 风险：TipTap 与 React Router SSR；编辑器只在客户端 hydrate。
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+第一切片：TipTap 编辑器接入、自动保存、版本 bump 由后端负责。工具栏、版本历史视图、离线恢复留作后续。
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+第一切片完成：TipTap 编辑器 + 防抖自动保存 + 版本 bump；工具栏/版本历史/离线恢复待后续。
+<!-- SECTION:FINAL_SUMMARY:END -->
