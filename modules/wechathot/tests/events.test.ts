@@ -306,6 +306,13 @@ test("facets count the current result and keep other options visible", async () 
   assert.deepEqual(ai.facets.brands.map((row) => [row.id, row.count]), [[openai, 1]]);
 });
 
+test("the legacy industry category is ignored instead of failing the page", async () => {
+  const all = await list();
+  const legacy = await list("?industry=industry");
+  assert.equal(legacy.items.length, all.items.length);
+  assert.equal(legacy.facets.industries.some((row) => row.value === "industry"), false);
+});
+
 test("invalid list parameters are readable errors", async () => {
   for (const query of [
     "?industry=not-an-industry",

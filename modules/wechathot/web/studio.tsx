@@ -137,7 +137,7 @@ export default function StudioHotspots() {
     }
     next.delete("page");
     const search = next.toString();
-    return search ? `/studio?${search}` : "/";
+    return search ? `/?${search}` : "/";
   }
 
   const industryOptions = [

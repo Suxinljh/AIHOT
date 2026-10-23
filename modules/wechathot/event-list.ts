@@ -83,13 +83,17 @@ function parseDay(value: string | undefined, label: string): Date | null {
 
 function parseFilters(query: unknown): ListFilters {
   const parsed = QuerySchema.parse(query);
-  const industries = splitList(parsed.industry);
+  // Old bookmarks and pre-migration events may still carry the legacy `industry` category. Ignore
+  // that one; a genuinely unknown key is still a readable 400.
+  let industries = splitList(parsed.industry);
   if (industries) {
     for (const key of industries) {
-      if (!isCategoryKey(key)) {
+      if (!isCategoryKey(key) && key !== "industry") {
         throw new EventQueryRejected(`行业 ${key} 不存在，可选：${CATEGORY_KEYS.join("、")}`);
       }
     }
+    industries = industries.filter(isCategoryKey);
+    if (!industries.length) industries = null;
   }
   const brands = splitList(parsed.brand);
   if (brands) {
@@ -307,11 +311,13 @@ async function facets(filters: ListFilters): Promise<StudioEventFacets> {
   ]);
 
   return {
-    industries: industries.map((row) => ({
-      value: row.value,
-      label: CATEGORY_LABELS[row.value as keyof typeof CATEGORY_LABELS] ?? row.value,
-      count:Number(row.count),
-    })),
+    industries: industries
+      .filter((row) => isCategoryKey(row.value))
+      .map((row) => ({
+        value: row.value,
+        label: CATEGORY_LABELS[row.value as keyof typeof CATEGORY_LABELS] ?? row.value,
+        count: Number(row.count),
+      })),
     brands: brands.map((row) => ({ id: row.id, name: row.name, count: Number(row.count) })),
     channels: channels.map((row) => ({
       value: row.value,
