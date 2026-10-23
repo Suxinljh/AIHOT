@@ -219,6 +219,21 @@ http.createServer((req, res) => {
 - 建议：Tags 用 240 分钟；Commits 只用于重要的库，360 分钟以上；Issues/PR 用 `labels` 收窄，否则一天几十条。
 - 预览同样走 API，会产生一次请求。
 
+### 微博（RSSHub）
+
+微博没有适合服务端监测的免费官方接口（免费档每用户每天 100 次，且禁止服务端抓取和存储）。用自建 [RSSHub](https://docs.rsshub.app/) 的 `/weibo/user/:uid` 路由，按 `rss` 信源接入：
+
+```json
+{ "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1746221281" }
+```
+
+- `.env` 设 `RSSHUB_BASE`（局域网地址，或与 RSSHub 同 Docker 网络时的容器名）；`scripts/seed.ts` 导入时替换占位符，没配就跳过这些源。
+- RSSHub 在局域网或 Docker 网络里时，还要设 `ALLOW_PRIVATE_NETWORK_FETCH=true`，否则采集会拒绝私有地址。只对可信内网源打开。
+- 微博路由需要浏览器渲染，RSSHub 用 `diygod/rsshub:chromium-bundled` 镜像；否则报 `browserType.launch: Executable doesn't exist`。
+- 还需要登录态：容器环境变量 `WEIBO_COOKIE=SUB=...; SUBP=...;`（一个变量，分号分隔），并设 `CACHE_EXPIRE=600` 减少风控。
+- 浏览器渲染较重：示范信源间隔 240 分钟；29 个重点品牌见 `docs/WeChatHot/weibo-uids.md`，叠纸暂无官方 UID。
+- Cookie 是账号登录态，只放 NAS 本地，不要提交仓库。
+
 ### mp_account
 
 ```json

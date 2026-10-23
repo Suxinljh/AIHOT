@@ -1437,15 +1437,14 @@
       "tier": "T2",
       "owner_entity_id": "byd",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-tesla",
@@ -1460,15 +1459,14 @@
       "tier": "T2",
       "owner_entity_id": "tesla",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-li-auto",
@@ -1483,15 +1481,14 @@
       "tier": "T2",
       "owner_entity_id": "li-auto",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-xpeng",
@@ -1506,15 +1503,14 @@
       "tier": "T2",
       "owner_entity_id": "xpeng",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-nio",
@@ -1529,15 +1525,14 @@
       "tier": "T2",
       "owner_entity_id": "nio",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-xiaomi",
@@ -1552,15 +1547,14 @@
       "tier": "T2",
       "owner_entity_id": "xiaomi",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-zeekr",
@@ -1575,15 +1569,14 @@
       "tier": "T2",
       "owner_entity_id": "zeekr",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-changan",
@@ -1598,15 +1591,14 @@
       "tier": "T2",
       "owner_entity_id": "changan",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-hima",
@@ -1621,15 +1613,14 @@
       "tier": "T2",
       "owner_entity_id": "hima",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-geely-auto",
@@ -1644,15 +1635,14 @@
       "tier": "T2",
       "owner_entity_id": "geely-auto",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-tencent",
@@ -1667,15 +1657,14 @@
       "tier": "T2",
       "owner_entity_id": "tencent",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-netease-games",
@@ -1690,15 +1679,14 @@
       "tier": "T2",
       "owner_entity_id": "netease-games",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-mihoyo",
@@ -1713,15 +1701,14 @@
       "tier": "T2",
       "owner_entity_id": "mihoyo",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-hypergryph",
@@ -1736,15 +1723,14 @@
       "tier": "T2",
       "owner_entity_id": "hypergryph",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-kuro-games",
@@ -1759,15 +1745,14 @@
       "tier": "T2",
       "owner_entity_id": "kuro-games",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-game-science",
@@ -1782,15 +1767,14 @@
       "tier": "T2",
       "owner_entity_id": "game-science",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-xd-games",
@@ -1805,15 +1789,14 @@
       "tier": "T2",
       "owner_entity_id": "xd-games",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-ubisoft",
@@ -1828,15 +1811,14 @@
       "tier": "T2",
       "owner_entity_id": "ubisoft",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-blizzard-entertainment",
@@ -1851,15 +1833,14 @@
       "tier": "T2",
       "owner_entity_id": "blizzard-entertainment",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-china-film",
@@ -1874,15 +1855,14 @@
       "tier": "T2",
       "owner_entity_id": "china-film",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-enlight-media",
@@ -1897,15 +1877,14 @@
       "tier": "T2",
       "owner_entity_id": "enlight-media",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-bona-film-group",
@@ -1920,15 +1899,14 @@
       "tier": "T2",
       "owner_entity_id": "bona-film-group",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-huace-media",
@@ -1943,15 +1921,14 @@
       "tier": "T2",
       "owner_entity_id": "huace-media",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-iqiyi",
@@ -1966,15 +1943,14 @@
       "tier": "T2",
       "owner_entity_id": "iqiyi",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-tencent-video",
@@ -1989,15 +1965,14 @@
       "tier": "T2",
       "owner_entity_id": "tencent-video",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-youku",
@@ -2012,15 +1987,14 @@
       "tier": "T2",
       "owner_entity_id": "youku",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-mango-tv",
@@ -2035,15 +2009,14 @@
       "tier": "T2",
       "owner_entity_id": "mango-tv",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-universal-pictures",
@@ -2058,15 +2031,14 @@
       "tier": "T2",
       "owner_entity_id": "universal-pictures",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "weibo-disney",
@@ -2081,15 +2053,14 @@
       "tier": "T2",
       "owner_entity_id": "disney",
       "participation_mode": "editorial",
-      "interval_minutes": 120,
+      "interval_minutes": 240,
       "tags": [
         "微博",
-        "官方",
-        "候选"
+        "官方"
       ],
       "site_fulltext": false,
       "syndicate_fulltext": false,
-      "enabled": false
+      "enabled": true
     }
   ]
 }
