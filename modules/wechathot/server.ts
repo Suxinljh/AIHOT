@@ -520,8 +520,9 @@ export const wechatHotServer = defineServerModule({
 
     app.patch("/api/studio/integrations", studioHandler(async (req, reply, admin) => {
       const body = (req.body ?? {}) as { plain?: unknown; secrets?: unknown };
-      const plain = z.record(z.enum(PLAIN_KEYS), z.union([z.string().max(500), z.boolean(), z.null()])).optional().parse(body.plain);
-      const secrets = z.record(z.enum(SECRET_KEYS), z.union([z.string().max(2000), z.null()])).optional().parse(body.secrets);
+      // Only the fields the editor filled are sent; omitted keys keep their stored value.
+      const plain = z.partialRecord(z.enum(PLAIN_KEYS), z.union([z.string().max(500), z.boolean(), z.null()])).optional().parse(body.plain);
+      const secrets = z.partialRecord(z.enum(SECRET_KEYS), z.union([z.string().max(2000), z.null()])).optional().parse(body.secrets);
       if (!plain && !secrets) return problem(req, reply, 400, "invalid_request", "没有要保存的配置");
       await saveIntegrations({ plain: plain as never, secrets: secrets as never }, actorOf(admin));
       return { ...(await readIntegrations()), restartRequired: true };

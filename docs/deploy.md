@@ -90,6 +90,24 @@ docker compose --profile https up -d --build
 - 保存后重启 `api` 和 `worker` 生效：`docker compose restart api worker`；
 - 部署时在环境变量里设置的值优先，页面会标为「由部署环境固定」。
 
+邮件通知走 SMTP：
+
+- `SMTP_URL`：`smtps://用户名:密码@主机:465`（465 隐式 TLS；支持 STARTTLS 的服务商用 `smtp://...:587`）
+- `SMTP_FROM`：发件人，如 `WeChatHot <bot@example.com>`；多数服务商要求与登录账号或已验证域名一致
+- `ALERT_EMAIL_TO`：收件人
+
+密码含 `@`、`#` 等字符时先做 URL 编码（`@` → `%40`）。保存后重启 api 与 worker。
+
+用 Cloudflare 上的域名发信：Cloudflare Email Service 自带 SMTP。先在 **Compute → Email Service → Email Sending → Onboard Domain** 验证域名（要求域名使用 Cloudflare DNS，MX/SPF/DKIM/DMARC 记录会自动加到 `cf-bounce` 子域），再创建带 **Email Sending: Edit** 权限的 API Token，然后填：
+
+```bash
+SMTP_URL=smtps://api_token:<API_TOKEN>@smtp.mx.cloudflare.net:465
+SMTP_FROM=WeChatHot <bot@你的域名>
+ALERT_EMAIL_TO=你的邮箱
+```
+
+Cloudflare 只支持 465 端口的隐式 TLS，不支持 587 STARTTLS。发到任意收件人需要 Workers Paid（每月含 3,000 封）；只发到账号里已验证的目的地址在 Free 计划也免费。
+
 ### 更新
 
 **公开站下线（WCH-33）**：`/` 是工作台首页，公开阅读页、RSS、API v1、MCP、`llms.txt`、站点地图、`robots.txt`、manifest、分享图和图标都不再提供，相关请求返回 404。数据库结构和已有内容不变，不需要迁移；`wc_` 私有数据本来就没有进入这些出口。升级后确认反代或 CDN 不再缓存这些地址，并用 `node scripts/smoke.ts --base <地址>` 检查。
