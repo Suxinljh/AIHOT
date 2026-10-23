@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { AdminModels } from "@aihot/contracts/admin";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { IconDoc, IconGrid, IconSparkles } from "@aihot/web/components/icons";
@@ -9,19 +10,21 @@ import type { StudioMetrics } from "../metrics.ts";
 import { Button, Field, Input, Textarea } from "@aihot/web/features/admin/ui";
 import { useStudioAction } from "./studio-action";
 import { MetricsSection } from "./studio-metrics";
+import { ModelsSection } from "./studio-models";
 import { IntegrationsSection, type Integrations } from "./studio-integrations";
 import { StudioDialog } from "./studio-brand-ui";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const days = new URL(request.url).searchParams.get("days") ?? "30";
-  const [presets, notify, integrations, metrics] = await Promise.all([
+  const [presets, notify, integrations, metrics, models] = await Promise.all([
     adminGet<StudioPresets>(request, "/api/studio/presets"),
     adminGet<{ settings: NotifySettings; targets: Array<{ key: string; enabled: boolean }> }>(request, "/api/studio/notify/settings"),
     adminGet<Integrations>(request, "/api/studio/integrations"),
     adminGet<StudioMetrics>(request, `/api/studio/metrics?days=${encodeURIComponent(days)}`),
+    adminGet<AdminModels>(request, "/api/admin/models?days=1"),
   ]);
-  return { presets, notify: notify.settings, integrations, metrics, days };
+  return { presets, notify: notify.settings, integrations, metrics, models, days };
 }
 
 function NotifySection({ initial }: { initial: NotifySettings }) {
@@ -262,7 +265,7 @@ function presetDraft(preset: StylePreset | null, kind: PresetKind): PresetDraft 
 }
 
 export default function StudioSettings() {
-  const { presets, notify, integrations, metrics, days } = useLoaderData<typeof loader>();
+  const { presets, notify, integrations, metrics, models, days } = useLoaderData<typeof loader>();
   const writing = presets.writing;
   const formatting = presets.format;
   const { run, pending } = useStudioAction();
@@ -361,6 +364,10 @@ export default function StudioSettings() {
 
       <div className="mt-8 border-t border-line pt-8">
         <IntegrationsSection integrations={integrations} />
+      </div>
+
+      <div className="mt-8 border-t border-line pt-8">
+        <ModelsSection models={models} />
       </div>
 
       <div className="mt-8 border-t border-line pt-8">

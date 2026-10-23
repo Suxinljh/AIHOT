@@ -74,6 +74,17 @@ const api = createServer((req, res) => {
   if (url.pathname === "/api/studio/integrations") {
     return res.end(JSON.stringify({ values: { LLM_BASE_URL: "", LLM_MODEL: "", COLLECT_ENABLED: "false", MODEL_CALLS_ENABLED: "false", FEISHU_INTERNAL_ENABLED: "false" }, secrets: {} }));
   }
+  if (url.pathname === "/api/admin/models") {
+    return res.end(JSON.stringify({
+    days: 1,
+    capabilities: [{
+      key: "score", label: "精选评分", env: "SCORE_MODEL", defaultModel: "default", vision: false,
+      current: { model: "qwen3.7-flash", source: "admin" }, usage: [],
+    }],
+    choices: [{ key: "default", service: "llm", vision: false }, { key: "qwen3.7-flash", service: "dashscope", vision: false }],
+    history: [], benches: [],
+  }));
+  }
   if (url.pathname === "/api/studio/metrics") {
     return res.end(JSON.stringify({
       from: "2026-04-01T00:00:00.000Z",
@@ -166,5 +177,5 @@ test("signed-in settings reads the built-in writing and formatting presets", asy
   assert.equal(settings.status, 200);
   assert.equal(settings.headers.get("Cache-Control"), "private, no-store");
   const html = await settings.text();
-  for (const label of ["写作风格", "排版预设", "科技快讯", "公众号默认", "震惊"]) assert.ok(html.includes(label), label);
+  for (const label of ["写作风格", "排版预设", "科技快讯", "公众号默认", "震惊", "模型", "精选评分", "恢复默认"]) assert.ok(html.includes(label), label);
 });

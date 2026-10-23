@@ -42,6 +42,17 @@ const api = createServer((req, res) => {
   if (url.pathname === "/api/studio/integrations") {
     return res.end(JSON.stringify({ values: {}, secrets: {} }));
   }
+  if (url.pathname === "/api/admin/models") {
+    return res.end(JSON.stringify({
+    days: 1,
+    capabilities: [{
+      key: "score", label: "精选评分", env: "SCORE_MODEL", defaultModel: "default", vision: false,
+      current: { model: "qwen3.7-flash", source: "admin" }, usage: [],
+    }],
+    choices: [{ key: "default", service: "llm", vision: false }, { key: "qwen3.7-flash", service: "dashscope", vision: false }],
+    history: [], benches: [],
+  }));
+  }
   if (url.pathname === "/api/studio/metrics") {
     if (!req.headers.cookie?.includes(SESSION)) {
       res.statusCode = 401;
