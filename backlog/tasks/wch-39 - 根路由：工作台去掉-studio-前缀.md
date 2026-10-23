@@ -1,0 +1,28 @@
+---
+id: WCH-39
+title: 根路由：工作台去掉 /studio 前缀
+status: To Do
+assignee: []
+created_date: '2026-10-23T00:37:00Z'
+labels:
+  - frontend
+  - refactor
+milestone: m-3
+dependencies: []
+priority: high
+type: feature
+ordinal: 46000
+---
+
+## Description
+
+<!-- SECTION:DESCRIPTION:BEGIN -->
+把工作台所有页面迁到根路径，/studio 只保留兼容跳转。范围：/（热点发现）、/events/:publicId、/alerts、/topics、/topics/:id、/articles、/articles/:id、/sources、/sources/new、/sources/:id、/brands、/brands/:id、/calendar、/metrics、/settings。后端 /api/* 与后台 /admin 不变。
+<!-- SECTION:DESCRIPTION:END -->
+
+## Acceptance Criteria
+<!-- AC:BEGIN -->
+- [ ] #1 所有工作台页面在根路径可访问，/ 显示热点发现，不再 302 到 /studio
+- [ ] #2 旧 /studio/* 302 到对应新地址，未登录仍跳登录并在登录后回到原路径
+- [ ] #3 导航、页面内链接、测试、smoke 脚本与文档全部使用新路径
+<!-- AC:END -->
