@@ -1,18 +1,8 @@
 // The workbench's own numbers. Every rate says what it divides by, and an empty range says so instead
 // of showing a row of zeros.
-import { Link, useLoaderData, type LoaderFunctionArgs, type MetaFunction } from "react-router";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import { Badge, FilterChips } from "@aihot/web/features/admin/ui";
 import type { StudioMetrics } from "../metrics.ts";
-import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url);
-  const days = url.searchParams.get("days") ?? "30";
-  return { days, metrics: await adminGet<StudioMetrics>(request, `/api/studio/metrics?days=${encodeURIComponent(days)}`) };
-}
-
-export const meta: MetaFunction = () => studioMeta("内容与成本");
 
 function percent(value: number | null): string {
   return value === null ? "—" : `${Math.round(value * 100)}%`;
@@ -33,23 +23,16 @@ function Card({ label, value, hint }: { label: string; value: string; hint: stri
   );
 }
 
-export default function StudioMetricsPage() {
-  const { days, metrics } = useLoaderData<typeof loader>();
+export function MetricsSection({ metrics, days }: { metrics: StudioMetrics; days: string }) {
   const empty = metrics.topics.created === 0 && metrics.articles.created === 0 && metrics.collection.items === 0 && metrics.cost.total === null;
 
   return (
     <div>
-      <header className="min-w-0">
-        <div className="mono text-[11px] uppercase tracking-[0.18em] text-ink-4">{STUDIO_PRODUCT} / Studio</div>
-        <h1 className="mt-2 text-[28px] font-black leading-[1.2] tracking-[-0.03em] text-ink sm:text-[34px]">内容与成本</h1>
-        <p className="mt-3 max-w-[52em] text-[14px] leading-[1.8] text-ink-3">
-          选题采纳、草稿完成、人工改写与模型开销，全部来自工作台自己的表、回执和采集记录。
-        </p>
-      </header>
+      <h2 className="text-[17px] font-semibold text-ink">内容与成本</h2>
+      <p className="mt-1 text-[13px] text-ink-3">选题采纳、草稿完成、人工改写与模型开销，全部来自工作台自己的表、回执和采集记录。</p>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
         <FilterChips param="days" options={[{ value: "7", label: "近 7 天" }, { value: "30", label: "近 30 天" }, { value: "90", label: "近 90 天" }]} />
-        <Link to="/settings" className="text-[12.5px] text-ink-4 hover:text-ink">返回设置</Link>
       </div>
 
       {empty ? (

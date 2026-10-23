@@ -71,6 +71,19 @@ const api = createServer((req, res) => {
       targets: [{ key: "feishu-alerts", enabled: false }, { key: "email-alerts", enabled: false }],
     }));
   }
+  if (url.pathname === "/api/studio/integrations") {
+    return res.end(JSON.stringify({ values: { LLM_BASE_URL: "", LLM_MODEL: "", COLLECT_ENABLED: "false", MODEL_CALLS_ENABLED: "false", FEISHU_INTERNAL_ENABLED: "false" }, secrets: {} }));
+  }
+  if (url.pathname === "/api/studio/metrics") {
+    return res.end(JSON.stringify({
+      from: "2026-04-01T00:00:00.000Z",
+      to: "2026-05-01T00:00:00.000Z",
+      topics: { created: 0, adopted: 0, adoptionRate: null },
+      articles: { created: 0, done: 0, completionRate: null, rewritten: 0, rewriteRate: null },
+      collection: { items: 0 },
+      cost: { total: null, currency: null, perArticle: null, perHundredItems: null, byPurpose: [] },
+    }));
+  }
   if (url.pathname === "/api/studio/events") {
     if (!req.headers.cookie?.includes(SESSION)) {
       res.statusCode = 401;

@@ -2,24 +2,16 @@
 // (the page only shows whether one is stored); saved values take effect after the api and worker
 // restart, because they are applied to the environment at boot.
 import { useState } from "react";
-import { Link, useLoaderData, type LoaderFunctionArgs, type MetaFunction } from "react-router";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import { Button, Field, Input } from "@aihot/web/features/admin/ui";
-import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 import { useStudioAction } from "./studio-action";
 
 interface SecretState { configured: boolean; last4: string | null; envFixed: boolean }
-interface Integrations {
+export interface Integrations {
   values: Record<string, string>;
   secrets: Record<string, SecretState>;
   restartRequired?: boolean;
 }
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  return { integrations: await adminGet<Integrations>(request, "/api/studio/integrations") };
-}
-
-export const meta: MetaFunction = () => studioMeta("集成配置");
 
 function SecretField({ name, label, hint, state, value, onChange }: {
   name: string; label: string; hint?: string; state: SecretState | undefined; value: string; onChange: (value: string) => void;
@@ -40,8 +32,7 @@ function SecretField({ name, label, hint, state, value, onChange }: {
   );
 }
 
-export default function StudioIntegrations() {
-  const { integrations } = useLoaderData<typeof loader>();
+export function IntegrationsSection({ integrations }: { integrations: Integrations }) {
   const { run, pending } = useStudioAction();
   const v = integrations.values;
   const [baseUrl, setBaseUrl] = useState(v.LLM_BASE_URL ?? "");
@@ -71,14 +62,8 @@ export default function StudioIntegrations() {
 
   return (
     <div>
-      <Link to="/settings" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">← 设置</Link>
-      <header className="mt-3">
-        <div className="mono text-[11px] uppercase tracking-[0.18em] text-ink-4">{STUDIO_PRODUCT} / Studio / 集成</div>
-        <h1 className="mt-2 text-[28px] font-black leading-[1.2] tracking-[-0.03em] text-ink sm:text-[34px]">集成配置</h1>
-        <p className="mt-3 max-w-[52em] text-[14px] leading-[1.8] text-ink-3">
-          大模型、飞书、邮件和采集开关。密钥只写不读；保存后重启 api 与 worker 生效。
-        </p>
-      </header>
+      <h2 className="text-[17px] font-semibold text-ink">集成配置</h2>
+      <p className="mt-1 text-[13px] text-ink-3">大模型、飞书、邮件和采集开关。密钥只写不读；保存后重启 api 与 worker 生效。</p>
 
       <section className="mt-5 rounded-panel bg-surface p-4 ring-1 ring-line sm:p-5">
         <h2 className="text-[15px] font-semibold text-ink">大模型</h2>

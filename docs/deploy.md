@@ -83,7 +83,7 @@ docker compose --profile https up -d --build
 
 ### 集成配置（大模型 / 飞书 / 邮件）
 
-登录后打开 `/settings/integrations`，可以配置大模型、飞书、SMTP 和采集/模型开关。保存的配置写入数据库：
+登录后打开 `/settings`（「集成配置」卡片），可以配置大模型、飞书、SMTP 和采集/模型开关。保存的配置写入数据库：
 
 - 非密钥值存在 `settings`，密钥用 `CONFIG_ENC_KEY` 加密后存在 `config_secrets`；
 - 生成主密钥：`openssl rand -base64 32`，写进 `.env` 的 `CONFIG_ENC_KEY`（丢失后需重新填写所有密钥）；

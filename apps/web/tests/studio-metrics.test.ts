@@ -1,4 +1,4 @@
-// The metrics page against a synthetic api: rates, costs and the "—" empty-value rule.
+// The metrics section of the settings page against a synthetic api: rates, costs and the "—" empty-value rule.
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { after, before, test } from "node:test";
@@ -33,6 +33,15 @@ const api = createServer((req, res) => {
     res.statusCode = 401;
     return res.end(JSON.stringify({ detail: "Sign in to the studio first." }));
   }
+  if (url.pathname === "/api/studio/presets") {
+    return res.end(JSON.stringify({ writing: [], format: [] }));
+  }
+  if (url.pathname === "/api/studio/notify/settings") {
+    return res.end(JSON.stringify({ settings: { immediate: true, digestHour: 9, minScore: null, eventTypes: [], channelTypes: [], feishu: false, email: false }, targets: [] }));
+  }
+  if (url.pathname === "/api/studio/integrations") {
+    return res.end(JSON.stringify({ values: {}, secrets: {} }));
+  }
   if (url.pathname === "/api/studio/metrics") {
     if (!req.headers.cookie?.includes(SESSION)) {
       res.statusCode = 401;
@@ -47,20 +56,21 @@ const api = createServer((req, res) => {
 before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
-test("the metrics page shows rates, costs and their denominators", async () => {
-  const response = await fetch(`${web.origin}/metrics?days=30`, { headers: { cookie: SESSION } });
+test("the metrics section shows rates, costs and their denominators", async () => {
+  const response = await fetch(`${web.origin}/settings?days=30`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["内容与成本", "选题采纳率", "草稿完成率", "人工改写率", "单篇模型成本", "每百条采集成本", "1 / 4 个选题已生成稿件", "6.25 CNY"]) {
     assert.ok(html.includes(text), text);
   }
-  assert.match(html, /<title>内容与成本 · WeChatHot Studio<\/title>/);
+  assert.match(html, /<title>设置 · WeChatHot Studio<\/title>/);
 });
 
 test("an empty range says so and does not print zeros as results", async () => {
-  const response = await fetch(`${web.origin}/metrics?days=90`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/settings?days=90`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.ok(html.includes("这个时间段还没有数据"));
-  assert.ok(!html.includes(">0<"), "an empty range is not a row of zeros");
+  assert.ok(!html.includes("选题采纳率"), "an empty range does not show rate cards");
+  assert.ok(!html.includes("单篇模型成本"), "an empty range does not show cost cards");
 });

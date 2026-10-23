@@ -93,7 +93,7 @@ flowchart LR
 | 地址 | 内容 |
 |---|---|
 | `/` | 工作台首页（热点发现） |
-| `/`、`/events/*`、`/topics/*`、`/articles/*`、`/sources/*`、`/brands/*`、`/alerts`、`/calendar`、`/metrics`、`/settings` | 工作台 |
+| `/`、`/events/*`、`/topics/*`、`/articles/*`、`/sources/*`、`/brands/*`、`/alerts`、`/calendar`、`/settings` | 工作台 |
 | `/studio/*` | 旧地址 302 到对应根路径 |
 | `/admin`、`/admin/*` | 后台：内容、信源、运行、模型、审计 |
 | `/api/health` | 健康检查（数据库连通性） |

@@ -23,8 +23,6 @@ export const wechatHot = defineModule({
         { path: "brands", file: "web/studio-brands.tsx", id: "studio-brands" },
         { path: "brands/:id", file: "web/studio-brand.tsx", id: "studio-brand" },
         { path: "settings", file: "web/studio-settings.tsx", id: "studio-settings" },
-        { path: "settings/integrations", file: "web/studio-integrations.tsx", id: "studio-integrations" },
-        { path: "metrics", file: "web/studio-metrics.tsx", id: "studio-metrics" },
       ],
     },
     // Old /studio addresses land on their root equivalents.

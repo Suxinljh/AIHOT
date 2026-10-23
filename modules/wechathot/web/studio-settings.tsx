@@ -1,20 +1,26 @@
 import { useState } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import { IconDoc, IconGrid, IconSparkles } from "@aihot/web/components/icons";
 import { adminGet } from "@aihot/web/lib/admin.server";
 import type { StylePreset, StudioPresets } from "../studio-types.ts";
 import type { NotifySettings } from "../notify.ts";
+import type { StudioMetrics } from "../metrics.ts";
 import { Field, Input } from "@aihot/web/features/admin/ui";
 import { useStudioAction } from "./studio-action";
+import { MetricsSection } from "./studio-metrics";
+import { IntegrationsSection, type Integrations } from "./studio-integrations";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const [presets, notify] = await Promise.all([
+  const days = new URL(request.url).searchParams.get("days") ?? "30";
+  const [presets, notify, integrations, metrics] = await Promise.all([
     adminGet<StudioPresets>(request, "/api/studio/presets"),
     adminGet<{ settings: NotifySettings; targets: Array<{ key: string; enabled: boolean }> }>(request, "/api/studio/notify/settings"),
+    adminGet<Integrations>(request, "/api/studio/integrations"),
+    adminGet<StudioMetrics>(request, `/api/studio/metrics?days=${encodeURIComponent(days)}`),
   ]);
-  return { presets, notify: notify.settings };
+  return { presets, notify: notify.settings, integrations, metrics, days };
 }
 
 function NotifySection({ initial }: { initial: NotifySettings }) {
@@ -210,7 +216,7 @@ function FormatCard({ preset }: { preset: StylePreset }) {
 }
 
 export default function StudioSettings() {
-  const { presets, notify } = useLoaderData<typeof loader>();
+  const { presets, notify, integrations, metrics, days } = useLoaderData<typeof loader>();
   const writing = presets.writing;
   const formatting = presets.format;
 
@@ -219,11 +225,7 @@ export default function StudioSettings() {
       <header className="max-w-[760px]">
         <div className="mono text-[11px] uppercase tracking-[0.18em] text-ink-4">{STUDIO_PRODUCT} / Studio</div>
         <h1 className="mt-2 text-[28px] font-black leading-[1.2] tracking-[-0.03em] text-ink sm:text-[34px]">设置</h1>
-        <p className="mt-3 text-[14px] leading-[1.8] text-ink-3">写作风格、排版预设、评分偏好和采集通知。当前先接入内置预设，自定义与模型配置会逐步放进这里。</p>
-        <div className="mt-3 flex gap-4">
-          <Link to="/metrics" className="text-[12.5px] text-accent hover:underline">内容与成本指标</Link>
-          <Link to="/settings/integrations" className="text-[12.5px] text-accent hover:underline">集成配置</Link>
-        </div>
+        <p className="mt-3 text-[14px] leading-[1.8] text-ink-3">写作风格、排版预设、外部通知、集成配置和内容成本，都在这一页。</p>
       </header>
 
       <section className="mt-8">
@@ -271,6 +273,14 @@ export default function StudioSettings() {
       </section>
 
       <NotifySection initial={notify} />
+
+      <div className="mt-8 border-t border-line pt-8">
+        <IntegrationsSection integrations={integrations} />
+      </div>
+
+      <div className="mt-8 border-t border-line pt-8">
+        <MetricsSection metrics={metrics} days={days} />
+      </div>
 
       <p className="mt-6 max-w-[760px] text-[12px] leading-[1.8] text-ink-4">
         内置预设只读；自定义预设和模型选择会在后续阶段接入。
