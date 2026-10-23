@@ -325,8 +325,8 @@ export async function articleSources(articleId: number): Promise<ExportSource[]>
     SELECT source_snapshot AS snapshot FROM wc_topics WHERE id = ${article.topicId}`;
   const reports = row?.snapshot?.reports ?? [];
   const cited = new Set<string>();
-  for (const node of article.content.content) {
-    if (node.type === "paragraph") for (const id of node.attrs.sources) cited.add(id);
+  for (const node of article.content.content as Array<{ type: string; attrs?: { sources?: string[] } }>) {
+    if (node.type === "paragraph") for (const id of node.attrs?.sources ?? []) cited.add(id);
   }
   const wanted = cited.size ? reports.filter((report) => cited.has(report.id)) : reports;
   return wanted.map((report) => ({ id: report.id, title: report.title, source: report.source, url: report.url }));
@@ -455,8 +455,13 @@ const ReviewSchema = z.object({
 
 /** The evidence pack a review is written from: the body's claim kinds and sources. */
 function bodyText(content: ArticleDoc): string {
+  function text(node: { type?: string; text?: string; content?: unknown[] }): string {
+    if (node.type === "text") return node.text ?? "";
+    return (node.content ?? []).map((child) => text(child as { type?: string; text?: string; content?: unknown[] })).join("");
+  }
   return content.content
-    .map((node) => (node.type === "heading" ? `# ${node.content.map((p) => p.text).join("")}` : node.content.map((p) => p.text).join("")))
+    .map((node) => (node.type === "heading" ? `# ${text(node as never)}` : text(node as never)))
+    .filter(Boolean)
     .join("\n");
 }
 
@@ -515,7 +520,7 @@ export async function updateReview(articleId: number, items: ReviewItem[]): Prom
 
 export async function updateArticle(
   id: number,
-  patch: { title?: string; content?: ArticleDoc; status?: "draft" | "review" | "done" | "archived"; plannedFor?: string | null },
+  patch: { title?: string; content?: ArticleDoc; format?: Record<string, unknown>; status?: "draft" | "review" | "done" | "archived"; plannedFor?: string | null },
 ): Promise<StudioArticle | null> {
   const [before] = await sql<ArticleRow[]>`
     SELECT a.id, a.topic_id, a.type, a.title, a.status, a.mode, a.angle, a.outline, a.content, a.title_options,
@@ -525,11 +530,13 @@ export async function updateArticle(
   if (!before) return null;
   const version = Number(before.version) + 1;
   const content = patch.content ?? before.content;
+  const format = patch.format === undefined ? before.format : patch.format;
   await sql.begin(async (tx) => {
     await tx`
       UPDATE wc_articles SET
         title = ${patch.title === undefined ? before.title : patch.title},
         content = ${sql.json(content as never)},
+        format = ${sql.json(format as never)},
         status = ${patch.status ?? before.status},
         planned_for = ${patch.plannedFor === undefined ? before.planned_for : patch.plannedFor === null ? null : new Date(patch.plannedFor)},
         version = ${version}, updated_at = now()

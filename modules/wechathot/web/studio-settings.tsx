@@ -6,10 +6,11 @@ import { adminGet } from "@aihot/web/lib/admin.server";
 import type { StylePreset, StudioPresets } from "../studio-types.ts";
 import type { NotifySettings } from "../notify.ts";
 import type { StudioMetrics } from "../metrics.ts";
-import { Field, Input } from "@aihot/web/features/admin/ui";
+import { Button, Field, Input, Textarea } from "@aihot/web/features/admin/ui";
 import { useStudioAction } from "./studio-action";
 import { MetricsSection } from "./studio-metrics";
 import { IntegrationsSection, type Integrations } from "./studio-integrations";
+import { StudioDialog } from "./studio-brand-ui";
 import { STUDIO_PRODUCT, studioMeta } from "./studio-nav";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -87,7 +88,7 @@ function BuiltinBadge({ preset }: { preset: StylePreset }) {
   return <span className="mono rounded-full border border-line bg-bg-sunk px-2 py-1 text-[10px] text-ink-4">内置</span>;
 }
 
-function WritingCard({ preset }: { preset: StylePreset }) {
+function WritingCard({ preset, onEdit }: { preset: StylePreset; onEdit: () => void }) {
   return (
     <article className="rounded-card border border-line bg-surface p-5">
       <div className="flex items-start justify-between gap-3">
@@ -103,6 +104,7 @@ function WritingCard({ preset }: { preset: StylePreset }) {
         <div className="flex items-center gap-1.5">
           <ColumnBadge preset={preset} />
           <BuiltinBadge preset={preset} />
+          <Button size="sm" tone="ghost" onClick={onEdit}>编辑</Button>
         </div>
       </div>
 
@@ -149,7 +151,7 @@ function WritingCard({ preset }: { preset: StylePreset }) {
   );
 }
 
-function FormatCard({ preset }: { preset: StylePreset }) {
+function FormatCard({ preset, onEdit }: { preset: StylePreset; onEdit: () => void }) {
   const shape = formatShape(preset);
   const body = shape.body;
   const title = shape.title;
@@ -165,7 +167,10 @@ function FormatCard({ preset }: { preset: StylePreset }) {
             <p className="mono mt-0.5 text-[10.5px] text-ink-4">{preset.id}</p>
           </div>
         </div>
-        <BuiltinBadge preset={preset} />
+        <div className="flex items-center gap-1.5">
+          <BuiltinBadge preset={preset} />
+          <Button size="sm" tone="ghost" onClick={onEdit}>编辑</Button>
+        </div>
       </div>
 
       <div className="mt-4 rounded-xl border border-line bg-white p-4">
@@ -215,10 +220,82 @@ function FormatCard({ preset }: { preset: StylePreset }) {
   );
 }
 
+
+type PresetKind = "writing" | "format";
+
+interface PresetDraft {
+  id: string | null;
+  kind: PresetKind;
+  name: string;
+  columnType: string;
+  targetReader: string;
+  wordCount: string;
+  tone: string;
+  titlePreference: string;
+  forbidden: string;
+  format: Record<string, any>;
+  builtin: boolean;
+}
+
+const DEFAULT_FORMAT: Record<string, any> = {
+  title: { fontSize: 22, fontWeight: 700, lineHeight: 1.35, marginBottom: 18, color: "#1a1a1a" },
+  body: { fontSize: 16, lineHeight: 1.85, color: "#333333", letterSpacing: 0.5, paragraphSpacing: 16, align: "justify" },
+  image: { borderRadius: 4 },
+};
+
+function presetDraft(preset: StylePreset | null, kind: PresetKind): PresetDraft {
+  return {
+    id: preset?.id ?? null,
+    kind: preset?.kind ?? kind,
+    name: preset?.name ?? "",
+    columnType: preset?.columnType ?? "",
+    targetReader: preset?.targetReader ?? "",
+    wordCount: preset?.wordCount ? String(preset.wordCount) : "",
+    tone: preset?.tone ?? "",
+    titlePreference: preset?.titlePreference ?? "",
+    forbidden: preset?.forbiddenExpressions.join("\n") ?? "",
+    format: { ...DEFAULT_FORMAT, ...(preset?.format ?? {}) },
+    builtin: preset?.builtin ?? false,
+  };
+}
+
 export default function StudioSettings() {
   const { presets, notify, integrations, metrics, days } = useLoaderData<typeof loader>();
   const writing = presets.writing;
   const formatting = presets.format;
+  const { run, pending } = useStudioAction();
+  const [editor, setEditor] = useState<PresetDraft | null>(null);
+
+  function setFormatField(section: "title" | "body" | "image", key: string, value: string | number) {
+    setEditor((current) => current ? { ...current, format: { ...current.format, [section]: { ...(current.format[section] ?? {}), [key]: value } } } : current);
+  }
+
+  async function savePreset() {
+    if (!editor || !editor.name.trim()) return;
+    const payload = editor.kind === "writing"
+      ? {
+          name: editor.name.trim(),
+          kind: "writing" as const,
+          columnType: editor.columnType || null,
+          targetReader: editor.targetReader.trim() || null,
+          wordCount: editor.wordCount === "" ? null : Number(editor.wordCount),
+          tone: editor.tone.trim() || null,
+          titlePreference: editor.titlePreference.trim() || null,
+          forbiddenExpressions: editor.forbidden.split(/[,\n]/).map((word) => word.trim()).filter(Boolean),
+        }
+      : { name: editor.name.trim(), kind: "format" as const, format: editor.format };
+    const saved = editor.id
+      ? await run("PATCH", `/api/studio/presets/${editor.id}`, payload, { label: "preset-save", success: "模板已保存" })
+      : await run("POST", "/api/studio/presets", payload, { label: "preset-save", success: "模板已创建" });
+    if (saved) setEditor(null);
+  }
+
+  async function deletePreset() {
+    if (!editor?.id || editor.builtin) return;
+    if (!window.confirm(`删除模板「${editor.name}」？`)) return;
+    const deleted = await run("DELETE", `/api/studio/presets/${editor.id}`, undefined, { label: "preset-delete", success: "模板已删除" });
+    if (deleted) setEditor(null);
+  }
 
   return (
     <div>
@@ -237,11 +314,14 @@ export default function StudioSettings() {
             </div>
             <p className="mt-1 text-[13px] text-ink-3">决定文章写给谁、写多长、用什么语气，以及标题和用词的边界。</p>
           </div>
-          <span className="mono rounded-full border border-line bg-bg-sunk px-3 py-1 text-[11px] text-ink-4">{writing.length} 个预设</span>
+          <div className="flex items-center gap-2">
+            <span className="mono rounded-full border border-line bg-bg-sunk px-3 py-1 text-[11px] text-ink-4">{writing.length} 个预设</span>
+            <Button size="sm" tone="secondary" onClick={() => setEditor(presetDraft(null, "writing"))}>新建写作模板</Button>
+          </div>
         </div>
         {writing.length ? (
           <div className="mt-4 grid gap-3 lg:grid-cols-2">
-            {writing.map((preset) => <WritingCard key={preset.id} preset={preset} />)}
+            {writing.map((preset) => <WritingCard key={preset.id} preset={preset} onEdit={() => setEditor(presetDraft(preset, "writing"))} />)}
           </div>
         ) : (
           <div className="mt-4 rounded-card border border-dashed border-line-strong bg-surface/60 px-5 py-10 text-center text-[13px] text-ink-3">
@@ -259,11 +339,14 @@ export default function StudioSettings() {
             </div>
             <p className="mt-1 text-[13px] text-ink-3">保存公众号文章的标题、正文、引用和图片样式，应用到文章后仍可逐项修改。</p>
           </div>
-          <span className="mono rounded-full border border-line bg-bg-sunk px-3 py-1 text-[11px] text-ink-4">{formatting.length} 个预设</span>
+          <div className="flex items-center gap-2">
+            <span className="mono rounded-full border border-line bg-bg-sunk px-3 py-1 text-[11px] text-ink-4">{formatting.length} 个预设</span>
+            <Button size="sm" tone="secondary" onClick={() => setEditor(presetDraft(null, "format"))}>新建排版模板</Button>
+          </div>
         </div>
         {formatting.length ? (
           <div className="mt-4 grid gap-3 lg:grid-cols-2">
-            {formatting.map((preset) => <FormatCard key={preset.id} preset={preset} />)}
+            {formatting.map((preset) => <FormatCard key={preset.id} preset={preset} onEdit={() => setEditor(presetDraft(preset, "format"))} />)}
           </div>
         ) : (
           <div className="mt-4 rounded-card border border-dashed border-line-strong bg-surface/60 px-5 py-10 text-center text-[13px] text-ink-3">
@@ -283,8 +366,93 @@ export default function StudioSettings() {
       </div>
 
       <p className="mt-6 max-w-[760px] text-[12px] leading-[1.8] text-ink-4">
-        内置预设只读；自定义预设和模型选择会在后续阶段接入。
+        内置预设可以直接改，也可以新建自己的模板；删除只对自定义模板开放。改动只影响之后新建的稿件和手动应用的排版。
       </p>
+
+      <StudioDialog
+        open={editor !== null}
+        title={editor?.id ? `编辑模板：${editor.name}` : editor?.kind === "format" ? "新建排版模板" : "新建写作模板"}
+        description={editor?.kind === "format" ? "标题、正文和图片的默认样式；应用后仍可在稿件里逐项覆盖。" : "决定文章写给谁、写多长、用什么语气，以及标题和用词的边界。"}
+        onClose={() => setEditor(null)}
+        onSubmit={savePreset}
+        busy={pending === "preset-save"}
+        submitLabel="保存模板"
+        submitDisabled={!editor?.name.trim()}
+      >
+        {editor && (
+          <div className="space-y-3">
+            <Field label="模板名称">
+              <Input value={editor.name} onChange={(event) => setEditor({ ...editor, name: event.target.value })} autoFocus />
+            </Field>
+            {editor.kind === "writing" ? (
+              <>
+                <Field label="栏目类型">
+                  <select
+                    aria-label="栏目类型"
+                    className="h-9 w-full rounded-control bg-surface px-3 text-[13.5px] text-ink ring-1 ring-line-strong outline-none"
+                    value={editor.columnType}
+                    onChange={(event) => setEditor({ ...editor, columnType: event.target.value })}
+                  >
+                    <option value="">不限</option>
+                    <option value="news">资讯</option>
+                    <option value="insight">洞察</option>
+                  </select>
+                </Field>
+                <Field label="目标读者">
+                  <Input value={editor.targetReader} onChange={(event) => setEditor({ ...editor, targetReader: event.target.value })} />
+                </Field>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field label="目标字数">
+                    <Input type="number" value={editor.wordCount} onChange={(event) => setEditor({ ...editor, wordCount: event.target.value })} />
+                  </Field>
+                  <Field label="语气">
+                    <Input value={editor.tone} onChange={(event) => setEditor({ ...editor, tone: event.target.value })} />
+                  </Field>
+                </div>
+                <Field label="标题偏好">
+                  <Input value={editor.titlePreference} onChange={(event) => setEditor({ ...editor, titlePreference: event.target.value })} />
+                </Field>
+                <Field label="避免用词" hint="每行一个，或用逗号分隔">
+                  <Textarea value={editor.forbidden} onChange={(event) => setEditor({ ...editor, forbidden: event.target.value })} />
+                </Field>
+                {editor.id && !editor.builtin && (
+                  <Button size="sm" tone="secondary" onClick={deletePreset} busy={pending === "preset-delete"}>删除这个模板</Button>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field label="标题字号"><Input type="number" value={Number(editor.format.title?.fontSize ?? 22)} onChange={(event) => setFormatField("title", "fontSize", Number(event.target.value))} /></Field>
+                  <Field label="标题字重"><Input type="number" value={Number(editor.format.title?.fontWeight ?? 700)} onChange={(event) => setFormatField("title", "fontWeight", Number(event.target.value))} /></Field>
+                  <Field label="标题行高"><Input type="number" step="0.05" value={Number(editor.format.title?.lineHeight ?? 1.35)} onChange={(event) => setFormatField("title", "lineHeight", Number(event.target.value))} /></Field>
+                  <Field label="标题颜色"><Input type="color" value={String(editor.format.title?.color ?? "#1a1a1a")} onChange={(event) => setFormatField("title", "color", event.target.value)} /></Field>
+                  <Field label="正文字号"><Input type="number" value={Number(editor.format.body?.fontSize ?? 16)} onChange={(event) => setFormatField("body", "fontSize", Number(event.target.value))} /></Field>
+                  <Field label="正文行高"><Input type="number" step="0.05" value={Number(editor.format.body?.lineHeight ?? 1.85)} onChange={(event) => setFormatField("body", "lineHeight", Number(event.target.value))} /></Field>
+                  <Field label="段落间距"><Input type="number" value={Number(editor.format.body?.paragraphSpacing ?? 16)} onChange={(event) => setFormatField("body", "paragraphSpacing", Number(event.target.value))} /></Field>
+                  <Field label="字间距"><Input type="number" step="0.1" value={Number(editor.format.body?.letterSpacing ?? 0.5)} onChange={(event) => setFormatField("body", "letterSpacing", Number(event.target.value))} /></Field>
+                  <Field label="正文颜色"><Input type="color" value={String(editor.format.body?.color ?? "#333333")} onChange={(event) => setFormatField("body", "color", event.target.value)} /></Field>
+                  <Field label="对齐">
+                    <select
+                      aria-label="对齐"
+                      className="h-9 w-full rounded-control bg-surface px-3 text-[13.5px] text-ink ring-1 ring-line-strong outline-none"
+                      value={String(editor.format.body?.align ?? "justify")}
+                      onChange={(event) => setFormatField("body", "align", event.target.value)}
+                    >
+                      <option value="left">左对齐</option>
+                      <option value="justify">两端对齐</option>
+                      <option value="center">居中</option>
+                    </select>
+                  </Field>
+                  <Field label="图片圆角"><Input type="number" value={Number(editor.format.image?.borderRadius ?? 4)} onChange={(event) => setFormatField("image", "borderRadius", Number(event.target.value))} /></Field>
+                </div>
+                {editor.id && !editor.builtin && (
+                  <Button size="sm" tone="secondary" onClick={deletePreset} busy={pending === "preset-delete"}>删除这个模板</Button>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </StudioDialog>
     </div>
   );
 }

@@ -29,6 +29,7 @@ import { listAlerts, markAllAlertsRead, setAlertStatus } from "./alerts.ts";
 import { deleteChannel, removeBrandFollow, saveBrandFollow, setBrandChannel, updateChannel } from "./follows.ts";
 import { checkGithubRepo, githubOwner, subscribeGithubReleases } from "./github.ts";
 import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset } from "./presets.ts";
+import { htmlToDoc } from "./html-import.ts";
 import { renderWechatHtml } from "./wechat-html.ts";
 import { generateAlerts } from "./alerts.ts";
 import { loadNotifySettings, saveNotifySettings, sendAlertDigest, sendNotifyTest } from "./notify.ts";
@@ -304,14 +305,28 @@ export const wechatHotServer = defineServerModule({
       return article;
     }));
 
+    // The 公众号 source edited by hand: parse it back into the draft so later exports and copies use
+    // the same content. Inline styles/classes are not part of the document and are dropped.
+    app.post("/api/studio/articles/:id/html", studioHandler(async (req, reply) => {
+      const body = (req.body ?? {}) as { html?: unknown };
+      if (typeof body.html !== "string") return problem(req, reply, 400, "invalid_request", "html 必须是字符串");
+      if (body.html.length > 500_000) return problem(req, reply, 413, "too_large", "HTML 太长，最多 500 KB");
+      const content = htmlToDoc(body.html);
+      if (!content.content.length) return problem(req, reply, 400, "invalid_request", "没有可识别的正文内容");
+      const article = await updateArticle(Number(param(req, "id")), { content });
+      if (!article) return problem(req, reply, 404, "not_found", "稿件不存在。");
+      return article;
+    }));
+
     app.patch("/api/studio/articles/:id", studioHandler(async (req, reply) => {
       const body = (req.body ?? {}) as Record<string, unknown>;
       const status = body.status;
-      const patch: { title?: string; content?: never; status?: "draft" | "review" | "done" | "archived"; plannedFor?: string | null } = {};
+      const patch: { title?: string; content?: never; format?: Record<string, unknown>; status?: "draft" | "review" | "done" | "archived"; plannedFor?: string | null } = {};
       if (typeof body.title === "string") patch.title = body.title;
       if (body.plannedFor === null) patch.plannedFor = null;
       else if (typeof body.plannedFor === "string") patch.plannedFor = body.plannedFor;
       if (body.content && typeof body.content === "object") patch.content = body.content as never;
+      if (body.format && typeof body.format === "object") patch.format = body.format as Record<string, unknown>;
       if (typeof status === "string" && ["draft", "review", "done", "archived"].includes(status)) {
         patch.status = status as "draft" | "review" | "done" | "archived";
       }

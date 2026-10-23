@@ -181,6 +181,24 @@ test("the article endpoints read, queue and edit a draft", async () => {
   assert.equal(after.status, "review");
   assert.equal(after.version, 2);
 
+  // The layout choices belong to the draft and must survive a reload, not just the local form state.
+  const formatted = await api("PATCH", `/api/studio/articles/${article.id}`, { format: { body: { fontSize: 18, lineHeight: 2 } } });
+  assert.equal(formatted.statusCode, 200, formatted.body);
+  const reloaded = await api("GET", `/api/studio/articles/${article.id}`);
+  assert.deepEqual((reloaded.json() as StudioArticle).format, { body: { fontSize: 18, lineHeight: 2 } });
+
+  // The 公众号 source mode parses the edited HTML back into the draft.
+  const applied = await api("POST", `/api/studio/articles/${article.id}/html`, {
+    html: `<h2>新的小标题</h2><p>新的 <strong>正文</strong></p><ul><li>要点</li></ul>`,
+  });
+  assert.equal(applied.statusCode, 200, applied.body);
+  const editedDoc = applied.json() as StudioArticle;
+  assert.equal(editedDoc.content.content[0]?.type, "heading");
+  assert.equal(editedDoc.content.content[2]?.type, "bulletList");
+  assert.ok(editedDoc.version > reloaded.json<StudioArticle>().version);
+  const empty = await api("POST", `/api/studio/articles/${article.id}/html`, { html: "<script>x</script>" });
+  assert.equal(empty.statusCode, 400);
+
   const missing = await api("GET", "/api/studio/articles/999999");
   assert.equal(missing.statusCode, 404);
   const noTopic = await api("POST", "/api/studio/topics/999999/article", {});

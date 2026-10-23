@@ -102,6 +102,10 @@ function block(node: Loose, format: Format): string {
       const inner = (node.content ?? []).map((child) => block(child, format)).join("");
       return `<blockquote${style({ margin: "0 0 16px", padding: "8px 12px", "border-left": "3px solid #d9d9d9", color: "#666666" })}>${inner}</blockquote>`;
     }
+    case "codeBlock": {
+      const code = inline(node.content, format);
+      return `<pre${style({ margin: "0 0 16px", padding: "12px", "background-color": "#f5f5f5", "border-radius": "4px", overflow: "auto" })}><code${style({ "font-size": `${(format.body?.fontSize ?? 16) - 2}px`, "line-height": 1.6, color: "#333333" })}>${code}</code></pre>`;
+    }
     case "image": {
       const src = typeof node.attrs?.src === "string" ? node.attrs.src : "";
       if (!src) return "";

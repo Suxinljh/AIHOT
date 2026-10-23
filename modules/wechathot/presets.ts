@@ -23,6 +23,8 @@ const PresetFields = z
     tone: z.string().trim().max(300).nullable().optional(),
     titlePreference: z.string().trim().max(300).nullable().optional(),
     forbiddenExpressions: z.array(z.string().trim().max(60)).max(50).optional(),
+    kind: z.enum(["writing", "format"]).optional(),
+    format: z.record(z.string(), z.unknown()).optional(),
   })
   .strict();
 
@@ -107,9 +109,9 @@ export async function createStylePreset(input: unknown, actor: string): Promise<
   const draft = PresetSchema.parse(input);
   const id = await nextPresetId(slugify(draft.name));
   const [row] = await sql<PresetRow[]>`
-    INSERT INTO wc_style_presets (id, kind, name, column_type, target_reader, word_count, tone, title_preference, forbidden_expressions)
-    VALUES (${id}, 'writing', ${draft.name}, ${draft.columnType ?? null}, ${draft.targetReader ?? null}, ${draft.wordCount ?? null},
-            ${draft.tone ?? null}, ${draft.titlePreference ?? null}, ${draft.forbiddenExpressions ?? []}::text[])
+    INSERT INTO wc_style_presets (id, kind, name, column_type, target_reader, word_count, tone, title_preference, forbidden_expressions, format)
+    VALUES (${id}, ${draft.kind ?? "writing"}, ${draft.name}, ${draft.columnType ?? null}, ${draft.targetReader ?? null}, ${draft.wordCount ?? null},
+            ${draft.tone ?? null}, ${draft.titlePreference ?? null}, ${draft.forbiddenExpressions ?? []}::text[], ${sql.json((draft.format ?? {}) as never)})
     RETURNING id, kind, name, column_type, target_reader, word_count, tone, title_preference, forbidden_expressions, format, builtin`;
   await audit(actor, "preset.create", `preset:${id}`, null, null, draft, { db: sql });
   return presetView(row!);
@@ -124,7 +126,8 @@ export async function updateStylePreset(id: string, input: unknown, actor: strin
              forbidden_expressions, format, builtin
       FROM wc_style_presets WHERE id = ${id} FOR UPDATE`;
     if (!before) return null;
-    if (before.kind !== "writing") throw new PresetRejected("只能改写作风格预设");
+    if (patch.kind && patch.kind !== before.kind) throw new PresetRejected("预设类型不能修改");
+    const format = patch.format === undefined ? before.format : patch.format;
     const [after] = await tx<PresetRow[]>`
       UPDATE wc_style_presets SET
         name = ${patch.name ?? before.name},
@@ -134,6 +137,7 @@ export async function updateStylePreset(id: string, input: unknown, actor: strin
         tone = ${patch.tone === undefined ? before.tone : patch.tone},
         title_preference = ${patch.titlePreference === undefined ? before.title_preference : patch.titlePreference},
         forbidden_expressions = ${patch.forbiddenExpressions === undefined ? before.forbidden_expressions : patch.forbiddenExpressions}::text[],
+        format = ${sql.json(format as never)},
         updated_at = now()
       WHERE id = ${id}
       RETURNING id, kind, name, column_type, target_reader, word_count, tone, title_preference, forbidden_expressions, format, builtin`;
@@ -157,10 +161,10 @@ export async function deleteStylePreset(id: string, actor: string): Promise<Pres
       FROM wc_style_presets WHERE id = ${id} FOR UPDATE`;
     if (!before) return null;
     if (before.builtin) throw new Conflict("内置预设不能删除，可以改它的内容");
-    const [fallback] = await tx<{ id: string; name: string }[]>`
+    const [fallback] = before.kind === "writing" ? await tx<{ id: string; name: string }[]>`
       SELECT id, name FROM wc_style_presets
       WHERE kind = 'writing' AND builtin AND (${before.column_type}::text IS NULL OR column_type = ${before.column_type})
-      ORDER BY column_type NULLS LAST LIMIT 1`;
+      ORDER BY column_type NULLS LAST LIMIT 1` : [];
     await tx`DELETE FROM wc_style_presets WHERE id = ${id}`;
     await audit(actor, "preset.delete", `preset:${id}`, fallback ? `回退到 ${fallback.name}` : null, before, null, { db: tx });
     return { id, fallback: fallback ?? null };

@@ -73,6 +73,31 @@ test("a preset of the editor's own can be created and edited", async () => {
   assert.ok(writing.some((row) => row.id === preset.id));
 });
 
+test("a formatting preset can be created and edited", async () => {
+  const created = await api("POST", "/api/studio/presets", {
+    name: `我的排版 ${T}`,
+    kind: "format",
+    format: { body: { fontSize: 17, lineHeight: 1.9 }, title: { fontSize: 23 }, image: { borderRadius: 6 } },
+  });
+  assert.equal(created.statusCode, 201, created.body);
+  const preset = created.json() as StylePreset;
+  assert.equal(preset.kind, "format");
+  assert.equal((preset.format.body as { fontSize?: number }).fontSize, 17);
+
+  const edited = await api("PATCH", `/api/studio/presets/${preset.id}`, {
+    format: { ...preset.format, body: { ...(preset.format.body as object), fontSize: 18 } },
+  });
+  assert.equal(edited.statusCode, 200, edited.body);
+  assert.equal(((edited.json() as StylePreset).format.body as { fontSize?: number }).fontSize, 18);
+
+  const listed = (await api("GET", "/api/studio/presets")).json() as { format: StylePreset[] };
+  assert.ok(listed.format.some((row) => row.id === preset.id));
+
+  const removed = await api("DELETE", `/api/studio/presets/${preset.id}`);
+  assert.equal(removed.statusCode, 200);
+  assert.equal((removed.json() as { id: string }).id, preset.id);
+});
+
 test("a built-in preset stays and a deleted one names its fallback", async () => {
   const builtin = await api("DELETE", `/api/studio/presets/writing-news-${T}`);
   assert.equal(builtin.statusCode, 409);

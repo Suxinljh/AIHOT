@@ -49,6 +49,8 @@ export default function StudioArticlePage() {
   const [mdText, setMdText] = useState("");
   const [mdLoses, setMdLoses] = useState(false);
   const [wechatHtml, setWechatHtml] = useState<string | null>(null);
+  const [htmlEditing, setHtmlEditing] = useState(false);
+  const [htmlDraft, setHtmlDraft] = useState("");
   const [includeSources, setIncludeSources] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [format, setFormat] = useState<Record<string, unknown>>(article.format ?? {});
@@ -244,6 +246,7 @@ export default function StudioArticlePage() {
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <Button size="sm" tone="primary" disabled={!wechatHtml} onClick={copyWechat}>复制富文本</Button>
+                <Button size="sm" tone="secondary" disabled={!wechatHtml} onClick={() => { setHtmlDraft(wechatHtml ?? ""); setHtmlEditing(true); }}>编辑 HTML</Button>
                 <Button size="sm" tone="secondary" onClick={copyPlain}>复制纯文本</Button>
                 <Button size="sm" tone="secondary" onClick={copyMarkdown}>复制 Markdown</Button>
                 <Button
@@ -271,6 +274,33 @@ export default function StudioArticlePage() {
                 只输出公众号接受的基础标签，样式写成 inline style；图片用绝对地址，正文按 375px 预览。
                 粘贴验收清单见 docs/WeChatHot/wechat-paste-checklist.md。公众号访问不到本机图片地址时，请在公众号后台手动上传图片。
               </p>
+              {htmlEditing && (
+                <div className="mt-3 rounded-control border border-line bg-bg-sunk p-3">
+                  <p className="text-[11.5px] leading-relaxed text-ink-4">
+                    只保留标题、段落、列表、引用、代码、图片、链接和加粗/斜体/删除线/行内代码；字体、颜色、class 等样式不会写回正文。应用后会覆盖正文并生成新版本。
+                  </p>
+                  <textarea
+                    aria-label="HTML 源码"
+                    className="mt-2 h-[360px] w-full rounded-control border border-line bg-surface p-3 font-mono text-[12px] leading-relaxed text-ink-2 outline-none focus:ring-1 focus:ring-line-strong"
+                    value={htmlDraft}
+                    onChange={(event) => setHtmlDraft(event.target.value)}
+                  />
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <Button
+                      size="sm"
+                      tone="primary"
+                      busy={pending === `article-html-${article.id}`}
+                      onClick={async () => {
+                        const updated = await run<unknown>("POST", `/api/studio/articles/${article.id}/html`, { html: htmlDraft }, { label: `article-html-${article.id}`, success: "HTML 已应用" });
+                        if (updated) setHtmlEditing(false);
+                      }}
+                    >
+                      应用到正文
+                    </Button>
+                    <Button size="sm" tone="secondary" onClick={() => setHtmlEditing(false)}>取消</Button>
+                  </div>
+                </div>
+              )}
               {wechatHtml === null ? (
                 <p className="mt-3 text-[13px] text-ink-4">正在生成…</p>
               ) : wechatHtml ? (
