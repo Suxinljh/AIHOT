@@ -330,6 +330,7 @@ export interface ArticleFormat {
   title: {
     fontSize: number;
     fontWeight: number;
+    fontFamily?: string;
     lineHeight: number;
     marginBottom: number;
     color: string;
@@ -338,6 +339,7 @@ export interface ArticleFormat {
   body: {
     fontSize: number;
     lineHeight: number;
+    fontFamily?: string;
     color: string;
     letterSpacing: number;
     paragraphSpacing: number;

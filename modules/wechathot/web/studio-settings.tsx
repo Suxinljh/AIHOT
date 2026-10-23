@@ -65,8 +65,8 @@ function NotifySection({ initial }: { initial: NotifySettings }) {
 export const meta: MetaFunction = () => studioMeta("设置");
 
 interface FormatShape {
-  title?: { fontSize?: number; fontWeight?: number; lineHeight?: number; marginBottom?: number; color?: string };
-  body?: { fontSize?: number; lineHeight?: number; color?: string; letterSpacing?: number; paragraphSpacing?: number; align?: string };
+  title?: { fontSize?: number; fontWeight?: number; lineHeight?: number; marginBottom?: number; color?: string; fontFamily?: string };
+  body?: { fontSize?: number; lineHeight?: number; color?: string; letterSpacing?: number; paragraphSpacing?: number; align?: string; fontFamily?: string };
   image?: { borderRadius?: number };
 }
 
@@ -176,6 +176,7 @@ function FormatCard({ preset, onEdit }: { preset: StylePreset; onEdit: () => voi
       <div className="mt-4 rounded-xl border border-line bg-white p-4">
         <div
           style={{
+            fontFamily: title?.fontFamily,
             fontSize: title?.fontSize,
             fontWeight: title?.fontWeight,
             lineHeight: title?.lineHeight,
@@ -187,6 +188,7 @@ function FormatCard({ preset, onEdit }: { preset: StylePreset; onEdit: () => voi
         </div>
         <div
           style={{
+            fontFamily: body?.fontFamily,
             fontSize: body?.fontSize,
             lineHeight: body?.lineHeight,
             color: body?.color,
@@ -426,6 +428,8 @@ export default function StudioSettings() {
                   <Field label="标题字重"><Input type="number" value={Number(editor.format.title?.fontWeight ?? 700)} onChange={(event) => setFormatField("title", "fontWeight", Number(event.target.value))} /></Field>
                   <Field label="标题行高"><Input type="number" step="0.05" value={Number(editor.format.title?.lineHeight ?? 1.35)} onChange={(event) => setFormatField("title", "lineHeight", Number(event.target.value))} /></Field>
                   <Field label="标题颜色"><Input type="color" value={String(editor.format.title?.color ?? "#1a1a1a")} onChange={(event) => setFormatField("title", "color", event.target.value)} /></Field>
+                  <Field label="正文字体"><Input placeholder="Optima-Regular, PingFangTC-light" value={String(editor.format.body?.fontFamily ?? "")} onChange={(event) => setFormatField("body", "fontFamily", event.target.value)} /></Field>
+                  <Field label="标题字体"><Input placeholder="Optima-Regular, PingFangTC-light" value={String(editor.format.title?.fontFamily ?? "")} onChange={(event) => setFormatField("title", "fontFamily", event.target.value)} /></Field>
                   <Field label="正文字号"><Input type="number" value={Number(editor.format.body?.fontSize ?? 16)} onChange={(event) => setFormatField("body", "fontSize", Number(event.target.value))} /></Field>
                   <Field label="正文行高"><Input type="number" step="0.05" value={Number(editor.format.body?.lineHeight ?? 1.85)} onChange={(event) => setFormatField("body", "lineHeight", Number(event.target.value))} /></Field>
                   <Field label="段落间距"><Input type="number" value={Number(editor.format.body?.paragraphSpacing ?? 16)} onChange={(event) => setFormatField("body", "paragraphSpacing", Number(event.target.value))} /></Field>

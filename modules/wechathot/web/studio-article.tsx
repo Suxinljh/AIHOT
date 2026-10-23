@@ -51,6 +51,7 @@ export default function StudioArticlePage() {
   const [wechatHtml, setWechatHtml] = useState<string | null>(null);
   const [htmlEditing, setHtmlEditing] = useState(false);
   const [htmlDraft, setHtmlDraft] = useState("");
+  const [replaceImages, setReplaceImages] = useState(false);
   const [includeSources, setIncludeSources] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [format, setFormat] = useState<Record<string, unknown>>(article.format ?? {});
@@ -113,11 +114,22 @@ export default function StudioArticlePage() {
   async function copyWechat() {
     if (!wechatHtml) return;
     const text = await exportText("text");
-    await copyRich(wechatHtml, text);
+    const html = replaceImages
+      ? wechatHtml.replace(/<img\b[^>]*>/g, '<p style="text-align:center;color:#999999">［图片：请在公众号后台插入］</p>')
+      : wechatHtml;
+    await copyRich(html, text);
     setCopied("rich");
   }
 
   const nodes = article.content?.content ?? [];
+  const images: Array<{ src: string; alt: string }> = [];
+  const collectImages = (list: Array<Record<string, any>>) => {
+    for (const node of list) {
+      if (node.type === "image" && typeof node.attrs?.src === "string") images.push({ src: node.attrs.src, alt: String(node.attrs.alt ?? "") });
+      if (Array.isArray(node.content)) collectImages(node.content);
+    }
+  };
+  collectImages(nodes as Array<Record<string, any>>);
   const headings = nodes.map((node, index) => (node.type === "heading" ? index : -1)).filter((index) => index >= 0);
   const sectionCount = headings.length;
 
@@ -266,6 +278,10 @@ export default function StudioArticlePage() {
                   下载 .md
                 </Button>
                 <label className="ml-auto flex items-center gap-1.5 text-[11.5px] text-ink-3">
+                  <input type="checkbox" checked={replaceImages} onChange={(event) => setReplaceImages(event.target.checked)} />
+                  复制时图片换成占位文字
+                </label>
+                <label className="flex items-center gap-1.5 text-[11.5px] text-ink-3">
                   <input type="checkbox" checked={includeSources} onChange={(event) => setIncludeSources(event.target.checked)} />
                   包含来源列表
                 </label>
@@ -274,6 +290,22 @@ export default function StudioArticlePage() {
                 只输出公众号接受的基础标签，样式写成 inline style；图片用绝对地址，正文按 375px 预览。
                 粘贴验收清单见 docs/WeChatHot/wechat-paste-checklist.md。公众号访问不到本机图片地址时，请在公众号后台手动上传图片。
               </p>
+              {images.length > 0 && (
+                <div className="mt-3 rounded-control border border-dashed border-line-strong bg-bg-sunk/60 px-3 py-2.5">
+                  <p className="text-[11.5px] leading-relaxed text-ink-3">
+                    公众号编辑器不能直接抓取这些图片，粘贴后请在后台手动上传（共 {images.length} 张）。外链图片也可能被公众号屏蔽。
+                  </p>
+                  <ol className="mt-2 space-y-1 text-[11.5px] text-ink-4">
+                    {images.map((image, index) => (
+                      <li key={`${image.src}-${index}`} className="flex flex-wrap items-center gap-2">
+                        <span>图片 {index + 1}{image.alt ? `：${image.alt}` : ""}</span>
+                        <a href={image.src} download={`image-${index + 1}`} target="_blank" rel="noreferrer" className="text-accent hover:underline">下载/打开</a>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+
               {htmlEditing && (
                 <div className="mt-3 rounded-control border border-line bg-bg-sunk p-3">
                   <p className="text-[11.5px] leading-relaxed text-ink-4">
@@ -350,6 +382,12 @@ export default function StudioArticlePage() {
                     setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
                   }} />
                 </Field>
+                <Field label="正文字体" hint="留空用公众号默认；可填 Optima-Regular, PingFangTC-light">
+                  <Input value={String((format as any)?.body?.fontFamily ?? "")} onChange={(e) => {
+                    const next = { ...format, body: { ...((format as any)?.body ?? {}), fontFamily: e.target.value } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
                 <Field label="正文行高">
                   <Input type="number" step="0.05" value={Number((format as any)?.body?.lineHeight ?? 1.85)} onChange={(e) => {
                     const next = { ...format, body: { ...((format as any)?.body ?? {}), lineHeight: Number(e.target.value) } };
@@ -375,6 +413,12 @@ export default function StudioArticlePage() {
                 <Field label="标题字号">
                   <Input type="number" value={Number((format as any)?.title?.fontSize ?? 22)} onChange={(e) => {
                     const next = { ...format, title: { ...((format as any)?.title ?? {}), fontSize: Number(e.target.value) } };
+                    setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
+                  }} />
+                </Field>
+                <Field label="标题字体" hint="留空用公众号默认">
+                  <Input value={String((format as any)?.title?.fontFamily ?? "")} onChange={(e) => {
+                    const next = { ...format, title: { ...((format as any)?.title ?? {}), fontFamily: e.target.value } };
                     setFormat(next); run("PATCH", `/api/studio/articles/${article.id}`, { format: next }, { label: `article-format-${article.id}`, success: "已保存" });
                   }} />
                 </Field>

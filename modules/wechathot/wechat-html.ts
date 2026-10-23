@@ -26,9 +26,16 @@ function style(pairs: Record<string, string | number | null | undefined>): strin
   return rules.length ? ` style="${rules.join(";")}"` : "";
 }
 
+/** Font stacks are comma-separated names; quotes/braces would break the inline style attribute. */
+function fontFamily(value?: string): string | undefined {
+  const clean = value?.replace(/["';{}<>]/g, "").trim();
+  return clean || undefined;
+}
+
 function titleStyle(format: Format): string {
   const title = format.title ?? {};
   return style({
+    "font-family": fontFamily(title.fontFamily),
     "font-size": title.fontSize ? `${title.fontSize}px` : undefined,
     "font-weight": title.fontWeight ?? 700,
     "line-height": title.lineHeight ?? 1.35,
@@ -40,6 +47,7 @@ function titleStyle(format: Format): string {
 function bodyStyle(format: Format): string {
   const body = format.body ?? {};
   return style({
+    "font-family": fontFamily(body.fontFamily),
     "font-size": body.fontSize ? `${body.fontSize}px` : undefined,
     "line-height": body.lineHeight ?? 1.85,
     "letter-spacing": body.letterSpacing !== undefined ? `${body.letterSpacing}px` : undefined,
@@ -80,7 +88,7 @@ function list(nodes: Loose[] | undefined, ordered: boolean, format: Format, dept
     const text = children.filter((child) => child.type === "paragraph").map((child) => inline(child.content, format)).join("");
     const nested = children.filter((child) => child.type === "bulletList" || child.type === "orderedList")
       .map((child) => list(child.content, child.type === "orderedList", format, depth + 1)).join("");
-    return `<li${style({ "font-size": `${format.body?.fontSize ?? 16}px`, "line-height": format.body?.lineHeight ?? 1.85, "margin-bottom": "6px" })}>${text}${nested}</li>`;
+    return `<li${style({ "font-family": fontFamily(format.body?.fontFamily), "font-size": `${format.body?.fontSize ?? 16}px`, "line-height": format.body?.lineHeight ?? 1.85, "margin-bottom": "6px" })}>${text}${nested}</li>`;
   }).join("");
   return `<${tag}${style({ padding: "0 0 0 1.4em", margin: "0 0 16px", color: format.body?.color ?? "#333333" })}>${items}</${tag}>`;
 }
@@ -100,7 +108,7 @@ function block(node: Loose, format: Format): string {
       return list(node.content, true, format);
     case "blockquote": {
       const inner = (node.content ?? []).map((child) => block(child, format)).join("");
-      return `<blockquote${style({ margin: "0 0 16px", padding: "8px 12px", "border-left": "3px solid #d9d9d9", color: "#666666" })}>${inner}</blockquote>`;
+      return `<blockquote${style({ "font-family": fontFamily(format.body?.fontFamily), margin: "0 0 16px", padding: "8px 12px", "border-left": "3px solid #d9d9d9", color: "#666666" })}>${inner}</blockquote>`;
     }
     case "codeBlock": {
       const code = inline(node.content, format);
