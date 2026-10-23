@@ -1,18 +1,24 @@
 // Worker process: queues and schedules for collection, processing, events, reports and ops, and the site's
-// modules (site/modules/server.ts).
-import { assertProductionSecrets } from "@aihot/backend/config";
-import { closeDb } from "@aihot/backend/db";
-import { getBoss, stopBoss, workModuleQueues } from "@aihot/backend/jobs/queue";
-import { installModules } from "@aihot/backend/modules";
-import { SERVER_MODULES } from "@aihot/site/modules/server";
-import { registerContentJobs } from "@aihot/backend/jobs/content";
-import { registerSourceJobs } from "@aihot/backend/jobs/sources";
-import { registerEventJobs } from "@aihot/backend/jobs/events";
-import { registerNotifyJobs } from "@aihot/backend/jobs/notify";
-import { registerPublicationJobs } from "@aihot/backend/jobs/publication";
-import { registerSchedules } from "./schedules.ts";
-import { ensureContentTargets } from "@aihot/backend/notify/deliver";
-import { startHeartbeat } from "@aihot/backend/operations/heartbeat";
+// modules (site/modules/server.ts). Stored integrations are applied before the config is read.
+import { applyStoredConfig } from "@aihot/backend/config/store";
+
+await applyStoredConfig();
+
+const [{ assertProductionSecrets }, { closeDb }, { getBoss, stopBoss, workModuleQueues }, { installModules }, { SERVER_MODULES }, { registerContentJobs }, { registerSourceJobs }, { registerEventJobs }, { registerNotifyJobs }, { registerPublicationJobs }, { registerSchedules }, { ensureContentTargets }, { startHeartbeat }] = await Promise.all([
+  import("@aihot/backend/config"),
+  import("@aihot/backend/db"),
+  import("@aihot/backend/jobs/queue"),
+  import("@aihot/backend/modules"),
+  import("@aihot/site/modules/server"),
+  import("@aihot/backend/jobs/content"),
+  import("@aihot/backend/jobs/sources"),
+  import("@aihot/backend/jobs/events"),
+  import("@aihot/backend/jobs/notify"),
+  import("@aihot/backend/jobs/publication"),
+  import("./schedules.ts"),
+  import("@aihot/backend/notify/deliver"),
+  import("@aihot/backend/operations/heartbeat"),
+]);
 
 installModules(SERVER_MODULES);
 assertProductionSecrets([["auth", "IMG_PROXY_SIGN_SECRET"]]);

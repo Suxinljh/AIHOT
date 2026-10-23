@@ -1,12 +1,19 @@
-import { assertProductionSecrets, config } from "@aihot/backend/config";
-import { closeDb } from "@aihot/backend/db";
-import { installModules } from "@aihot/backend/modules";
-import { SERVER_MODULES } from "@aihot/site/modules/server";
-import { DEPLOYMENT } from "@aihot/site";
-import { feishuLoginConfigured } from "@aihot/backend/admin/auth";
-import { startHeartbeat } from "@aihot/backend/operations/heartbeat";
-import { startWorkerWatchdog } from "@aihot/backend/operations/watch";
-import { buildApp } from "./app.ts";
+// Stored integrations are applied to the environment before anything reads the config.
+import { applyStoredConfig } from "@aihot/backend/config/store";
+
+await applyStoredConfig();
+
+const [{ assertProductionSecrets, config }, { closeDb }, { installModules }, { SERVER_MODULES }, { DEPLOYMENT }, { feishuLoginConfigured }, { startHeartbeat }, { startWorkerWatchdog }, { buildApp }] = await Promise.all([
+  import("@aihot/backend/config"),
+  import("@aihot/backend/db"),
+  import("@aihot/backend/modules"),
+  import("@aihot/site/modules/server"),
+  import("@aihot/site"),
+  import("@aihot/backend/admin/auth"),
+  import("@aihot/backend/operations/heartbeat"),
+  import("@aihot/backend/operations/watch"),
+  import("./app.ts"),
+]);
 
 installModules(SERVER_MODULES);
 assertProductionSecrets([

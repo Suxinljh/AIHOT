@@ -81,6 +81,15 @@ docker compose --profile https up -d --build
 
 工作台和后台的所有响应都是 `Cache-Control: no-store`。用 Nginx、CDN 时不要缓存 `/`、`/admin` 和 `/api/`，也不要让代理把旧页面离线返回；公开阅读页已经下线，没有需要缓存的读者页面。
 
+### 集成配置（大模型 / 飞书 / 邮件）
+
+登录后打开 `/settings/integrations`，可以配置大模型、飞书、SMTP 和采集/模型开关。保存的配置写入数据库：
+
+- 非密钥值存在 `settings`，密钥用 `CONFIG_ENC_KEY` 加密后存在 `config_secrets`；
+- 生成主密钥：`openssl rand -base64 32`，写进 `.env` 的 `CONFIG_ENC_KEY`（丢失后需重新填写所有密钥）；
+- 保存后重启 `api` 和 `worker` 生效：`docker compose restart api worker`；
+- 部署时在环境变量里设置的值优先，页面会标为「由部署环境固定」。
+
 ### 更新
 
 **公开站下线（WCH-33）**：`/` 是工作台首页，公开阅读页、RSS、API v1、MCP、`llms.txt`、站点地图、`robots.txt`、manifest、分享图和图标都不再提供，相关请求返回 404。数据库结构和已有内容不变，不需要迁移；`wc_` 私有数据本来就没有进入这些出口。升级后确认反代或 CDN 不再缓存这些地址，并用 `node scripts/smoke.ts --base <地址>` 检查。

@@ -1,7 +1,7 @@
 // WeChatHot's backend socket. The api and worker install it from site/modules/server.ts. The studio's
 // private API starts here: the same admin session as /admin, never a second account system.
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import type { AdminMe } from "@aihot/contracts/admin";
 import { actorOf, sessionPrincipal, type AdminPrincipal } from "@aihot/backend/admin/auth";
 import { Conflict } from "@aihot/backend/audit";
@@ -32,6 +32,7 @@ import { createStylePreset, deleteStylePreset, setTopicPreset, updateStylePreset
 import { renderWechatHtml } from "./wechat-html.ts";
 import { generateAlerts } from "./alerts.ts";
 import { loadNotifySettings, saveNotifySettings, sendAlertDigest, sendNotifyTest } from "./notify.ts";
+import { PLAIN_KEYS, SECRET_KEYS, readIntegrations, saveIntegrations } from "@aihot/backend/config/store";
 import { readUpload, saveUpload } from "./uploads.ts";
 import { currentMonth, loadCalendar } from "./calendar.ts";
 import { loadMetrics } from "./metrics.ts";
@@ -512,6 +513,18 @@ export const wechatHotServer = defineServerModule({
         actorOf(admin),
       );
       return reply.code(201).send(subscribed);
+    }));
+
+    // Integration settings edited here; secrets are write-only and take effect after a restart.
+    app.get("/api/studio/integrations", studioHandler(async () => readIntegrations()));
+
+    app.patch("/api/studio/integrations", studioHandler(async (req, reply, admin) => {
+      const body = (req.body ?? {}) as { plain?: unknown; secrets?: unknown };
+      const plain = z.record(z.enum(PLAIN_KEYS), z.union([z.string().max(500), z.boolean(), z.null()])).optional().parse(body.plain);
+      const secrets = z.record(z.enum(SECRET_KEYS), z.union([z.string().max(2000), z.null()])).optional().parse(body.secrets);
+      if (!plain && !secrets) return problem(req, reply, 400, "invalid_request", "没有要保存的配置");
+      await saveIntegrations({ plain: plain as never, secrets: secrets as never }, actorOf(admin));
+      return { ...(await readIntegrations()), restartRequired: true };
     }));
 
     // External notifications: the settings, a test message, and the delivery targets' state.
