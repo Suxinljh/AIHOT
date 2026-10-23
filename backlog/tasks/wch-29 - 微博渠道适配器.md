@@ -4,7 +4,7 @@ title: 微博渠道适配器
 status: To Do
 assignee: []
 created_date: '2026-10-21T03:12:00Z'
-updated_date: '2026-10-23T00:37:00Z'
+updated_date: '2026-10-23T01:41:00Z'
 labels:
   - backend
   - source
@@ -39,4 +39,6 @@ ordinal: 41000
 
 <!-- SECTION:NOTES:BEGIN -->
 方案已定：不新增微博适配器，用 RSSHub 的 /weibo/user/<uid> 作为 rss 信源。27 个品牌 UID 已收在 docs/WeChatHot/weibo-uids.md；叠纸无 UID，标候选。需要在 .env 配 RSSHUB_BASE，并决定这些源是否默认启用。
+
+已加 29 条微博 RSSHub 源（含迪士尼电影，叠纸无 UID 未加），地址用 {{RSSHUB_BASE}} 占位，seed 时替换；NAS 地址 http://192.168.3.32:1200。当前 /weibo/user 返回 503，源默认停用为候选，待 RSSHub 配好 WEIBO_COOKIE 后启用并验证。
 <!-- SECTION:NOTES:END -->
