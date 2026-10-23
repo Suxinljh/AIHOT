@@ -74,7 +74,7 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the event page shows the evidence, the scores and the editor's own state", async () => {
-  const response = await fetch(`${web.origin}/studio/events/${PUBLIC_ID}`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/events/${PUBLIC_ID}`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("Cache-Control"), "private, no-store");
   const html = await response.text();
@@ -102,7 +102,7 @@ test("the event page shows the evidence, the scores and the editor's own state",
 });
 
 test("an unknown event shows the private empty state", async () => {
-  const response = await fetch(`${web.origin}/studio/events/99999999-9999-9999-9999-999999999999`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/events/99999999-9999-9999-9999-999999999999`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 404);
   const html = await response.text();
   assert.ok(html.includes("这个事件不存在"));

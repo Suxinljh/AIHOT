@@ -121,7 +121,7 @@ export default function StudioArticlePage() {
 
   return (
     <div>
-      <Link to={article.topic ? `/studio/topics` : "/studio/articles"} className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
+      <Link to={article.topic ? `/topics` : "/articles"} className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
         <IconArrowLeft size={14} />{article.topic ? "选题管理" : "我的文章"}
       </Link>
 
@@ -172,7 +172,7 @@ export default function StudioArticlePage() {
             生成审核清单
           </Button>
           {article.topic && (
-            <ButtonLink to={`/studio/topics/${article.topic.id}`} tone="ghost">
+            <ButtonLink to={`/topics/${article.topic.id}`} tone="ghost">
               <IconHistory size={13} />回到选题
             </ButtonLink>
           )}

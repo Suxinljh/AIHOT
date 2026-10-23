@@ -41,7 +41,7 @@ export function ErrorBoundary() {
         {status === 404 ? "它可能已经被合并，或者还没有投影到工作台。" : "稍后再试，或回到热点发现重新进入。"}
       </p>
       <div className="mt-4 flex justify-center">
-        <ButtonLink to="/studio" tone="primary">回到热点发现</ButtonLink>
+        <ButtonLink to="/" tone="primary">回到热点发现</ButtonLink>
       </div>
     </div>
   );
@@ -88,7 +88,7 @@ export default function StudioEvent() {
 
   return (
     <div>
-      <Link to="/studio" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
+      <Link to="/" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
         <IconArrowLeft size={14} />热点发现
       </Link>
 
@@ -289,7 +289,7 @@ export default function StudioEvent() {
                 {event.brands.map((brand) => (
                   <li key={brand.id}>
                     <Link
-                      to={`/studio/brands/${encodeURIComponent(brand.id)}`}
+                      to={`/brands/${encodeURIComponent(brand.id)}`}
                       className="inline-flex items-center gap-1 rounded-full bg-bg-sunk px-2.5 py-1 text-[12.5px] text-ink-2 transition-colors hover:bg-bg-sunk hover:text-ink"
                     >
                       {brand.name}
@@ -313,7 +313,7 @@ export default function StudioEvent() {
                 <ul className="min-w-0 flex-1 space-y-2">
                   {event.pitches.map((pitch) => (
                     <li key={pitch.id} className="flex flex-wrap items-center gap-2 text-[12.5px]">
-                      <Link to={`/studio/topics/${pitch.id}`} className="min-w-0 flex-1 truncate text-ink-2 hover:text-accent">
+                      <Link to={`/topics/${pitch.id}`} className="min-w-0 flex-1 truncate text-ink-2 hover:text-accent">
                         {pitch.angle || "未填写角度"}
                       </Link>
                       <Badge tone="muted">{pitch.status}</Badge>

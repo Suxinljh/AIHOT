@@ -220,7 +220,7 @@ export default function StudioSettings() {
         <div className="mono text-[11px] uppercase tracking-[0.18em] text-ink-4">{STUDIO_PRODUCT} / Studio</div>
         <h1 className="mt-2 text-[28px] font-black leading-[1.2] tracking-[-0.03em] text-ink sm:text-[34px]">设置</h1>
         <p className="mt-3 text-[14px] leading-[1.8] text-ink-3">写作风格、排版预设、评分偏好和采集通知。当前先接入内置预设，自定义与模型配置会逐步放进这里。</p>
-        <div className="mt-3"><Link to="/studio/metrics" className="text-[12.5px] text-accent hover:underline">内容与成本指标</Link></div>
+        <div className="mt-3"><Link to="/metrics" className="text-[12.5px] text-accent hover:underline">内容与成本指标</Link></div>
       </header>
 
       <section className="mt-8">

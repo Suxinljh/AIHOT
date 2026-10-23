@@ -101,51 +101,55 @@ const api = createServer((req, res) => {
 before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
-test("the product entry redirects to the studio", async () => {
-  const home = await fetch(`${web.origin}/`, { redirect: "manual" });
-  assert.equal(home.status, 302);
-  assert.equal(home.headers.get("location"), "/studio");
-  await home.text();
+test("old /studio addresses redirect to the root routes", async () => {
+  const old = await fetch(`${web.origin}/studio/topics?tab=research`, { redirect: "manual" });
+  assert.equal(old.status, 302);
+  assert.equal(old.headers.get("location"), "/topics?tab=research");
+  await old.text();
+  const entry = await fetch(`${web.origin}/studio`, { redirect: "manual" });
+  assert.equal(entry.status, 302);
+  assert.equal(entry.headers.get("location"), "/");
+  await entry.text();
 });
 
 test("a guest is sent to sign in and comes back to the requested studio page", async () => {
-  for (const path of ["/studio", "/studio/topics?tab=research", "/studio/sources"]) {
+  for (const path of ["/", "/topics?tab=research", "/sources"]) {
     const studio = await fetch(`${web.origin}${path}`, { redirect: "manual" });
     assert.equal(studio.status, 302, path);
     assert.match(studio.headers.get("location") ?? "", /^\/api\/auth\/login\?return=/);
     await studio.text();
   }
 
-  const gate = await fetch(`${web.origin}/api/auth/login?return=%2Fstudio%2Ftopics`, { redirect: "manual" });
+  const gate = await fetch(`${web.origin}/api/auth/login?return=%2Ftopics`, { redirect: "manual" });
   assert.equal(gate.status, 302);
-  assert.equal(gate.headers.get("location"), "/admin/login?return=%2Fstudio%2Ftopics");
+  assert.equal(gate.headers.get("location"), "/admin/login?return=%2Ftopics");
   await gate.text();
 
-  const login = await fetch(`${web.origin}/admin/login?return=%2Fstudio%2Ftopics`);
+  const login = await fetch(`${web.origin}/admin/login?return=%2Ftopics`);
   assert.equal(login.status, 200);
   assert.equal(login.headers.get("Cache-Control"), "private, no-store");
   assert.equal(login.headers.get("X-Robots-Tag"), "noindex, nofollow");
   const html = await login.text();
-  assert.match(html, /name="return" value="\/studio\/topics"/);
+  assert.match(html, /name="return" value="\/topics"/);
 });
 
 test("signed-in studio pages are private and carry the workbench navigation", async () => {
-  const studio = await fetch(`${web.origin}/studio`, { headers: { cookie: SESSION } });
+  const studio = await fetch(`${web.origin}/`, { headers: { cookie: SESSION } });
   assert.equal(studio.status, 200);
   assert.equal(studio.headers.get("Cache-Control"), "private, no-store");
   assert.equal(studio.headers.get("X-Robots-Tag"), "noindex, nofollow");
   const html = await studio.text();
   assert.match(html, /<meta name="robots" content="noindex, nofollow"\/>/);
   for (const label of ["热点发现", "选题管理", "我的文章", "关注与信源", "设置", "还没有可用的热点事件"]) assert.ok(html.includes(label), label);
-  assert.ok(html.includes('href="/studio/alerts"'), "the top bar links to the notifications");
+  assert.ok(html.includes('href="/alerts"'), "the top bar links to the notifications");
 
-  const topics = await fetch(`${web.origin}/studio/topics`, { headers: { cookie: SESSION } });
+  const topics = await fetch(`${web.origin}/topics`, { headers: { cookie: SESSION } });
   assert.equal(topics.status, 200);
   assert.match(await topics.text(), /<title>选题管理 · WeChatHot Studio<\/title>/);
 });
 
 test("signed-in settings reads the built-in writing and formatting presets", async () => {
-  const settings = await fetch(`${web.origin}/studio/settings`, { headers: { cookie: SESSION } });
+  const settings = await fetch(`${web.origin}/settings`, { headers: { cookie: SESSION } });
   assert.equal(settings.status, 200);
   assert.equal(settings.headers.get("Cache-Control"), "private, no-store");
   const html = await settings.text();

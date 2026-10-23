@@ -87,7 +87,7 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the source list shows health, errors and the paid and limited states", async () => {
-  const response = await fetch(`${web.origin}/studio/sources`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/sources`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of [
@@ -108,7 +108,7 @@ test("the source list shows health, errors and the paid and limited states", asy
 });
 
 test("a source's own page shows its runs and its items", async () => {
-  const response = await fetch(`${web.origin}/studio/sources/${row.id}`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/sources/${row.id}`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["信源详情", "最近抓取记录", "最近条目", "OpenAI 发布新模型", "发现", "新增"]) assert.ok(html.includes(text), text);

@@ -76,7 +76,7 @@ export default function StudioTopic() {
 
   return (
     <div>
-      <Link to="/studio/topics" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
+      <Link to="/topics" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
         <IconArrowLeft size={14} />选题管理
       </Link>
 
@@ -89,7 +89,7 @@ export default function StudioTopic() {
           <Badge tone={topic.columnType === "insight" ? "info" : "muted"}>{topic.columnType === "insight" ? "洞察" : "资讯"}</Badge>
           <Badge tone="accent">{STATUS_LABEL[topic.status]}</Badge>
           {topic.event && (
-            <Link to={`/studio/events/${encodeURIComponent(topic.event.publicId)}`} className="inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
+            <Link to={`/events/${encodeURIComponent(topic.event.publicId)}`} className="inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
               {topic.event.title}<IconExternal size={12} />
             </Link>
           )}
@@ -108,7 +108,7 @@ export default function StudioTopic() {
                 label: `topic-article-${topic.id}`,
                 success: "稿件已创建",
               });
-              if (article) navigate(`/studio/articles/${article.id}`);
+              if (article) navigate(`/articles/${article.id}`);
             }}
           >
             创建稿件

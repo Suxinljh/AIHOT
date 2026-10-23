@@ -84,7 +84,7 @@ after(() => web.stop());
 
 test("the list passes the url's filters to the api and shows the card", async () => {
   seen.length = 0;
-  const response = await fetch(`${web.origin}/studio?industry=ai-models&sort=heat&scope=all&read=false&days=7`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/?industry=ai-models&sort=heat&scope=all&read=false&days=7`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.ok(seen.some((search) => search.includes("industry=ai-models") && search.includes("sort=heat") && search.includes("scope=all")), seen.join(" | "));
@@ -111,19 +111,19 @@ test("the list passes the url's filters to the api and shows the card", async ()
 });
 
 test("an empty result and a failing api both have their own state", async () => {
-  const empty = await fetch(`${web.origin}/studio?empty=1`, { headers: { cookie: SESSION } });
+  const empty = await fetch(`${web.origin}/?empty=1`, { headers: { cookie: SESSION } });
   assert.equal(empty.status, 200);
   const emptyHtml = await empty.text();
   assert.ok(emptyHtml.includes("还没有可用的热点事件"));
   assert.ok(emptyHtml.includes("查看全部已采集事件"));
 
-  const noMatch = await fetch(`${web.origin}/studio?empty=1&industry=ai-models`, { headers: { cookie: SESSION } });
+  const noMatch = await fetch(`${web.origin}/?empty=1&industry=ai-models`, { headers: { cookie: SESSION } });
   assert.equal(noMatch.status, 200);
   const noMatchHtml = await noMatch.text();
   assert.ok(noMatchHtml.includes("没有匹配的事件"));
   assert.ok(noMatchHtml.includes("清除筛选"));
 
-  const failed = await fetch(`${web.origin}/studio?fail=1`, { headers: { cookie: SESSION } });
+  const failed = await fetch(`${web.origin}/?fail=1`, { headers: { cookie: SESSION } });
   assert.equal(failed.status, 503);
   const failedHtml = await failed.text();
   assert.ok(failedHtml.includes("热点列表加载失败"));

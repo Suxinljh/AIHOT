@@ -24,18 +24,18 @@ function IconSettings({ size = 18, ...rest }: SVGProps<SVGSVGElement> & { size?:
 }
 
 export const STUDIO_NAV: StudioNavItem[] = [
-  { to: "/studio", label: "热点发现", short: "热点", icon: IconFlame, end: true },
-  { to: "/studio/topics", label: "选题管理", short: "选题", icon: IconList },
-  { to: "/studio/articles", label: "我的文章", short: "文章", icon: IconDoc },
-  { to: "/studio/sources", label: "关注与信源", short: "信源", icon: IconPlug },
-  { to: "/studio/settings", label: "设置", short: "设置", icon: IconSettings },
+  { to: "/", label: "热点发现", short: "热点", icon: IconFlame, end: true },
+  { to: "/topics", label: "选题管理", short: "选题", icon: IconList },
+  { to: "/articles", label: "我的文章", short: "文章", icon: IconDoc },
+  { to: "/sources", label: "关注与信源", short: "信源", icon: IconPlug },
+  { to: "/settings", label: "设置", short: "设置", icon: IconSettings },
 ];
 
 /** The entry a path belongs to; the index entry matches only /studio itself. */
 export function studioNavFor(pathname: string): StudioNavItem | undefined {
   // The brand library is part of 关注与信源, not a sixth first-level entry.
-  if (pathname === "/studio/brands" || pathname.startsWith("/studio/brands/")) {
-    return STUDIO_NAV.find((item) => item.to === "/studio/sources");
+  if (pathname === "/brands" || pathname.startsWith("/brands/")) {
+    return STUDIO_NAV.find((item) => item.to === "/sources");
   }
   return STUDIO_NAV.find((item) => item.end ? pathname === item.to : pathname === item.to || pathname.startsWith(`${item.to}/`));
 }

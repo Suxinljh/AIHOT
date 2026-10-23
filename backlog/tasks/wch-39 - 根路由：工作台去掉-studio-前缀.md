@@ -1,9 +1,10 @@
 ---
 id: WCH-39
 title: 根路由：工作台去掉 /studio 前缀
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-10-23T00:37:00Z'
+updated_date: '2026-10-23T00:39:00Z'
 labels:
   - frontend
   - refactor
@@ -26,3 +27,9 @@ ordinal: 46000
 - [ ] #2 旧 /studio/* 302 到对应新地址，未登录仍跳登录并在登录后回到原路径
 - [ ] #3 导航、页面内链接、测试、smoke 脚本与文档全部使用新路径
 <!-- AC:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. ModulePage 支持 index；routes.ts 用 index(file) 渲染模块首页。2. module.ts 的布局页改为根路径，/ 为热点发现；删除 home.tsx 的跳转。3. 全部 /studio/... 链接、导航与登录回跳改为新路径。4. 旧 /studio/* 用 302 兼容。5. 更新 web 测试、smoke 与文档；跑 typecheck/test/smoke。
+<!-- SECTION:PLAN:END -->

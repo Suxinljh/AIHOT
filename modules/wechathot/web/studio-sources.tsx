@@ -95,8 +95,8 @@ export default function StudioSources() {
             每个信源的状态、失败原因和最近的抓取都在这里。信源出问题会同时留下一条通知。
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <ButtonLink to="/studio/sources/new" tone="primary">添加信源</ButtonLink>
-            <ButtonLink to="/studio/brands" tone="secondary">打开品牌库</ButtonLink>
+            <ButtonLink to="/sources/new" tone="primary">添加信源</ButtonLink>
+            <ButtonLink to="/brands" tone="secondary">打开品牌库</ButtonLink>
           </div>
         </div>
         <form
@@ -107,7 +107,7 @@ export default function StudioSources() {
             if (query.trim()) next.set("q", query.trim());
             else next.delete("q");
             const search = next.toString();
-            window.location.href = search ? `/studio/sources?${search}` : "/studio/sources";
+            window.location.href = search ? `/sources?${search}` : "/sources";
           }}
         >
           <div className="flex-1">
@@ -148,7 +148,7 @@ export default function StudioSources() {
                 {KIND_NOTE[row.kind] && <Badge tone="warn">{KIND_NOTE[row.kind]}</Badge>}
               </div>
               <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <Link to={`/studio/sources/${row.id}`} className="text-[15px] font-semibold text-ink hover:text-accent">{row.name}</Link>
+                <Link to={`/sources/${row.id}`} className="text-[15px] font-semibold text-ink hover:text-accent">{row.name}</Link>
                 <span className="mono text-[11.5px] text-ink-4">{row.id}</span>
               </div>
               <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-[12.5px] sm:grid-cols-4">

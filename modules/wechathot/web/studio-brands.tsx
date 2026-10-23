@@ -36,7 +36,7 @@ export const meta: MetaFunction = () => studioMeta("品牌库");
 function withoutParam(params: URLSearchParams, key: string): string {
   const next = new URLSearchParams(params);
   next.delete(key);
-  return next.size ? `?${next}` : "/studio/brands";
+  return next.size ? `?${next}` : "/brands";
 }
 
 export default function StudioBrands() {
@@ -68,7 +68,7 @@ export default function StudioBrands() {
     });
     if (!created) return;
     setCreateOpen(false);
-    navigate(`/studio/brands/${encodeURIComponent(created.id)}`);
+    navigate(`/brands/${encodeURIComponent(created.id)}`);
   }
 
   function openMerge() {
@@ -90,7 +90,7 @@ export default function StudioBrands() {
     });
     if (!merged) return;
     setMergeOpen(false);
-    navigate(`/studio/brands/${encodeURIComponent(merged.brand.id)}`);
+    navigate(`/brands/${encodeURIComponent(merged.brand.id)}`);
   }
 
   function chooseIndustry(value: string) {
@@ -126,7 +126,7 @@ export default function StudioBrands() {
 
       <section className="mt-5 rounded-panel bg-surface p-3 ring-1 ring-line">
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-          <Form method="get" action="/studio/brands" preventScrollReset className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+          <Form method="get" action="/brands" preventScrollReset className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {industry && <input type="hidden" name="industry" value={industry} />}
             {followed && <input type="hidden" name="followed" value={followed} />}
             <Input key={q} name="q" defaultValue={q} placeholder="搜索品牌、别名" aria-label="搜索品牌" className="max-w-[360px]" />
@@ -158,7 +158,7 @@ export default function StudioBrands() {
             icon={IconSearch}
             title="没有匹配的品牌"
             body="换个关键词，或清除行业和关注状态筛选。品牌库里的别名也会参与搜索。"
-            action={<ButtonLink to="/studio/brands" tone="secondary">清除筛选</ButtonLink>}
+            action={<ButtonLink to="/brands" tone="secondary">清除筛选</ButtonLink>}
           />
         </div>
       ) : (
@@ -166,7 +166,7 @@ export default function StudioBrands() {
           {items.map((brand) => (
             <li key={brand.id} className="min-w-0">
               <Link
-                to={`/studio/brands/${encodeURIComponent(brand.id)}`}
+                to={`/brands/${encodeURIComponent(brand.id)}`}
                 className="group flex h-full flex-col rounded-panel bg-surface p-4 ring-1 ring-line transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex items-start gap-3">

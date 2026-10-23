@@ -7,6 +7,8 @@ import type { RedirectRule } from "./http-policy.ts";
 export interface ModulePage {
   /** The address without its leading slash, as React Router writes it: "guides/:slug". */
   path: string;
+  /** The module's index page for its layout (or for `/` when top-level). */
+  index?: boolean;
   /** The route module, relative to the module's folder. */
   file: string;
   id?: string;

@@ -49,7 +49,7 @@ export default function StudioMetricsPage() {
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
         <FilterChips param="days" options={[{ value: "7", label: "近 7 天" }, { value: "30", label: "近 30 天" }, { value: "90", label: "近 90 天" }]} />
-        <Link to="/studio/settings" className="text-[12.5px] text-ink-4 hover:text-ink">返回设置</Link>
+        <Link to="/settings" className="text-[12.5px] text-ink-4 hover:text-ink">返回设置</Link>
       </div>
 
       {empty ? (

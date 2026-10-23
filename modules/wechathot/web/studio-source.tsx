@@ -26,7 +26,7 @@ export default function StudioSource() {
 
   return (
     <div>
-      <Link to="/studio/sources" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
+      <Link to="/sources" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
         <IconArrowLeft size={14} />关注与信源
       </Link>
 

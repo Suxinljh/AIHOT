@@ -68,13 +68,13 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the notification page lists the alerts and links to the event and the source", async () => {
-  const response = await fetch(`${web.origin}/studio/alerts`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/alerts`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["通知", "新事件", "采集错误", "OpenAI 发布新模型", "HTTP 503", "标为已读", "静音", "全部标为已读"]) {
     assert.ok(html.includes(text), text);
   }
-  assert.ok(html.includes("/studio/events/11111111-2222-3333-4444-555555555555"));
-  assert.ok(html.includes("/studio/sources/rss-broken"));
+  assert.ok(html.includes("/events/11111111-2222-3333-4444-555555555555"));
+  assert.ok(html.includes("/sources/rss-broken"));
   assert.match(html, /<title>通知 · WeChatHot Studio<\/title>/);
 });

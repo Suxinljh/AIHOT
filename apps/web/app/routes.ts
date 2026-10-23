@@ -4,7 +4,9 @@ import { MODULES } from "@aihot/site/modules";
 
 /** A module's route module, from the app directory. */
 const file = (module: string, path: string) => `../../../modules/${module}/${path}`;
-const page = (module: string, p: ModulePage) => route(p.path, file(module, p.file), p.id ? { id: p.id } : {});
+const page = (module: string, p: ModulePage) => p.index
+  ? index(file(module, p.file), p.id ? { id: p.id } : {})
+  : route(p.path, file(module, p.file), p.id ? { id: p.id } : {});
 
 /** The site's modules' pages, after the engine's. */
 const modulePages: RouteConfigEntry[] = MODULES.flatMap((m) =>
@@ -12,10 +14,9 @@ const modulePages: RouteConfigEntry[] = MODULES.flatMap((m) =>
 );
 const moduleAdminPages: RouteConfigEntry[] = MODULES.flatMap((m) => (m.adminPages ?? []).map((p) => page(m.name, p)));
 
-// The public reading site is retired: the product is the studio, and `/` leads there. Only the
-// private admin back office and the modules' own pages are routed.
+// The public reading site is retired: the product is the workbench, and the enabled module owns the
+// root routes. Only the private admin back office is routed by the engine.
 export default [
-  index("routes/home.tsx"),
   ...modulePages,
   route("admin/login", "routes/admin-login.tsx"),
   layout("routes/admin/layout.tsx", { id: "admin-layout" }, [

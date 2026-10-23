@@ -62,7 +62,7 @@ export function ErrorBoundary() {
       <h1 className="text-[18px] font-semibold text-ink">无法打开添加信源</h1>
       <p className="mt-2 text-[13px] text-ink-3">{detail || "稍后再试。"}</p>
       <div className="mt-4 flex justify-center">
-        <ButtonLink to="/studio/sources" tone="primary">回到信源列表</ButtonLink>
+        <ButtonLink to="/sources" tone="primary">回到信源列表</ButtonLink>
       </div>
     </div>
   );
@@ -103,7 +103,7 @@ export default function StudioSourceNew() {
 
   return (
     <div>
-      <Link to="/studio/sources" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
+      <Link to="/sources" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
         <IconArrowLeft size={14} />关注与信源
       </Link>
 
@@ -208,8 +208,8 @@ export default function StudioSourceNew() {
             {created.owner.brandId ? `，并关联到品牌 ${created.owner.brandName ?? created.owner.brandId}` : "，暂未关联品牌"}。
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <ButtonLink to={`/studio/sources/${encodeURIComponent(created.source.id)}`} tone="secondary">查看信源详情</ButtonLink>
-            <ButtonLink to="/studio/sources" tone="ghost">回到信源列表</ButtonLink>
+            <ButtonLink to={`/sources/${encodeURIComponent(created.source.id)}`} tone="secondary">查看信源详情</ButtonLink>
+            <ButtonLink to="/sources" tone="ghost">回到信源列表</ButtonLink>
           </div>
           <h3 className="mt-4 text-[13px] font-semibold text-ink">试抓预览（{created.preview.count} 条）</h3>
           {created.preview.items.length ? (

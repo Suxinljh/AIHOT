@@ -15,7 +15,8 @@ const ERRORS: Record<string, string> = {
 
 /** The sign-in page returns to the studio or the admin, never to another site or an arbitrary path. */
 function loginReturn(value: string | null): string {
-  return value && /^\/(?:admin|studio)(?:\/|\?|$)/.test(value) && !value.startsWith("//") ? value : "/admin";
+  // Any same-origin page may be the return path; protocol-relative and api addresses are not pages.
+  return value && value.startsWith("/") && !value.startsWith("//") && !value.startsWith("/api/") ? value : "/admin";
 }
 
 export async function loader({ request }: Route.LoaderArgs) {

@@ -84,9 +84,9 @@ export default function StudioCalendarPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link to={`/studio/calendar?month=${shiftMonth(calendar.month, -1)}`} className="rounded-control bg-surface px-3 py-1.5 text-[12.5px] text-ink-2 ring-1 ring-line hover:bg-bg-sunk">上一月</Link>
+          <Link to={`/calendar?month=${shiftMonth(calendar.month, -1)}`} className="rounded-control bg-surface px-3 py-1.5 text-[12.5px] text-ink-2 ring-1 ring-line hover:bg-bg-sunk">上一月</Link>
           <span className="mono text-[13px] text-ink">{calendar.month}</span>
-          <Link to={`/studio/calendar?month=${shiftMonth(calendar.month, 1)}`} className="rounded-control bg-surface px-3 py-1.5 text-[12.5px] text-ink-2 ring-1 ring-line hover:bg-bg-sunk">下一月</Link>
+          <Link to={`/calendar?month=${shiftMonth(calendar.month, 1)}`} className="rounded-control bg-surface px-3 py-1.5 text-[12.5px] text-ink-2 ring-1 ring-line hover:bg-bg-sunk">下一月</Link>
         </div>
       </header>
 
@@ -97,8 +97,8 @@ export default function StudioCalendarPage() {
             在选题或稿件上设置计划日期后，它们会出现在这里。也可以直接在某一天下面改日期。
           </p>
           <div className="mt-4 flex justify-center gap-3 text-[13px]">
-            <Link to="/studio/topics" className="text-accent hover:underline">去选题管理</Link>
-            <Link to="/studio/articles" className="text-accent hover:underline">去我的文章</Link>
+            <Link to="/topics" className="text-accent hover:underline">去选题管理</Link>
+            <Link to="/articles" className="text-accent hover:underline">去我的文章</Link>
           </div>
         </section>
       ) : (
@@ -116,7 +116,7 @@ export default function StudioCalendarPage() {
                       <div className="mt-1 space-y-1">
                         {(byDay.get(cell.key) ?? []).map((item) => (
                           <div key={`${item.kind}-${item.id}`} className="rounded-control bg-bg-sunk px-1.5 py-1">
-                            <Link to={item.kind === "topic" ? `/studio/topics/${item.id}` : `/studio/articles/${item.id}`} className="block truncate text-[11.5px] text-ink hover:text-accent">
+                            <Link to={item.kind === "topic" ? `/topics/${item.id}` : `/articles/${item.id}`} className="block truncate text-[11.5px] text-ink hover:text-accent">
                               {item.title}
                             </Link>
                             <div className="mt-0.5 flex items-center justify-between gap-1">
@@ -148,7 +148,7 @@ export default function StudioCalendarPage() {
                 <div className="mt-1.5 space-y-1.5">
                   {items.map((item) => (
                     <div key={`${item.kind}-${item.id}`} className="flex items-center justify-between gap-2">
-                      <Link to={item.kind === "topic" ? `/studio/topics/${item.id}` : `/studio/articles/${item.id}`} className="min-w-0 flex-1 truncate text-[12.5px] text-ink">
+                      <Link to={item.kind === "topic" ? `/topics/${item.id}` : `/articles/${item.id}`} className="min-w-0 flex-1 truncate text-[12.5px] text-ink">
                         {item.title}
                       </Link>
                       <input

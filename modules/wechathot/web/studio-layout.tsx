@@ -89,7 +89,7 @@ export default function StudioLayout() {
       </a>
 
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[232px] flex-col border-r border-line bg-bg-sunk/45 px-3 py-5 lg:flex">
-        <Link to="/studio" className="flex items-center gap-2.5 px-2" aria-label={`${STUDIO_PRODUCT} Studio 首页`}>
+        <Link to="/" className="flex items-center gap-2.5 px-2" aria-label={`${STUDIO_PRODUCT} Studio 首页`}>
           <RingMark className="size-7 text-accent" />
           <span className="text-[15px] font-black tracking-[-0.03em] text-ink">{STUDIO_PRODUCT}</span>
           <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-[0.12em] text-accent">Studio</span>
@@ -119,7 +119,7 @@ export default function StudioLayout() {
             <div className="flex min-w-0 items-center gap-1.5">
               <span className="hidden max-w-[160px] truncate text-[12px] text-ink-4 sm:inline">{me.name}</span>
               <Link
-                to="/studio/alerts"
+                to="/alerts"
                 aria-label="通知"
                 title="通知"
                 className="inline-flex size-8 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-bg-sunk hover:text-ink"

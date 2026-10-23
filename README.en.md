@@ -6,7 +6,7 @@ From a hot event to a draft you can paste into the WeChat editor: discover, judg
 
 Seven industries: AI models, automotive, consumer hardware, software & internet, embodied AI, film & TV, games.
 
-> Status: in development. The public reading site is retired; `/` redirects to `/studio`. Only the studio, the admin and the health check are served.
+> Status: in development. The public reading site is retired; `/` is the workbench. Only the workbench, the admin and the health check are served.
 
 ## What it does
 

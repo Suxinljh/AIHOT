@@ -48,7 +48,7 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the metrics page shows rates, costs and their denominators", async () => {
-  const response = await fetch(`${web.origin}/studio/metrics?days=30`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/metrics?days=30`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["内容与成本", "选题采纳率", "草稿完成率", "人工改写率", "单篇模型成本", "每百条采集成本", "1 / 4 个选题已生成稿件", "6.25 CNY"]) {
@@ -58,7 +58,7 @@ test("the metrics page shows rates, costs and their denominators", async () => {
 });
 
 test("an empty range says so and does not print zeros as results", async () => {
-  const response = await fetch(`${web.origin}/studio/metrics?days=90`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/metrics?days=90`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.ok(html.includes("这个时间段还没有数据"));

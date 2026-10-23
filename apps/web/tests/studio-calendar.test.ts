@@ -48,22 +48,22 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the calendar places a topic and a draft on their planned days", async () => {
-  const response = await fetch(`${web.origin}/studio/calendar?month=2026-05`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/calendar?month=2026-05`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["发布日历", "OpenAI 发布新模型", "OpenAI 新模型观察", "2026-05", "上一月", "下一月"]) {
     assert.ok(html.includes(text), text);
   }
-  assert.ok(html.includes('href="/studio/topics/11"'));
-  assert.ok(html.includes('href="/studio/articles/5"'));
+  assert.ok(html.includes('href="/topics/11"'));
+  assert.ok(html.includes('href="/articles/5"'));
   assert.match(html, /value="2026-05-12"/);
   assert.match(html, /<title>发布日历 · WeChatHot Studio<\/title>/);
 });
 
 test("an empty month says so and keeps the navigation usable", async () => {
-  const response = await fetch(`${web.origin}/studio/calendar?month=2026-07`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/calendar?month=2026-07`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.ok(html.includes("这个月还没有排期"));
-  assert.ok(html.includes("/studio/topics"));
+  assert.ok(html.includes("/topics"));
 });

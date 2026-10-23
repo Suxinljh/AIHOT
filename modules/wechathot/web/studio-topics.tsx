@@ -48,7 +48,7 @@ export default function StudioTopics() {
       else next.set(key, value);
     }
     const search = next.toString();
-    return search ? `/studio/topics?${search}` : "/studio/topics";
+    return search ? `/topics?${search}` : "/topics";
   }
 
   return (
@@ -62,7 +62,7 @@ export default function StudioTopics() {
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <Link to="/studio/calendar" className="text-[12.5px] text-accent hover:underline">发布日历</Link>
+          <Link to="/calendar" className="text-[12.5px] text-accent hover:underline">发布日历</Link>
         </div>
         <form
           className="flex w-full max-w-[420px] items-end gap-2"
@@ -113,7 +113,7 @@ export default function StudioTopics() {
           {topics.map((topic) => (
             <li key={topic.id}>
               <Link
-                to={`/studio/topics/${topic.id}`}
+                to={`/topics/${topic.id}`}
                 className="block rounded-card border border-line bg-surface p-4 transition-colors hover:bg-bg-sunk"
               >
                 <div className="flex flex-wrap items-center gap-2">

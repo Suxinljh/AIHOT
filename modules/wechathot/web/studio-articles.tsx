@@ -43,7 +43,7 @@ export default function StudioArticles() {
       else next.set(key, value);
     }
     const search = next.toString();
-    return search ? `/studio/articles?${search}` : "/studio/articles";
+    return search ? `/articles?${search}` : "/articles";
   }
 
   return (
@@ -57,7 +57,7 @@ export default function StudioArticles() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link to="/studio/calendar" className="text-[12.5px] text-accent hover:underline">发布日历</Link>
+          <Link to="/calendar" className="text-[12.5px] text-accent hover:underline">发布日历</Link>
         </div>
         <form
           className="flex w-full max-w-[380px] items-end gap-2"
@@ -98,7 +98,7 @@ export default function StudioArticles() {
             在选题页把一条选题推进到写作，会在这里生成草稿；角度、大纲和正文都可以继续改。
           </p>
           <div className="mt-4 flex justify-center">
-            <Link to="/studio/topics" className="text-[13px] text-accent hover:underline">去选题管理</Link>
+            <Link to="/topics" className="text-[13px] text-accent hover:underline">去选题管理</Link>
           </div>
         </section>
       ) : (
@@ -106,7 +106,7 @@ export default function StudioArticles() {
           {articles.map((article) => (
             <li key={article.id} className="min-w-0">
               <Link
-                to={`/studio/articles/${article.id}`}
+                to={`/articles/${article.id}`}
                 className="group flex h-full flex-col rounded-panel bg-surface p-4 ring-1 ring-line transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md"
               >
                 <div className="flex flex-wrap items-center gap-1.5">

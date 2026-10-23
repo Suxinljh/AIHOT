@@ -7,8 +7,10 @@ const base = (at > 0 ? process.argv[at + 1] : process.env.SITE_URL) ?? "http://l
 
 /** The product entry and the private studio's sign-in gate. */
 const REDIRECTS: Array<[path: string, status: number, location: RegExp]> = [
-  ["/", 302, /^\/studio$/],
-  ["/studio", 302, /^\/api\/auth\/login\?return=%2Fstudio$/],
+  ["/", 302, /^\/api\/auth\/login\?return=%2F$/],
+  ["/topics", 302, /^\/api\/auth\/login\?return=%2Ftopics$/],
+  ["/studio", 302, /^\/$/],
+  ["/studio/topics", 302, /^\/topics$/],
 ];
 
 /** The admin sign-in page is still served (the back office keeps its own session). */

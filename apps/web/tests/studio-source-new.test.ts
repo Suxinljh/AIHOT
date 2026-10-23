@@ -71,7 +71,7 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the new-source page offers the GitHub branch", async () => {
-  const response = await fetch(`${web.origin}/studio/sources/new`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/sources/new`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["添加信源", "GitHub 仓库地址", "检查仓库"]) assert.ok(html.includes(text), text);

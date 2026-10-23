@@ -128,12 +128,12 @@ export default function StudioBrand() {
     });
     if (!merged) return;
     setMergeOpen(false);
-    navigate(`/studio/brands/${encodeURIComponent(merged.brand.id)}`);
+    navigate(`/brands/${encodeURIComponent(merged.brand.id)}`);
   }
 
   return (
     <div>
-      <Link to="/studio/brands" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
+      <Link to="/brands" className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-4 transition-colors hover:text-ink">
         <IconArrowLeft size={14} />品牌库
       </Link>
 

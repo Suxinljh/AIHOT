@@ -51,7 +51,7 @@ export function ErrorBoundary() {
       <h1 className="text-[18px] font-semibold text-ink">热点列表加载失败</h1>
       <p className="mt-2 text-[13px] leading-relaxed text-ink-3">稍后再试，或刷新页面重新读取事件。</p>
       <div className="mt-4 flex justify-center">
-        <ButtonLink to="/studio" tone="primary">重新加载</ButtonLink>
+        <ButtonLink to="/" tone="primary">重新加载</ButtonLink>
       </div>
     </div>
   );
@@ -79,7 +79,7 @@ function EventCard({ item }: { item: StudioEventListItem }) {
       </div>
 
       <h2 className="mt-2.5 text-[16px] font-semibold leading-[1.5] text-ink">
-        <Link to={`/studio/events/${encodeURIComponent(item.publicId)}`} className="hover:text-accent">
+        <Link to={`/events/${encodeURIComponent(item.publicId)}`} className="hover:text-accent">
           {item.title}
         </Link>
       </h2>
@@ -137,7 +137,7 @@ export default function StudioHotspots() {
     }
     next.delete("page");
     const search = next.toString();
-    return search ? `/studio?${search}` : "/studio";
+    return search ? `/studio?${search}` : "/";
   }
 
   const industryOptions = [
@@ -223,7 +223,7 @@ export default function StudioHotspots() {
                 换个行业、时间或搜索词试试，也可以清除筛选回到全部事件。
               </p>
               <div className="mt-4 flex justify-center">
-                <ButtonLink to="/studio" tone="secondary">清除筛选</ButtonLink>
+                <ButtonLink to="/" tone="secondary">清除筛选</ButtonLink>
               </div>
             </>
           ) : (

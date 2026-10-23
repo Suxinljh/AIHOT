@@ -58,7 +58,7 @@ export default function StudioAlerts() {
             icon={IconMessage}
             title={status === "unread" ? "没有未读通知" : "还没有通知"}
             body="关注品牌之后，符合规则的新事件会出现在这里；信源采集失败也会提醒你。"
-            action={<Link to="/studio/brands" className="text-[13px] text-accent hover:underline">去品牌库关注</Link>}
+            action={<Link to="/brands" className="text-[13px] text-accent hover:underline">去品牌库关注</Link>}
           />
         </div>
       ) : (
@@ -76,12 +76,12 @@ export default function StudioAlerts() {
               <p className="mt-2 break-words text-[13px] leading-relaxed text-ink-2">{alert.reason}</p>
               <div className="mt-2.5 flex flex-wrap items-center gap-2">
                 {alert.storyPublicId && (
-                  <Link to={`/studio/events/${encodeURIComponent(alert.storyPublicId)}`} className="inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
+                  <Link to={`/events/${encodeURIComponent(alert.storyPublicId)}`} className="inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
                     打开事件<IconExternal size={12} />
                   </Link>
                 )}
                 {alert.sourceId && (
-                  <Link to={`/studio/sources/${encodeURIComponent(alert.sourceId)}`} className="inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
+                  <Link to={`/sources/${encodeURIComponent(alert.sourceId)}`} className="inline-flex items-center gap-1 text-[12.5px] text-accent hover:underline">
                     查看信源<IconExternal size={12} />
                   </Link>
                 )}

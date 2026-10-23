@@ -55,7 +55,7 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the drafts list links to the editor and shows its state", async () => {
-  const response = await fetch(`${web.origin}/studio/articles`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/articles`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["我的文章", "OpenAI 发布新一代推理模型", "从价格变化看"]) {
@@ -64,14 +64,14 @@ test("the drafts list links to the editor and shows its state", async () => {
   // React splits dynamic text with comment markers in SSR.
   assert.match(html, /第\s*(?:<!-- -->)?2\s*(?:<!-- -->)?\s*版/);
   assert.match(html, /审核\s*(?:<!-- -->)?1/);
-  assert.ok(html.includes('href="/studio/articles/5"'), "the card opens the editor");
+  assert.ok(html.includes('href="/articles/5"'), "the card opens the editor");
   assert.match(html, /<title>我的文章 · WeChatHot Studio<\/title>/);
 });
 
 test("an empty filter keeps its own empty state", async () => {
-  const response = await fetch(`${web.origin}/studio/articles?status=done`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/articles?status=done`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.ok(html.includes("还没有文章"));
-  assert.ok(html.includes("/studio/topics"));
+  assert.ok(html.includes("/topics"));
 });

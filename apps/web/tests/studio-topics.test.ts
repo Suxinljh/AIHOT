@@ -78,7 +78,7 @@ before(async () => { web = await startWebServer(api); });
 after(() => web.stop());
 
 test("the board shows the topics in their columns", async () => {
-  const response = await fetch(`${web.origin}/studio/topics`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/topics`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["选题管理", "待评估", "待研究", "待写作", "写作中", "已完成", "从开发者视角看这次 API 变更", "洞察"]) {
@@ -88,7 +88,7 @@ test("the board shows the topics in their columns", async () => {
 });
 
 test("a topic's page shows the angle, the snapshot and the event", async () => {
-  const response = await fetch(`${web.origin}/studio/topics/${topic.id}`, { headers: { cookie: SESSION } });
+  const response = await fetch(`${web.origin}/topics/${topic.id}`, { headers: { cookie: SESSION } });
   assert.equal(response.status, 200);
   const html = await response.text();
   for (const text of ["角度与备注", "来源快照", "OpenAI 官网", "刷新快照", "记得问官方"]) assert.ok(html.includes(text), text);
