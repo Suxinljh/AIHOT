@@ -155,7 +155,10 @@ function articleView(row: ArticleRow, dropped: string[]): StudioArticle {
     droppedSources: dropped,
     stylePresetId: row.style_preset_id,
     format: row.format ?? {},
-    review: (row.review ?? { items: [], generatedAt: null }) as unknown as ArticleReview,
+    review: (() => {
+      const review = (row.review ?? {}) as Partial<ArticleReview>;
+      return { items: Array.isArray(review.items) ? review.items : [], generatedAt: review.generatedAt ?? null };
+    })(),
     plannedFor: row.planned_for?.toISOString() ?? null,
     writingState: row.writing_state ?? null,
     version: row.version,

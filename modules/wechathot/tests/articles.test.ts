@@ -76,6 +76,7 @@ test("a topic becomes a draft with its outline, angle and first version", async 
   assert.equal(article!.outline.length, 1);
   assert.equal(article!.outline[0]?.title, "价格怎么变的");
   assert.equal(article!.version, 1);
+  assert.deepEqual(article!.review.items, [], "a new draft has an empty review checklist");
   const [version] = await sql<{ version: number; reason: string }[]>`
     SELECT version, reason FROM wc_article_versions WHERE article_id = ${article!.id}`;
   assert.equal(version?.version, 1);
