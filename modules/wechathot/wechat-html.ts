@@ -144,6 +144,7 @@ export function sanitizeWechatHtml(html: string): string {
     allowedSchemes: ["http", "https", "data"],
     allowedStyles: {
       "*": {
+        "font-family": [/^[^;{}<>]+$/],
         "font-size": [/^\d+(\.\d+)?px$/],
         "font-weight": [/^\d{3}$/, /^bold$/, /^normal$/],
         "line-height": [/^\d+(\.\d+)?$/],

@@ -36,6 +36,18 @@ test("the serializer writes whitelisted tags with inline styles", () => {
   assert.ok(!html.includes("flex"), "no layout systems reach WeChat");
 });
 
+test("a font family survives serialization and cleanup", () => {
+  const fontFormat = {
+    ...format,
+    title: { ...format.title, fontFamily: "Optima-Regular, PingFangTC-light" },
+    body: { ...format.body, fontFamily: "PingFang SC, Microsoft YaHei, sans-serif" },
+  };
+  const html = renderWechatHtml(doc, fontFormat);
+  assert.ok(html.includes("font-family:Optima-Regular, PingFangTC-light"), "heading keeps the title font");
+  assert.ok(html.includes("font-family:PingFang SC, Microsoft YaHei, sans-serif"), "paragraph keeps the body font");
+  assert.ok(!sanitizeWechatHtml(`<p style="font-family:Bad;position:fixed">x</p>`).includes("position"));
+});
+
 test("the cleanup drops scripts, event handlers and unknown styles", () => {
   const hostile = `<p style="font-size:16px;position:fixed" onclick="alert(1)">正文<script>alert(2)</script></p><img src="https://example.org/a.png" onerror="alert(3)"><div class="x">丢弃</div>`;
   const clean = sanitizeWechatHtml(hostile);
