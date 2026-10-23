@@ -23,8 +23,17 @@ interface SeedSource {
 }
 
 const { sources } = JSON.parse(readFileSync(path.join(REPO_ROOT, "industry/sources.json"), "utf8")) as { sources: SeedSource[] };
+const rsshub = (process.env.RSSHUB_BASE ?? "").replace(/\/+$/, "");
+const resolved = sources.map((source) => ({
+  ...source,
+  config: JSON.parse(JSON.stringify(source.config).replaceAll("{{RSSHUB_BASE}}", rsshub)) as Record<string, unknown>,
+})).filter((source) => {
+  const needsRsshub = JSON.stringify(source.config).includes("{{RSSHUB_BASE}}");
+  if (needsRsshub) console.warn(`skip ${source.id}: RSSHUB_BASE is not set`);
+  return !needsRsshub;
+});
 let added = 0;
-for (const s of sources) {
+for (const s of resolved) {
   assertSupportedConfig(s.kind, s.config);
   const tier = s.tier ?? "T2";
   // First-party means a T1 source, as the admin sets it.
@@ -36,5 +45,5 @@ for (const s of sources) {
     ON CONFLICT (id) DO NOTHING RETURNING id`;
   added += inserted.length;
 }
-console.log(`sources: ${added} added, ${sources.length - added} already there`);
+console.log(`sources: ${added} added, ${resolved.length - added} already there${resolved.length < sources.length ? `, ${sources.length - resolved.length} skipped` : ""}`);
 await closeDb();

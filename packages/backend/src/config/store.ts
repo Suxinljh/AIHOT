@@ -4,6 +4,7 @@
 // restart; a value the deployment sets in the environment always wins.
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import postgres from "postgres";
+import type { Db } from "../db.ts";
 
 export const SECRET_KEYS = [
   "LLM_API_KEY",
@@ -122,7 +123,7 @@ export async function saveIntegrations(patch: IntegrationPatch, actor: string): 
     // The audit table is written only by its owner; import it after the config has loaded.
     const { audit } = await import("../audit.ts");
     await audit(actor, "integrations.update", "settings:integrations", null, null,
-      { plain: Object.keys(patch.plain ?? {}), secrets: Object.keys(patch.secrets ?? {}) }, { db: sql });
+      { plain: Object.keys(patch.plain ?? {}), secrets: Object.keys(patch.secrets ?? {}) }, { db: sql as unknown as Db });
   } finally {
     await sql.end({ timeout: 1 });
   }

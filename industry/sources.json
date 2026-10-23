@@ -1423,6 +1423,673 @@
       "site_fulltext": false,
       "syndicate_fulltext": false,
       "enabled": false
+    },
+    {
+      "id": "weibo-byd",
+      "name": "比亚迪 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1746221281",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "byd",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-tesla",
+      "name": "特斯拉 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/3615027564",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "tesla",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-li-auto",
+      "name": "理想汽车 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/6001272153",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "li-auto",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-xpeng",
+      "name": "小鹏汽车 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/5710264970",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "xpeng",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-nio",
+      "name": "蔚来 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/5675889356",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "nio",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-xiaomi",
+      "name": "小米汽车 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/7871239944",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "xiaomi",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-zeekr",
+      "name": "极氪 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/7576049404",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "zeekr",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-changan",
+      "name": "长安汽车 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1740936973",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "changan",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-hima",
+      "name": "鸿蒙智行 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/3032210184",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "hima",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-geely-auto",
+      "name": "吉利汽车 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1691328753",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "geely-auto",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-tencent",
+      "name": "腾讯游戏 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/3604205173",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "tencent",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-netease-games",
+      "name": "网易游戏 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1502592662",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "netease-games",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-mihoyo",
+      "name": "米哈游 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/6415164493",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "mihoyo",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-hypergryph",
+      "name": "鹰角网络 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/7461423907",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "hypergryph",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-kuro-games",
+      "name": "库洛游戏 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/7567551564",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "kuro-games",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-game-science",
+      "name": "游戏科学 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/6603744955",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "game-science",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-xd-games",
+      "name": "心动网络 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1706392091",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "xd-games",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-ubisoft",
+      "name": "育碧 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/2808306097",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "ubisoft",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-blizzard-entertainment",
+      "name": "暴雪娱乐 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/5883095259",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "blizzard-entertainment",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-china-film",
+      "name": "中国电影报道 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1261788454",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "china-film",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-enlight-media",
+      "name": "光线传媒 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1643386091",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "enlight-media",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-bona-film-group",
+      "name": "博纳影业 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1828843925",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "bona-film-group",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-huace-media",
+      "name": "华策影视 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1361882355",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "huace-media",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-iqiyi",
+      "name": "爱奇艺 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1731986465",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "iqiyi",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-tencent-video",
+      "name": "腾讯视频 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/2591595652",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "tencent-video",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-youku",
+      "name": "优酷 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1642904381",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "youku",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-mango-tv",
+      "name": "芒果TV 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1663088660",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "mango-tv",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-universal-pictures",
+      "name": "环球影业 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/2108175657",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "universal-pictures",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
+    },
+    {
+      "id": "weibo-disney",
+      "name": "迪士尼电影 微博",
+      "kind": "rss",
+      "config": {
+        "feedUrl": "{{RSSHUB_BASE}}/weibo/user/1261788454",
+        "_aihot": {
+          "initialBackfillLimit": 8
+        }
+      },
+      "tier": "T2",
+      "owner_entity_id": "disney",
+      "participation_mode": "editorial",
+      "interval_minutes": 120,
+      "tags": [
+        "微博",
+        "官方",
+        "候选"
+      ],
+      "site_fulltext": false,
+      "syndicate_fulltext": false,
+      "enabled": false
     }
   ]
 }
