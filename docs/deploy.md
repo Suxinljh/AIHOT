@@ -88,7 +88,7 @@ docker compose --profile https up -d --build
 - 非密钥值存在 `settings`，密钥用 `CONFIG_ENC_KEY` 加密后存在 `config_secrets`；
 - 生成主密钥：`openssl rand -base64 32`，写进 `.env` 的 `CONFIG_ENC_KEY`（丢失后需重新填写所有密钥）；
 - 保存后重启 `api` 和 `worker` 生效：`docker compose restart api worker`；
-- 部署时在环境变量里设置的值优先，页面会标为「由部署环境固定」。
+- 部署时在环境变量里设置的值优先。密钥会标为「由部署环境固定」；`FEISHU_INTERNAL_ENABLED`、`COLLECT_ENABLED`、`MODEL_CALLS_ENABLED` 这类开关如果写在 `.env` 里，会直接覆盖页面上的勾选，要交给设置页就先注释掉。
 
 邮件通知走 SMTP：
 
